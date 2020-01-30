@@ -1,6 +1,5 @@
 import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
-import {InsightError, NotFoundError} from "./IInsightFacade";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
 import * as JSZip from "jszip";
 import * as fs from "fs";
 
@@ -187,10 +186,10 @@ export default class InsightFacade implements IInsightFacade {
     public removeDataset(id: string): Promise<string> {
         return new Promise((resolve, reject) => {
             if (!this.checkValidIdToRemove(id)) {
-                return reject(InsightError);
+                reject(InsightError);
             }
             if (!this.checkIdExists(id)) {
-                return reject(NotFoundError);
+                reject(NotFoundError);
             }
             fs.readdirSync("C:\\Users\\Yuree\\github-310\\project_team020\\data").forEach((file: string) => {
                 let fileName = file.substr(0, file.lastIndexOf("."));
@@ -211,19 +210,18 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public listDatasets(): Promise<InsightDataset[]> {
-        // let listCurrent: InsightDataset[] = [];
-        // // access datasets
-        // for (const data of this.datasets) {
-        //     const coursesDataset: InsightDataset =
-        //         { data.id, data.numRow, data.kind } as InsightDataset;
-        //     listCurrent.push(coursesDataset);
-        // }
-        // return Promise.resolve((result: InsightDataset[]) => {
-        //     for (const datasetsCurrent of result) {
-        //         console.log(datasetsCurrent);
-        //     }
-        // });
-        return Promise.reject("Not implemented.");
+        return new Promise((resolve) => {
+            let currentDatasets: InsightDataset[] = [];
+            let allData: string[] = Object.keys(this.addedData);
+            allData.forEach((key: string) => {
+                let dataValues: any = {};
+                dataValues["id"] = key;
+                dataValues["numRows"] = allData.length;
+                dataValues["kind"] = InsightDatasetKind.Courses;
+                currentDatasets.push(dataValues);
+            });
+            resolve(currentDatasets);
+        });
     }
 
     private checkValidIdToRemove(id: string) {
