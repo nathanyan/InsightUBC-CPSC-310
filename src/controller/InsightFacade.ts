@@ -69,10 +69,10 @@ export default class InsightFacade implements IInsightFacade {
                             }
                         }
                     }).catch((err: InsightError) => {
-                        return InsightError;
+                        return err;
                     });
                 }).catch((err: InsightError) => {
-                    return InsightError;
+                    return err;
                 });
                 resolve(Object.keys(this.addedData));
             }
@@ -99,7 +99,8 @@ export default class InsightFacade implements IInsightFacade {
             Log.trace("No directory");
         }
         fs.readdirSync("C:\\Users\\Yuree\\github-310\\project_team020\\data").forEach((file: string) => {
-            if (file === id) {return false; }
+            let fileName = file.substr(0, file.lastIndexOf("."));
+            if (fileName === id) {return false; }
         });
         return true;
     }
@@ -244,8 +245,9 @@ export default class InsightFacade implements IInsightFacade {
                 return true;
             }
         }
-        fs.readdirSync("/data/").forEach((file: string) => {
-            if (file === id) {return true; }
+        fs.readdirSync("C:\\Users\\Yuree\\github-310\\project_team020\\data").forEach((file: string) => {
+            let fileName = file.substr(0, file.lastIndexOf("."));
+            if (fileName === id) {return true; }
         });
         return false;
     }
