@@ -242,7 +242,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
                     });
             })
             .catch((err: any) => {
-                expect.fail(err, expected, "Should not have rejected adding valid dataset");
+                expect.fail(err, expected, "Should have rejected adding duplicate dataset");
             });
     });
 

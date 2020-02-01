@@ -17,7 +17,6 @@ export default class InsightFacade implements IInsightFacade {
         this.zip = new JSZip();
         this.addedData = {};
         fs.readdirSync("./data/").forEach((file: string) => {
-            Log.trace("hi starting here");
             let parsedFile: any = JSON.parse(file);
             let key: string = Object.keys(parsedFile)[0];
             this.addedData[key] = parsedFile[key];
@@ -31,16 +30,9 @@ export default class InsightFacade implements IInsightFacade {
                 reject(new InsightError());
             } else {
                 this.zip.loadAsync(content, {base64: true}).then((zip2) => {
-                    // read each file individually (loop over array) which are jsons -> call async on each object ,
-                    // when promise resolves gives back string
-                    // load each file, gives back promise, accumulate these promises in an array ->
-                    // pass array to promise.all ->
-                    // .then () gives result which is array of strings (of files) then you can iterate over this
-
                     let folder = zip2.folder("courses");
-
-                    Object.values(folder.files).forEach((file) => {
-                        promisesList.push(file.async("text"));
+                    Object.values(folder.files).forEach((course) => {
+                        promisesList.push(course.async("text"));
                     });
 
                     Promise.all(promisesList).then((resultFiles: string[]) => {
@@ -57,29 +49,19 @@ export default class InsightFacade implements IInsightFacade {
                             }
                         });
                         if (data.length !== 0) {
-                            // push data to memory
-                            // let filesToWrite: string[] = [];
                             this.addedData[id] = data;
-                            // stringify and write to disk
-                            // for (let jsonFile of data) {
                             let stringifiedFile = JSON.stringify(this.addedData);
-                                // filesToWrite.push(stringifiedFile);
-                            // }
-
                             try {
                                 fs.writeFileSync("./data/" + id, stringifiedFile);
                             } catch (e) {
-                                Log.trace("write before" + e);
                                 reject(new InsightError());
                             }
                         }
                         resolve(Object.keys(this.addedData));
                     }).catch((err: any) => {
-                        Log.trace(err);
                         reject(new InsightError());
                     });
                 }).catch((err: any) => {
-                    Log.trace(err);
                     reject(new InsightError());
                 });
             }
@@ -175,16 +157,11 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     private checkKeysComplete(formattedKeys: any, id: string): boolean {
-        if (formattedKeys[id + "_dept"] !== undefined &&
-            formattedKeys[id + "_id"] !== undefined &&
-            formattedKeys[id + "_avg"] !== undefined &&
-            formattedKeys[id + "_instructor"] !== undefined &&
-            formattedKeys[id + "_title"] !== undefined &&
-            formattedKeys[id + "_pass"] !== undefined &&
-            formattedKeys[id + "_fail"] !== undefined &&
-            formattedKeys[id + "_audit"] !== undefined
-            && formattedKeys[id + "_uuid"] !== undefined &&
-            formattedKeys[id + "_year"] !== undefined) {
+        if (formattedKeys[id + "_dept"] !== undefined && formattedKeys[id + "_id"] !== undefined &&
+            formattedKeys[id + "_avg"] !== undefined && formattedKeys[id + "_instructor"] !== undefined &&
+            formattedKeys[id + "_title"] !== undefined && formattedKeys[id + "_pass"] !== undefined &&
+            formattedKeys[id + "_fail"] !== undefined && formattedKeys[id + "_audit"] !== undefined &&
+            formattedKeys[id + "_uuid"] !== undefined && formattedKeys[id + "_year"] !== undefined) {
             return true;
         }
         return false;
@@ -202,12 +179,11 @@ export default class InsightFacade implements IInsightFacade {
                 if (idKey === id) {
                     fs.unlink("./data/" + idKey, (err) => {
                         if (err) {throw err; }
-                        Log.trace("data with id was deleted");
+                        delete this.addedData[id];
+                        resolve(id);
                     });
                 }
             });
-            delete this.addedData[id];
-            resolve(id);
         });
     }
 
