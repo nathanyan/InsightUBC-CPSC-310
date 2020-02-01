@@ -15,15 +15,16 @@ export default class InsightFacade implements IInsightFacade {
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
         this.zip = new JSZip();
-        // let data: Buffer = fs.readFileSync("./data/");
-        // let dataToAdd:  = JSON.parse(data);
         this.addedData = {};
+        fs.readdirSync("./data/").forEach((file: string) => {
+            Log.trace("hi starting here");
+            let parsedFile: any = JSON.parse(file);
+            let key: string = Object.keys(parsedFile)[0];
+            this.addedData[key] = parsedFile[key];
+        });
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        // open data, read data, dump it somewhere, write it to disk
-        // So the steps of addDataset are sth along line of: check for validity of the zip file -> read the zip if so
-        // -> parse -> save to disk
         let promisesList: Array<Promise<any>> = [];
         return new Promise((resolve, reject) => {
             if (!this.checkValidId(id)) {
@@ -43,6 +44,9 @@ export default class InsightFacade implements IInsightFacade {
                     });
 
                     Promise.all(promisesList).then((resultFiles: string[]) => {
+                        if (resultFiles.length === 0) {
+                            reject(new InsightError());
+                        }
                         let data: JSON[] = [];
                         resultFiles.forEach((object: string) => {
                             try {
@@ -63,9 +67,9 @@ export default class InsightFacade implements IInsightFacade {
                             // }
 
                             try {
-                                fs.writeFileSync("./data/cache", stringifiedFile);
+                                fs.writeFileSync("./data/" + id, stringifiedFile);
                             } catch (e) {
-                                Log.trace("write before");
+                                Log.trace("write before" + e);
                                 reject(new InsightError());
                             }
                         }
@@ -87,24 +91,12 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     private checkValidId(id: string): boolean {
-        if (id.length === 0 || typeof id !== "string" || /^\s*$/.test(id)) {
-            return false;
-        }
-        if (id.includes("_")) {
+        if (id.length === 0 || typeof id !== "string" || /^\s*$/.test(id) || id.includes("_")) {
             return false;
         }
         for (let otherIds in Object.keys(this.addedData)) {
             if (otherIds === id) {return false; }
         }
-        // check to see what's on disk, use fs readd dir sync to get back an array of strings that are filenames ->
-        // parse these filenames and compare to id names
-        if (!fs.existsSync("C:\\Users")) {
-            Log.trace("No directory");
-        }
-        fs.readdirSync("C:\\Users\\Yuree\\github-310\\project_team020\\data").forEach((file: string) => {
-            let fileName = file.substr(0, file.lastIndexOf("."));
-            if (fileName === id) {return false; }
-        });
         return true;
     }
 
@@ -123,9 +115,6 @@ export default class InsightFacade implements IInsightFacade {
         let formattedKeys: any = {};
         let result: any[] = file["result"];
         result.forEach((section: any) => {
-            // if (section["Section"] === undefined) {
-            //     return;
-            // }
             this.setKeyValues(formattedKeys, targetKeys, id, section);
             if (this.checkKeysComplete(formattedKeys, id)) {
                 data.push(formattedKeys);
@@ -209,10 +198,9 @@ export default class InsightFacade implements IInsightFacade {
             if (!this.checkIdExists(id)) {
                 reject(new NotFoundError());
             }
-            fs.readdirSync("./data/cache").forEach((file: string) => {
-                let fileName = file.substr(0, file.lastIndexOf("."));
-                if (fileName === id) {
-                    fs.unlink(file, (err) => {
+            Object.keys(this.addedData).forEach((idKey: string) => {
+                if (idKey === id) {
+                    fs.unlink("./data/cache" + idKey, (err) => {
                         if (err) {throw err; }
                         Log.trace("data with id was deleted");
                     });
@@ -243,14 +231,8 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     private checkValidIdToRemove(id: string) {
-        if (id.length === 0 || typeof id !== "string" || /^\s*$/.test(id)) {
+        if (id.length === 0 || typeof id !== "string" || /^\s*$/.test(id) || id.includes("_")) {
             return false;
-        }
-        if (id.includes("_")) {
-            return false;
-        }
-        for (let otherIds in Object.keys(this.addedData)) {
-            if (otherIds === id) {return false; }
         }
         return true;
     }
