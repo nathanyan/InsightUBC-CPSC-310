@@ -10,11 +10,9 @@ import * as fs from "fs";
  */
 export default class InsightFacade implements IInsightFacade {
     private addedData: any;
-    private zip: JSZip;
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
-        this.zip = new JSZip();
         this.addedData = {};
         fs.readdirSync("./data/").forEach((file: string) => {
             let parsedFile: any = JSON.parse(file);
@@ -29,8 +27,8 @@ export default class InsightFacade implements IInsightFacade {
             if (!this.checkValidId(id)) {
                 reject(new InsightError());
             } else {
-                this.zip.loadAsync(content, {base64: true}).then((zip2) => {
-                    let folder = zip2.folder("courses");
+                new JSZip().loadAsync(content, {base64: true}).then((unzipped) => {
+                    let folder = unzipped.folder("courses");
                     Object.values(folder.files).forEach((course) => {
                         promisesList.push(course.async("text"));
                     });
