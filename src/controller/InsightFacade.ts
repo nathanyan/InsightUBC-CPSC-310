@@ -200,7 +200,7 @@ export default class InsightFacade implements IInsightFacade {
             }
             Object.keys(this.addedData).forEach((idKey: string) => {
                 if (idKey === id) {
-                    fs.unlink("./data/cache" + idKey, (err) => {
+                    fs.unlink("./data/" + idKey, (err) => {
                         if (err) {throw err; }
                         Log.trace("data with id was deleted");
                     });
