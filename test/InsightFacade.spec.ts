@@ -102,7 +102,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             });
     });
 
-    it("Should add a dataset with extra folder with courses folder", function () {
+    it("Should add a dataset with extra folder with courses folder, multiple dataset", function () {
         const id: string = "courses";
         const id2: string = "coursesExtraFolder";
         const expected: string[] = [id];
@@ -120,6 +120,19 @@ describe("InsightFacade Add/Remove Dataset", function () {
             })
             .catch((err: any) => {
                 expect.fail(err, expected, "Should not have rejected");
+            });
+    });
+
+    it("Should add a dataset with extra folder with courses folder", function () {
+        const id2: string = "coursesExtraFolder";
+        const expected2: string[] = [id2];
+        return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses)
+            .then((result2: string[]) => {
+                expect(result2).to.deep.equal(expected2);
+            })
+            .catch((err: any) => {
+                Log.trace(err);
+                expect.fail(err, expected2, "Should not have rejected valid dataset");
             });
     });
 
@@ -656,7 +669,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
                 expect(result).to.be.deep.equal(expected2);
                 return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
                     .then((result2: string[]) => {
-                        expect.fail(result2, expected2, "Should not have rejected empty dataset");
+                        expect.fail(result2, expected2, "Should have rejected empty dataset");
                     })
                     .catch((err: any) => {
                         expect(err).to.be.instanceOf(InsightError);

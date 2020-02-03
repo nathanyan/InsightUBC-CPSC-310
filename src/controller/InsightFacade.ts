@@ -29,10 +29,15 @@ export default class InsightFacade implements IInsightFacade {
             } else {
                 new JSZip().loadAsync(content, {base64: true}).then((unzipped) => {
                     let folder = unzipped.folder("courses");
-                    Object.values(folder.files).forEach((course) => {
-                        promisesList.push(course.async("text"));
+                    let coursesFolderExists = false;
+                    Object.values(folder.files).forEach((dir) => {
+                        if (dir.dir) {
+                            if (dir.name.includes("courses/")) {coursesFolderExists = true; }
+                        }
+                        if ((!dir.dir) && coursesFolderExists) {
+                            if (dir.name.includes("courses/")) {promisesList.push(dir.async("text")); }
+                        }
                     });
-
                     Promise.all(promisesList).then((resultFiles: string[]) => {
                         if (resultFiles.length === 0) {
                             reject(new InsightError());
