@@ -60,8 +60,7 @@ export default class InsightFacade implements IInsightFacade {
                                 reject(new InsightError());
                             }
                             resolve(Object.keys(this.addedData));
-                        }
-                        reject(new InsightError());
+                        } else {reject(new InsightError()); }
                     }).catch((err: any) => {
                         reject(new InsightError());
                     });

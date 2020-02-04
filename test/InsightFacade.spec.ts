@@ -85,10 +85,10 @@ describe("InsightFacade Add/Remove Dataset", function () {
                 expect(result).to.deep.equal(expected);
             })
             .catch((err: any) => {
-                Log.trace(err);
                 expect.fail(err, expected, "Should not have rejected");
             });
     });
+
     // me
     it("Should reject a dataset with underscore id in middle", function () {
         const id: string = "cour_ses";
@@ -99,6 +99,18 @@ describe("InsightFacade Add/Remove Dataset", function () {
             })
             .catch((err: any) => {
                 expect(err).to.be.instanceOf(InsightError);
+            });
+    });
+
+    it("Should add a valid dataset, smaller dataset", function () {
+        const id: string = "coursesInvalidKey";
+        const expected: string[] = [id];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
+            .then((result: string[]) => {
+                expect(result).to.deep.equal(expected);
+            })
+            .catch((err: any) => {
+                expect.fail(err, expected, "Should not have rejected");
             });
     });
 
@@ -131,7 +143,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
                 expect(result2).to.deep.equal(expected2);
             })
             .catch((err: any) => {
-                Log.trace(err);
                 expect.fail(err, expected2, "Should not have rejected valid dataset");
             });
     });
@@ -193,6 +204,18 @@ describe("InsightFacade Add/Remove Dataset", function () {
             })
             .catch((err: any) => {
                 expect.fail(err, expected, "Should not have rejected");
+            });
+    });
+
+    it("Should reject a dataset with no courses folder, single behaviour", function () {
+        const idNoFolder: string = "coursesFolder";
+        const expected: string[] = [];
+        return insightFacade.addDataset(idNoFolder, datasets[idNoFolder], InsightDatasetKind.Courses)
+            .then((result2: string[]) => {
+                expect.fail(result2, expected, "Should not have added invalid dataset");
+            })
+            .catch((err: any) => {
+                expect(err).to.be.instanceOf(InsightError);
             });
     });
 
@@ -436,8 +459,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
     it("Should add a dataset with invalid JSON format in only one file, multiple dataset", function () {
         const id: string = "coursesInvalidKey";
         const id2: string = "courses";
-        const expected: string[] = [id];
-        const expected2: string[] = [id, id2];
+        const expected: string[] = [id2];
+        const expected2: string[] = [id2, id];
         return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses)
             .then((result: string[]) => {
                 expect(result).to.be.deep.equal(expected);
@@ -582,7 +605,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             });
     });
 
-    it("Should add a dataset with half garbage files, some valid JSON files", function () {
+    it("Should add a dataset with half garbage files, one valid JSON files", function () {
         const id: string = "coursesGarbage";
         const expected: string[] = [id];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
@@ -711,7 +734,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
                         expect.fail(result2, collection, "Should have rejected dataset not a zip");
                     })
                     .catch((err: any) => {
-                        expect(err).to.deep.equal(collection);
+                        expect(err).to.be.instanceOf(InsightError);
                     });
             })
             .catch((err: any) => {
@@ -867,7 +890,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
                                 expect.fail(result3, "Should not remove invalid ID dataset");
                             })
                             .catch((err: any) => {
-                                expect(err).to.be.instanceOf(NotFoundError);
+                                expect(err).to.be.instanceOf(InsightError);
                             });
                     })
                     .catch((err: any) => {
@@ -896,7 +919,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
                                 expect.fail(result3, "Should not remove invalid ID dataset");
                             })
                             .catch((err: any) => {
-                                expect(err).to.be.instanceOf(NotFoundError);
+                                expect(err).to.be.instanceOf(InsightError);
                             });
                     })
                     .catch((err: any) => {
@@ -935,7 +958,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         const coursesDataset: InsightDataset =
             { id: "courses", numRows: 64612, kind: InsightDatasetKind.Courses } as InsightDataset;
         const coursesDataset2: InsightDataset =
-            { id: "coursesGarbage", numRows: 4, kind: InsightDatasetKind.Courses } as InsightDataset;
+            { id: "coursesInvalidKey", numRows: 2, kind: InsightDatasetKind.Courses } as InsightDataset;
         const expectedList: InsightDataset[] = [coursesDataset];
         const expectedList2: InsightDataset[] = [coursesDataset, coursesDataset2];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
@@ -975,9 +998,9 @@ describe("InsightFacade Add/Remove Dataset", function () {
         const coursesDataset: InsightDataset =
             { id: "courses", numRows: 64612, kind: InsightDatasetKind.Courses } as InsightDataset;
         const coursesDataset2: InsightDataset =
-            { id: "coursesGarbage", numRows: 4, kind: InsightDatasetKind.Courses } as InsightDataset;
+            { id: "coursesInvalidKey", numRows: 2, kind: InsightDatasetKind.Courses } as InsightDataset;
         const coursesDataset3: InsightDataset =
-            { id: "coursesSomeEmpty", numRows: 3, kind: InsightDatasetKind.Courses } as InsightDataset;
+            { id: "coursesSomeEmpty", numRows: 47, kind: InsightDatasetKind.Courses } as InsightDataset;
         const expectedList3: InsightDataset[] = [coursesDataset, coursesDataset2, coursesDataset3];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
             .then((result: string[]) => {
@@ -993,7 +1016,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
                                 });
                             })
                             .catch((err: any) => {
-                                expect.fail(err, expectedAdd, "Should not have rejected valid add");
+                                expect.fail(err, expected2, "Should not have rejected valid add");
                             });
                     })
                     .catch((err: any) => {
@@ -1013,7 +1036,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         const coursesDataset: InsightDataset =
             { id: "courses", numRows: 64612, kind: InsightDatasetKind.Courses } as InsightDataset;
         const coursesDataset2: InsightDataset =
-            { id: "coursesGarbage", numRows: 4, kind: InsightDatasetKind.Courses } as InsightDataset;
+            { id: "coursesInvalidKey", numRows: 2, kind: InsightDatasetKind.Courses } as InsightDataset;
         const expectedList: InsightDataset[] = [coursesDataset];
         const expectedList2: InsightDataset[] = [coursesDataset, coursesDataset2];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
