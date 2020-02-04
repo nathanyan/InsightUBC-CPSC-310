@@ -59,8 +59,9 @@ export default class InsightFacade implements IInsightFacade {
                             } catch (e) {
                                 reject(new InsightError());
                             }
+                            resolve(Object.keys(this.addedData));
                         }
-                        resolve(Object.keys(this.addedData));
+                        reject(new InsightError());
                     }).catch((err: any) => {
                         reject(new InsightError());
                     });
@@ -79,7 +80,7 @@ export default class InsightFacade implements IInsightFacade {
         if (id.length === 0 || typeof id !== "string" || /^\s*$/.test(id) || id.includes("_")) {
             return false;
         }
-        for (let existingIds in Object.keys(this.addedData)) {
+        for (let existingIds of Object.keys(this.addedData)) {
             if (existingIds === id) {return false; }
         }
         return true;
@@ -135,10 +136,9 @@ export default class InsightFacade implements IInsightFacade {
             if (key === "Year") {
                 if (section["Section"] === "overall") {
                     formattedKeys[id + "_" + key.toLowerCase()] = 1900;
-                } else if (typeof section[key] === "number") {
-                    formattedKeys[id + "_" + key.toLowerCase()] = parseFloat(section[key]);
-                    if (isNaN(formattedKeys[id + "_" + key.toLowerCase()])) {return; }
                 }
+                formattedKeys[id + "_" + key.toLowerCase()] = parseFloat(section[key]);
+                if (isNaN(formattedKeys[id + "_" + key.toLowerCase()])) {return; }
             }
             if (key === "Avg") {
                 formattedKeys[id + "_" + key.toLowerCase()] = parseFloat(section[key]);
