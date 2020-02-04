@@ -167,6 +167,30 @@ describe("InsightFacade Add/Remove Dataset", function () {
             });
     });
 
+    it("Should reject a dataset with null as id key", function () {
+        const id: string = null;
+        const expected: string[] = [];
+        return insightFacade.addDataset(id, datasets["courses"], InsightDatasetKind.Courses)
+            .then((result: string[]) => {
+                expect.fail(result, expected, "Should not have added null id key");
+            })
+            .catch((err: any) => {
+                expect(err).to.be.instanceOf(InsightError);
+            });
+    });
+
+    it("Should reject a dataset with undefined as id key", function () {
+        const id: string = undefined;
+        const expected: string[] = [];
+        return insightFacade.addDataset(id, datasets["courses"], InsightDatasetKind.Courses)
+            .then((result: string[]) => {
+                expect.fail(result, expected, "Should not have added null id key");
+            })
+            .catch((err: any) => {
+                expect(err).to.be.instanceOf(InsightError);
+            });
+    });
+
     it("Should reject a dataset with only one json file, no zip", function () {
         const id: string = "courses";
         const idOneCourse: string = "coursesJsonOnly";
@@ -771,6 +795,28 @@ describe("InsightFacade Add/Remove Dataset", function () {
             })
             .catch((err: any) => {
                 expect.fail(err, collection, "Should have added valid dataset");
+            });
+    });
+
+    it("Should not remove existing dataset with null id key", function () {
+        const id: string = null;
+        return insightFacade.addDataset(id, datasets["courses"], InsightDatasetKind.Courses)
+            .then((result: string[]) => {
+                expect.fail(result, "Should not have removed dataset with null id key");
+            })
+            .catch((err: any) => {
+                expect(err).to.be.instanceOf(InsightError);
+            });
+    });
+
+    it("Should not remove existing dataset with undefined id key", function () {
+        const id: string = undefined;
+        return insightFacade.addDataset(id, datasets["courses"], InsightDatasetKind.Courses)
+            .then((result: string[]) => {
+                expect.fail(result, "Should not have removed dataset with undefined type id key");
+            })
+            .catch((err: any) => {
+                expect(err).to.be.instanceOf(InsightError);
             });
     });
 

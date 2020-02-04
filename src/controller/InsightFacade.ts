@@ -76,6 +76,9 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     private checkValidId(id: string): boolean {
+        if (id === null || id === undefined || id.length === undefined) {
+            return false;
+        }
         if (id.length === 0 || typeof id !== "string" || /^\s*$/.test(id) || id.includes("_")) {
             return false;
         }
@@ -209,6 +212,9 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     private checkValidIdToRemove(id: string) {
+        if (id === null || id === undefined || id.length === undefined) {
+            return false;
+        }
         if (id.length === 0 || typeof id !== "string" || /^\s*$/.test(id) || id.includes("_")) {
             return false;
         }
