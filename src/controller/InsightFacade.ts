@@ -79,8 +79,8 @@ export default class InsightFacade implements IInsightFacade {
         if (id.length === 0 || typeof id !== "string" || /^\s*$/.test(id) || id.includes("_")) {
             return false;
         }
-        for (let otherIds in Object.keys(this.addedData)) {
-            if (otherIds === id) {return false; }
+        for (let existingIds in Object.keys(this.addedData)) {
+            if (existingIds === id) {return false; }
         }
         return true;
     }
@@ -201,7 +201,7 @@ export default class InsightFacade implements IInsightFacade {
             allData.forEach((key: string) => {
                 let dataValues: any = {};
                 dataValues["id"] = key;
-                dataValues["numRows"] = allData.length;
+                dataValues["numRows"] = this.addedData[key].length;
                 dataValues["kind"] = InsightDatasetKind.Courses;
                 currentDatasets.push(dataValues);
             });
