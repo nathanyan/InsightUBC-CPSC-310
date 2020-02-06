@@ -15,7 +15,8 @@ export default class InsightFacade implements IInsightFacade {
         Log.trace("InsightFacadeImpl::init()");
         this.addedData = {};
         fs.readdirSync("./data/").forEach((file: string) => {
-            let parsedFile: any = JSON.parse(file);
+            let fileData: string = fs.readFileSync(file).toString();
+            let parsedFile: any = JSON.parse(fileData);
             let key: string = Object.keys(parsedFile)[0];
             this.addedData[key] = parsedFile[key];
         });
@@ -100,9 +101,9 @@ export default class InsightFacade implements IInsightFacade {
             return;
         } else {
         let targetKeys = ["Subject", "Course", "Avg", "Professor", "Title", "Pass", "Fail", "Audit", "Year", "id"];
-        let formattedKeys: any = {};
         let result: any[] = file["result"];
         result.forEach((section: any) => {
+            let formattedKeys: any = {};
             this.setKeyValues(formattedKeys, targetKeys, id, section);
             if (this.checkKeysComplete(formattedKeys, id)) {
                 data.push(formattedKeys);
