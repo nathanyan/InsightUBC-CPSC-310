@@ -34,8 +34,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
         courses3: "./test/data/coursesValid3.zip",
         coursesGarbage: "./test/data/coursesHalfGarbage.zip",
         testJPG: "./test/data/test.jpg",
-        coursesNested: "./test/data/coursesNested.zip",
-        coursesNested2: "./test/data/coursesNested2.zip",
         courseOnlyOneFile: "./test/data/oneCourse",
         coursesFolder: "./test/data/coursesFolder.zip",
         coursesWrongFolder: "./test/data/coursesWrongFolder.zip",
@@ -766,18 +764,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
             });
     });
 
-    it("Should accept dataset with nested courses folder", function () {
-        const id: string = "coursesNested";
-        const collection: string[] = [id];
-        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
-            .then((result: string[]) => {
-                expect(result).to.deep.equal(collection);
-            })
-            .catch((err: any) => {
-                expect.fail(err, collection, "Should have added valid dataset");
-            });
-    });
-
     it("Should not remove valid ID not existing in dataset", function () {
         const id: string = "courses";
         const id2: string = "courses2";
@@ -1194,8 +1180,6 @@ describe("InsightFacade PerformQuery", () => {
         courses_: {path: "./test/data/coursesValid2.zip", kind: InsightDatasetKind.Courses},
         courses3: {path: "./test/data/coursesValid3.zip", kind: InsightDatasetKind.Courses},
         coursesGarbage: {path: "./test/data/coursesHalfGarbage.zip", kind: InsightDatasetKind.Courses},
-        coursesNested: {path: "./test/data/coursesNested.zip", kind: InsightDatasetKind.Courses},
-        coursesNested2: {path: "./test/data/coursesNested2.zip", kind: InsightDatasetKind.Courses},
         testJPG: {path: "./test/data/test.jpg", kind: InsightDatasetKind.Courses},
         courseOnlyOneFile: {path: "./test/data/oneCourse", kind: InsightDatasetKind.Courses},
         coursesFolder: {path: "./test/data/coursesFolder.zip", kind: InsightDatasetKind.Courses},
