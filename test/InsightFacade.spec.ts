@@ -1167,24 +1167,21 @@ describe("InsightFacade Add/Remove Dataset", function () {
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery: { [id: string]: {path: string, kind: InsightDatasetKind} } = {
         courses: {path: "./test/data/courses.zip", kind: InsightDatasetKind.Courses},
-        coursesNullKey: {path: "./test/data/coursesNullKey.zip", kind: InsightDatasetKind.Courses},
-        coursesInvalidKey: {path: "./test/data/coursesInvalidkey.zip", kind: InsightDatasetKind.Courses},
-        coursesNoValidFile: {path: "./test/data/coursesNoneValid.zip", kind: InsightDatasetKind.Courses},
-        coursesNullValue: {path: "./test/data/coursesNullValue.zip", kind: InsightDatasetKind.Courses},
-        coursesNoFiles: {path: "./test/data/coursesNoFiles.zip", kind: InsightDatasetKind.Courses},
-        coursesSomeEmpty: {path: "./test/data/coursesSomeEmpty.zip", kind: InsightDatasetKind.Courses},
-        coursesAllEmpty: {path: "./test/data/coursesAllEmpty.zip", kind: InsightDatasetKind.Courses},
-        courses2: {path: "./test/data/coursesValid2.zip", kind: InsightDatasetKind.Courses},
-        cour_ses: {path: "./test/data/coursesValid2.zip", kind: InsightDatasetKind.Courses},
-        _courses: {path: "./test/data/coursesValid2.zip", kind: InsightDatasetKind.Courses},
-        courses_: {path: "./test/data/coursesValid2.zip", kind: InsightDatasetKind.Courses},
-        courses3: {path: "./test/data/coursesValid3.zip", kind: InsightDatasetKind.Courses},
-        coursesGarbage: {path: "./test/data/coursesHalfGarbage.zip", kind: InsightDatasetKind.Courses},
-        testJPG: {path: "./test/data/test.jpg", kind: InsightDatasetKind.Courses},
-        courseOnlyOneFile: {path: "./test/data/oneCourse", kind: InsightDatasetKind.Courses},
-        coursesFolder: {path: "./test/data/coursesFolder.zip", kind: InsightDatasetKind.Courses},
-        coursesWrongFolder: {path: "./test/data/coursesWrongFolder.zip", kind: InsightDatasetKind.Courses},
-        coursesJsonOnly: {path: "./test/data/AND.json", kind: InsightDatasetKind.Courses}
+        // coursesNullKey: {path: "./test/data/coursesNullKey.zip", kind: InsightDatasetKind.Courses},
+        // coursesInvalidKey: {path: "./test/data/coursesInvalidkey.zip", kind: InsightDatasetKind.Courses},
+        // coursesNoValidFile: {path: "./test/data/coursesNoneValid.zip", kind: InsightDatasetKind.Courses},
+        // coursesNullValue: {path: "./test/data/coursesNullValue.zip", kind: InsightDatasetKind.Courses},
+        // coursesNoFiles: {path: "./test/data/coursesNoFiles.zip", kind: InsightDatasetKind.Courses},
+        // coursesSomeEmpty: {path: "./test/data/coursesSomeEmpty.zip", kind: InsightDatasetKind.Courses},
+        // coursesAllEmpty: {path: "./test/data/coursesAllEmpty.zip", kind: InsightDatasetKind.Courses},
+        // courses2: {path: "./test/data/coursesValid2.zip", kind: InsightDatasetKind.Courses},
+        // courses3: {path: "./test/data/coursesValid3.zip", kind: InsightDatasetKind.Courses},
+        // coursesGarbage: {path: "./test/data/coursesHalfGarbage.zip", kind: InsightDatasetKind.Courses},
+        // testJPG: {path: "./test/data/test.jpg", kind: InsightDatasetKind.Courses},
+        // courseOnlyOneFile: {path: "./test/data/oneCourse", kind: InsightDatasetKind.Courses},
+        // coursesFolder: {path: "./test/data/coursesFolder.zip", kind: InsightDatasetKind.Courses},
+        // coursesWrongFolder: {path: "./test/data/coursesWrongFolder.zip", kind: InsightDatasetKind.Courses},
+        // coursesJsonOnly: {path: "./test/data/AND.json", kind: InsightDatasetKind.Courses}
     };
     let insightFacade: InsightFacade;
     let testQueries: ITestQuery[] = [];
@@ -1210,13 +1207,14 @@ describe("InsightFacade PerformQuery", () => {
             const data = fs.readFileSync(ds.path).toString("base64");
             loadDatasetPromises.push(insightFacade.addDataset(id, data, ds.kind));
         }
-        return Promise.all(loadDatasetPromises).catch((err) => {
-            /* *IMPORTANT NOTE: This catch is to let this run even without the implemented addDataset,
-             * for the purposes of seeing all your tests run.
-             * TODO For C1, remove this catch block (but keep the Promise.all)
-             */
-            return Promise.resolve("HACK TO LET QUERIES RUN");
-        });
+        return Promise.all(loadDatasetPromises);
+        // .catch((err) => {
+        //     /* *IMPORTANT NOTE: This catch is to let this run even without the implemented addDataset,
+        //      * for the purposes of seeing all your tests run.
+        //      * TODO For C1, remove this catch block (but keep the Promise.all)
+        //      */
+        //     return Promise.resolve("HACK TO LET QUERIES RUN");
+        // });
     });
 
     beforeEach(function () {

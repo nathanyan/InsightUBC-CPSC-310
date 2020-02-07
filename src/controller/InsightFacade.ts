@@ -1,7 +1,10 @@
 import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
 import * as JSZip from "jszip";
 import * as fs from "fs";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
+import {InsightError, NotFoundError} from "./IInsightFacade";
+import PerformQueryValid from "./PerformQueryValid";
+import PerformQueryFilterDisplay from "./PerformQueryFilterDisplay";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -10,10 +13,12 @@ import * as fs from "fs";
  */
 export default class InsightFacade implements IInsightFacade {
     private addedData: any;
+    private uniqueIDsInQuery: any[];
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
         this.addedData = {};
+        this.uniqueIDsInQuery = [];
         fs.readdirSync("./data/").forEach((file: string) => {
             let fileData: string = fs.readFileSync(file).toString();
             let parsedFile: any = JSON.parse(fileData);
@@ -194,7 +199,29 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public performQuery(query: any): Promise <any[]> {
-        return Promise.reject("Not implemented.");
+        return new Promise((resolve, reject) => {
+            if (!PerformQueryValid.isQueryValid(query, this.addedData, this.uniqueIDsInQuery)) {
+                this.uniqueIDsInQuery.pop();
+                return reject(new InsightError("Query is invalid"));
+            }
+            let idToQuery: string = this.uniqueIDsInQuery[0];           // only 1 id in uniqueIDsInQuery = one to query
+            let datasetToParse: any[] = this.addedData[idToQuery];      // the only dataset we need to look at
+            let resultSoFar: any[] = [];
+            let where: any = query["WHERE"];
+            resultSoFar = PerformQueryFilterDisplay.filterCourseSections(datasetToParse, where);
+            if (resultSoFar.length >= 5000) {
+                Log.trace(resultSoFar);
+                this.uniqueIDsInQuery.pop();
+                return reject (new ResultTooLargeError());
+            } else {
+                let options: any = query["OPTIONS"];
+                let finalResult: any[];
+                finalResult = PerformQueryFilterDisplay.displayByOptions(resultSoFar, options);
+                this.uniqueIDsInQuery.pop();
+                Log.trace(finalResult);
+                return resolve(finalResult);
+            }
+        });
     }
 
     public listDatasets(): Promise<InsightDataset[]> {

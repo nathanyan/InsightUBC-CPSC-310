@@ -1,0 +1,38 @@
+{
+    "title": "Invalid query - 400: referenced dataset 'name' not added yet",
+    "query": {
+	  "WHERE": {
+	    "OR": [
+	      {
+	        "AND": [
+	          {
+	            "GT": {
+	              "name_avg": 90
+	            }
+	          },
+	          {
+	            "IS": {
+	              "name_dept": "adhe"
+	            }
+	          }
+	        ]
+	      },
+	      {
+	        "EQ": {
+	          "name_avg": 95
+	        }
+	      }
+	    ]
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "name_dept",
+	      "name_id",
+	      "name_avg"
+	    ],
+	    "ORDER": "name_avg"
+	  }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

@@ -1,0 +1,191 @@
+{
+    "title": "IS 'career planning' - Wildcard before",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_title": "career planni*"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_title",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":87.5
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":87.72
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":87.72
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":88.05
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":88.05
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":88.54
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":88.54
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":88.93
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":89
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":89
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":89.16
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":89.79
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":89.79
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":90.42
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":90.42
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":90.53
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":90.58
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":90.58
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":90.88
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":90.88
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":90.9
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":90.9
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":91.21
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":91.21
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":91.81
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":91.81
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":91.89
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":91.89
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":92.71
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":92.71
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":94.23
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":97.47
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":97.47
+        },
+        {
+            "courses_dept":"cnps",
+            "courses_title":"career planning",
+            "courses_avg":99.19
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "title": "Valid Query - returns none, logic odd",
+    "query": {
+	  "WHERE": {
+	       "AND": [
+	          {
+	            "GT": {
+	              "courses_avg": 90
+	            }
+	          },
+	          {
+	            "LT": {
+	              "courses_avg": 20
+	            }
+	          }
+	        ]
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_dept",
+	      "courses_id",
+	      "courses_avg"
+	    ],
+	    "ORDER": "courses_avg"
+	  }
+    },
+    "isQueryValid": true,
+	"result":[]
+}
