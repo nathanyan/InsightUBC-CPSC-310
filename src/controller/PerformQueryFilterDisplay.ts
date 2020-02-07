@@ -169,16 +169,15 @@ export default class PerformQueryFilterDisplay {
 
     public static orLogic(datasetToParse: any[], filterKV: any[]): any[] {
         let result: any[] = [];
-        let orFilterKeys: any[] = Object.keys(filterKV);
-        let orFilterKey: any = orFilterKeys[0];
-        if (orFilterKeys.length === 1) {
-            return this.filterCourseSections(datasetToParse, orFilterKey);  // if only 1 in OR = just do one filter
-        }
-        for (let orFilter of filterKV) {
-            let recurseResult: any[] = this.filterCourseSections(datasetToParse, orFilter); // do first filter in OR
-            for (let eachRecurseResult of recurseResult) {
-                if (!(result.includes(eachRecurseResult))) {         // in results so far, if not present yet then add
-                    result.push(eachRecurseResult);
+        if (filterKV.length === 1) {
+            result = this.filterCourseSections(datasetToParse, filterKV[0]);  // if only 1 in OR = just do one filter
+        } else {
+            for (let orFilter of filterKV) {
+                let recurseResult: any[] = this.filterCourseSections(datasetToParse, orFilter); // do first filter in OR
+                for (let eachRecurseResult of recurseResult) {
+                    if (!(result.includes(eachRecurseResult))) {       // in results so far, if not present yet then add
+                        result.push(eachRecurseResult);
+                    }
                 }
             }
         }
