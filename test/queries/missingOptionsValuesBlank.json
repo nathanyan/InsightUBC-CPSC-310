@@ -1,0 +1,33 @@
+{
+    "title": "Invalid query - 400: OPTIONS blank, missing COLUMNS",
+    "query": {
+	  "WHERE": {
+	    "OR": [
+	      {
+	        "AND": [
+	          {
+	            "GT": {
+	              "courses_avg": 90
+	            }
+	          },
+	          {
+	            "IS": {
+	              "courses_dept": "adhe"
+	            }
+	          }
+	        ]
+	      },
+	      {
+	        "EQ": {
+	          "courses_avg": 95
+	        }
+	      }
+	    ]
+	  },
+	  "OPTIONS": {
+
+	  }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

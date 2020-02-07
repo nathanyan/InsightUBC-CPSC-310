@@ -1,0 +1,38 @@
+{
+    "title": "Invalid query: 400 - invalid ORDER type",
+    "query": {
+	  "WHERE": {
+	    "OR": [
+	      {
+	        "AND": [
+	          {
+	            "GT": {
+	              "courses_avg": 90
+	            }
+	          },
+	          {
+	            "IS": {
+	              "courses_dept": "adhe"
+	            }
+	          }
+	        ]
+	      },
+	      {
+	        "EQ": {
+	          "courses_avg": 95
+	        }
+	      }
+	    ]
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_dept",
+	      "courses_id",
+	      "courses_avg"
+	    ],
+	    "ORDER": 123
+	  }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

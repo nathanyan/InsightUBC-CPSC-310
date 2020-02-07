@@ -1,0 +1,25 @@
+{
+    "title": "Invalid query - 400: AND should only have 1 key, has 0",
+    "query": {
+	  "WHERE": {
+	    "AND": [
+	      {
+	       
+	      },
+	      {
+
+	      }
+	    ]
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_dept",
+	      "courses_id",
+	      "courses_avg"
+	    ],
+	    "ORDER": "courses_avg"
+	  }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

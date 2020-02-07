@@ -1,0 +1,30 @@
+{
+    "title": "Invalid query - 400: Missing OPTIONS key and value",
+    "query": {
+	  "WHERE": {
+	    "OR": [
+	      {
+	        "AND": [
+	          {
+	            "GT": {
+	              "courses_avg": 90
+	            }
+	          },
+	          {
+	            "IS": {
+	              "courses_dept": "adhe"
+	            }
+	          }
+	        ]
+	      },
+	      {
+	        "EQ": {
+	          "courses_avg": 95
+	        }
+	      }
+	    ]
+	  }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

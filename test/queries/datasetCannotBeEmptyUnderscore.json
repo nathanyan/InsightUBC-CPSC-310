@@ -1,0 +1,38 @@
+{
+    "title": "Invalid query - 400: referenced dataset cannot be empty string",
+    "query": {
+	  "WHERE": {
+	    "OR": [
+	      {
+	        "AND": [
+	          {
+	            "GT": {
+	              "_courses_avg": 90
+	            }
+	          },
+	          {
+	            "IS": {
+	              "_courses_dept": "adhe"
+	            }
+	          }
+	        ]
+	      },
+	      {
+	        "EQ": {
+	          "_courses_avg": 95
+	        }
+	      }
+	    ]
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "_courses_dept",
+	      "_courses_id",
+	      "_courses_avg"
+	    ],
+	    "ORDER": "_courses_avg"
+	  }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

@@ -34,6 +34,11 @@ export default class PerformQueryValid {
             Log.trace("WHERE or OPTIONS values are not objects");
             return false;                                   // check that WHERE and OPTION values are objects
         }
+        let filterKeys: any[] = Object.keys(where);
+        if (filterKeys.length === 0) {                      // a blank WHERE is valid
+            return (this.isOptionsValid(options, addedData, uniqueIDsInQuery) && (uniqueIDsInQuery.length === 1));
+            // Log.trace("Blank WHERE");
+        }
         if (!this.isWhereFiltersValid(where, addedData, uniqueIDsInQuery)) {    // check filters in WHERE are correct
             Log.trace("WHERE is invalid");
             return false;
@@ -51,14 +56,11 @@ export default class PerformQueryValid {
 
     public static isWhereFiltersValid(filter: any, addedData: any, uniqueIDsInQuery: any[]): boolean {
         let filterKeys: any[] = Object.keys(filter);
-        if (filterKeys.length === 0) {                      // a blank WHERE is valid
-            return true;    // Log.trace("Blank WHERE");
-        }
         if (filterKeys.length > 1) {                        // should only have 1 object in it (but can be nested)
-            return false;   // Log.trace("Where has more than 1 object in it");
+            return false;           // Log.trace("Where has more than 1 object in it");
         } else {
             let filterKey = filterKeys[0];
-            if (!filterKeysAll.includes(filterKey)) {
+            if (!(filterKeysAll.includes(filterKey))) {
                 return false;                               // doesn't match one of the pre-set filter keys
             }       // Log.trace("Filter key is something other than GT, LT, EQ, IS, NOT, AND, OR");
             if (filterKey === "GT" || filterKey === "LT" || filterKey === "EQ") {   // check mComparators
@@ -75,7 +77,8 @@ export default class PerformQueryValid {
             }
             if (filterKey === "NOT") {                              // check negation -> recurse
                 let negationKeyValue: any = filter[filterKey];  //  Log.trace("reach NOT");
-                if (negationKeyValue === null || typeof negationKeyValue !== "object") {
+                if (negationKeyValue === null || typeof negationKeyValue !== "object"
+                || !(this.isWhereFiltersValid(negationKeyValue, addedData, uniqueIDsInQuery))) {
                     return false;   // Log.trace("Value in NOT is not an object");
                 }
                 this.isWhereFiltersValid(negationKeyValue, addedData, uniqueIDsInQuery);
@@ -87,7 +90,8 @@ export default class PerformQueryValid {
                     return false;   // Log.trace("Value in logic operator is null, not an array or an empty array");
                 }
                 for (let logicComparisonObject of logicComparison) {            // for each thing, check is an object
-                    if (typeof logicComparisonObject !== "object" || logicComparisonObject === null) {
+                    if (typeof logicComparisonObject !== "object" || logicComparisonObject === null
+                    || !(this.isWhereFiltersValid(logicComparisonObject, addedData, uniqueIDsInQuery))) {
                         return false;       // Log.trace("Item in logic operator array is not an object");
                     } else {
                         this.isWhereFiltersValid(logicComparisonObject, addedData, uniqueIDsInQuery);
@@ -217,8 +221,8 @@ export default class PerformQueryValid {
 
     public static checkColumnsValid(columnsValues: any[], addedData: any, uniqueIDsInQuery: any[]): boolean {
         Log.trace("Reached checkColumnsValid");
-        if (columnsValues.length === 0 || !Array.isArray(columnsValues)) {      // must be non-empty array
-            Log.trace("COLUMNS value has nothing in it or is not in array");
+        if (columnsValues === null || columnsValues.length === 0 || !Array.isArray(columnsValues)) {
+            Log.trace("COLUMNS value has nothing in it or is not in array");    // must be non-empty array
             return false;
         }
         for (let columnsValue of columnsValues) {               // each thing in array must be a string

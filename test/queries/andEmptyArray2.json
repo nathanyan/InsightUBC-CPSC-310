@@ -1,0 +1,19 @@
+{
+    "title": "Invalid query - 400: AND must be non-empty array",
+    "query": {
+	  "WHERE": {
+	    "AND": 
+	    null
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_dept",
+	      "courses_id",
+	      "courses_avg"
+	    ],
+	    "ORDER": "courses_avg"
+	  }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

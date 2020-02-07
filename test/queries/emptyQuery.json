@@ -1,0 +1,6 @@
+{
+    "title": "Invalid query: 400 - missing WHERE",
+    "query": {},
+    "isQueryValid": false,
+    "result": "InsightError"
+}
