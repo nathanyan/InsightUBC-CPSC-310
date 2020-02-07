@@ -209,7 +209,7 @@ export default class InsightFacade implements IInsightFacade {
             let resultSoFar: any[] = [];
             let where: any = query["WHERE"];
             resultSoFar = PerformQueryFilterDisplay.filterCourseSections(datasetToParse, where);
-            if (resultSoFar.length >= 5000) {
+            if (resultSoFar.length > 5000) {
                 Log.trace(resultSoFar);
                 this.uniqueIDsInQuery.pop();
                 return reject (new ResultTooLargeError());

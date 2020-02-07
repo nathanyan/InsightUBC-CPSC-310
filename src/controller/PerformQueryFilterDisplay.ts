@@ -172,12 +172,12 @@ export default class PerformQueryFilterDisplay {
         let orFilterKeys: any[] = Object.keys(filterKV);
         let orFilterKey: any = orFilterKeys[0];
         if (orFilterKeys.length === 1) {
-            return this.filterCourseSections(datasetToParse, orFilterKey);  // if only 1 in OR = just one filter
+            return this.filterCourseSections(datasetToParse, orFilterKey);  // if only 1 in OR = just do one filter
         }
         for (let orFilter of filterKV) {
             let recurseResult: any[] = this.filterCourseSections(datasetToParse, orFilter); // do first filter in OR
             for (let eachRecurseResult of recurseResult) {
-                if (!(result.includes(eachRecurseResult))) {         // will take all results of deeper further filters
+                if (!(result.includes(eachRecurseResult))) {         // in results so far, if not present yet then add
                     result.push(eachRecurseResult);
                 }
             }
