@@ -144,8 +144,9 @@ export default class InsightFacade implements IInsightFacade {
             if (key === "Year") {
                 if (section["Section"] === "overall") {
                     formattedKeys[id + "_" + key.toLowerCase()] = 1900;
-                }
+                } else {
                 formattedKeys[id + "_" + key.toLowerCase()] = parseFloat(section[key]);
+                }
                 if (isNaN(formattedKeys[id + "_" + key.toLowerCase()])) {return; }
             }
             if (key === "Avg") {

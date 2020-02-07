@@ -1,0 +1,32 @@
+{
+    "title": "SELECT dept, avg WHERE avg > 97",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "LT": {
+                        "courses_year": 1900
+                    }
+                },
+                {
+                    "LT": {
+                        "courses_avg": 10
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_year",
+                "courses_avg",
+                "courses_uuid"
+            ],
+            "ORDER": "courses_dept"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+    ]
+}
