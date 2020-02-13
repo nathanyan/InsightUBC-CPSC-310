@@ -17,7 +17,8 @@ module.exports = {
         {
             "files": ["**/*.spec.ts"],
             "rules": {
-                "max-lines": "off"
+                "max-lines": "off",
+                "max-nested-callbacks": ["error", 4],
             }
         },
         {
