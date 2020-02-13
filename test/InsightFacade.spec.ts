@@ -318,26 +318,32 @@ describe("InsightFacade Add/Remove Dataset", function () {
                     .then((result2: string[]) => {
                         expect(result2).to.deep.equal(expected2);
                         return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses)
-                            .then((result3: string[]) => {
-                                expect.fail(result3, expected2, "Should not have added identical id dataset");
-                            })
-                            .catch((err: any) => {
-                                expect(err).to.be.instanceOf(InsightError);
-                                return insightFacade.addDataset(id3, datasets[id3], InsightDatasetKind.Courses)
-                                    .then((result4: string[]) => {
-                                        expect(result4).to.deep.equal(expected3);
-                                        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
-                                            .then((result5: string[]) => {
-                                                expect.fail(result5, expected3, "Should not have added identical id 2");
-                                            })
-                                            .catch((err2: any) => {
-                                                expect(err2).to.be.instanceOf(InsightError);
-                                            });
-                                    })
-                                    .catch((err1: any) => {
-                                        expect.fail(err1, expected3, "Should not have rejected 3");
-                                    });
-                            });
+                            .then(then1)
+                            .catch(catch2);
+                        function then1(result3: string[]) {
+                            expect.fail(result3, expected2, "Should not have added identical id dataset");
+                        }
+                        function catch2(err: any) {
+                            expect(err).to.be.instanceOf(InsightError);
+                            return insightFacade.addDataset(id3, datasets[id3], InsightDatasetKind.Courses)
+                                .then(addDataSetOuter)
+                                .catch(outCatch);
+                            function addDataSetOuter(result4: string[]) {
+                                expect(result4).to.deep.equal(expected3);
+                                return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
+                                    .then(addDatasetThen)
+                                    .catch(finalPromise);
+                                function addDatasetThen(result5: string[]) {
+                                    expect.fail(result5, expected3, "Should not have added identical id 2");
+                                }
+                                function finalPromise(err2: any) {
+                                    expect(err2).to.be.instanceOf(InsightError);
+                                }
+                            }
+                            function outCatch(err1: any) {
+                                expect.fail(err1, expected3, "Should not have rejected 3");
+                            }
+                        }
                     })
                     .catch((err: any) => {
                         expect.fail(err, expected2, "Should not have rejected 2");
@@ -380,34 +386,39 @@ describe("InsightFacade Add/Remove Dataset", function () {
         const expected1: string[] = [id];
         const expected2: string[] = [id, id2];
         const expected3: string[] = [id, id2, id3];
-        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
-            .then((result: string[]) => {
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
                 expect(result).to.deep.equal(expected1);
                 return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses)
                     .then((result2: string[]) => {
                         expect(result2).to.deep.equal(expected2);
                         return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses)
-                            .then((result3: string[]) => {
-                                expect.fail(result3, expected2, "Should not have added identical id");
-                            })
-                            .catch((err: any) => {
-                                expect(err).to.be.instanceOf(InsightError);
-                                return insightFacade.addDataset(id3, datasets[id3], InsightDatasetKind.Courses)
-                                    .then((result4: string[]) => {
-                                        expect(result4).to.deep.equal(expected3);
-                                        return insightFacade.addDataset(idE, datasets[idE], InsightDatasetKind.Courses)
-                                            .then((result5: string[]) => {
-                                                expect.fail(result5, expected3,
-                                                    "Should not have added empty string ID dataset");
-                                            })
-                                            .catch((err2: any) => {
-                                                expect(err2).to.be.instanceOf(InsightError);
-                                            });
-                                    })
-                                    .catch((err1: any) => {
-                                        expect.fail(err1, expected3, "Should not have rejected 3");
-                                    });
-                            });
+                            .then(then3)
+                            .catch(catch3);
+                        function then3(result3: string[]) {
+                            expect.fail(result3, expected2, "Should not have added identical id");
+                        }
+                        function catch3(err: any) {
+                            expect(err).to.be.instanceOf(InsightError);
+                            return insightFacade.addDataset(id3, datasets[id3], InsightDatasetKind.Courses)
+                                .then(then2)
+                                .catch(catch2);
+                            function catch2(err1: any) {
+                                expect.fail(err1, expected3, "Should not have rejected 3");
+                            }
+                            function then2(result4: string[]) {
+                                expect(result4).to.deep.equal(expected3);
+                                return insightFacade.addDataset(idE, datasets[idE], InsightDatasetKind.Courses)
+                                    .then(thenInner)
+                                    .catch(catchInner);
+                                function thenInner(result5: string[]) {
+                                    expect.fail(result5, expected3,
+                                        "Should not have added empty string ID dataset");
+                                }
+                                function catchInner(err2: any) {
+                                    expect(err2).to.be.instanceOf(InsightError);
+                                }
+                            }
+                        }
                     })
                     .catch((err: any) => {
                         expect.fail(err, expected2, "Should not have rejected 2");
@@ -889,12 +900,14 @@ describe("InsightFacade Add/Remove Dataset", function () {
                     .then((result2: string[]) => {
                         expect(result2).to.deep.equal(expected2);
                         return insightFacade.removeDataset(id2)
-                            .then((result3: string) => {
-                                expect(result3).to.deep.equal(id2);
-                            })
-                            .catch((err: InsightError) => {
-                                expect.fail(err, id2, "Should have removed existing dataset");
-                            });
+                            .then(thenInner)
+                            .catch(catchInner);
+                        function catchInner(err: InsightError) {
+                            expect.fail(err, id2, "Should have removed existing dataset");
+                        }
+                        function thenInner(result3: string) {
+                            expect(result3).to.deep.equal(id2);
+                        }
                     })
                     .catch((err: any) => {
                         expect.fail(err, expected2, "Should not have rejected");
@@ -918,12 +931,14 @@ describe("InsightFacade Add/Remove Dataset", function () {
                     .then((result2: string[]) => {
                         expect(result2).to.deep.equal(expected2);
                         return insightFacade.removeDataset(id3)
-                            .then((result3: string) => {
-                                expect.fail(result3, "Should not remove invalid ID dataset");
-                            })
-                            .catch((err: any) => {
-                                expect(err).to.be.instanceOf(InsightError);
-                            });
+                            .then(thenInner)
+                            .catch(catchInner);
+                        function catchInner(err: any) {
+                            expect(err).to.be.instanceOf(InsightError);
+                        }
+                        function thenInner(result3: string) {
+                            expect.fail(result3, "Should not remove invalid ID dataset");
+                        }
                     })
                     .catch((err: any) => {
                         expect.fail(err, expected2, "Should have added valid dataset 2");
@@ -947,12 +962,14 @@ describe("InsightFacade Add/Remove Dataset", function () {
                     .then((result2: string[]) => {
                         expect(result2).to.deep.equal(expected2);
                         return insightFacade.removeDataset(id3)
-                            .then((result3: string) => {
-                                expect.fail(result3, "Should not remove invalid ID dataset");
-                            })
-                            .catch((err: any) => {
-                                expect(err).to.be.instanceOf(InsightError);
-                            });
+                            .then(thenInner)
+                            .catch(catchInner);
+                        function catchInner(err: any) {
+                            expect(err).to.be.instanceOf(InsightError);
+                        }
+                        function thenInner(result3: string) {
+                            expect.fail(result3, "Should not remove invalid ID dataset");
+                        }
                     })
                     .catch((err: any) => {
                         expect.fail(err, expected2, "Should not have rejected add dataset");
@@ -1000,16 +1017,19 @@ describe("InsightFacade Add/Remove Dataset", function () {
                     .then((result2: InsightDataset[]) => {
                         expect(result2).to.deep.equal(expectedList);
                         return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses)
-                            .then((result3: string[]) => {
-                                expect(result3).to.deep.equal(expectedAdd2);
-                                return insightFacade.listDatasets()
-                                    .then((result4: InsightDataset[]) => {
-                                        expect(result4).to.deep.equal(expectedList2);
-                                    });
-                            })
-                            .catch((err: any) => {
-                                expect.fail(err, expectedAdd2, "Should not have rejected 2");
-                            });
+                            .then(then2)
+                            .catch(catchInner);
+                        function then2(result3: string[]) {
+                            expect(result3).to.deep.equal(expectedAdd2);
+                            return insightFacade.listDatasets()
+                                .then(thenInner);
+                            function thenInner(result4: InsightDataset[]) {
+                                expect(result4).to.deep.equal(expectedList2);
+                            }
+                        }
+                        function catchInner(err: any) {
+                            expect.fail(err, expectedAdd2, "Should not have rejected 2");
+                        }
                     })
                     .catch((err: any) => {
                         expect.fail(err, expectedAdd2, "Should not have rejected 2");
@@ -1041,15 +1061,18 @@ describe("InsightFacade Add/Remove Dataset", function () {
                     .then((result2: string[]) => {
                         expect(result2).to.deep.equal(expected2);
                         return insightFacade.addDataset(id3, datasets[id3], InsightDatasetKind.Courses)
-                            .then((result3: string[]) => {
-                                expect(result3).to.deep.equal(expectedAdd);
-                                return insightFacade.listDatasets().then((result4: InsightDataset[]) => {
-                                    expect(result4).to.deep.equal(expectedList3);
-                                });
-                            })
-                            .catch((err: any) => {
-                                expect.fail(err, expected2, "Should not have rejected valid add");
-                            });
+                            .then(thenInner)
+                            .catch(catchInner);
+                        function catchInner(err: any) {
+                            expect.fail(err, expected2, "Should not have rejected valid add");
+                        }
+                        function thenInner(result3: string[]) {
+                            expect(result3).to.deep.equal(expectedAdd);
+                            return insightFacade.listDatasets().then(then5);
+                            function then5(result4: InsightDataset[]) {
+                                expect(result4).to.deep.equal(expectedList3);
+                            }
+                        }
                     })
                     .catch((err: any) => {
                         expect.fail(err, expected2, "Should not have rejected add");
@@ -1071,32 +1094,36 @@ describe("InsightFacade Add/Remove Dataset", function () {
             { id: "coursesInvalidKey", numRows: 2, kind: InsightDatasetKind.Courses } as InsightDataset;
         const expectedList: InsightDataset[] = [coursesDataset];
         const expectedList2: InsightDataset[] = [coursesDataset, coursesDataset2];
-        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses)
-            .then((result: string[]) => {
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
                 expect(result).to.deep.equal(expectedAdd);
-                return insightFacade.listDatasets()
-                    .then((result2: InsightDataset[]) => {
+                return insightFacade.listDatasets().then((result2: InsightDataset[]) => {
                         expect(result2).to.deep.equal(expectedList);
-                        return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses)
-                            .then((result3: string[]) => {
-                                expect(result3).to.deep.equal(expectedAdd2);
-                                return insightFacade.listDatasets()
-                                    .then((result4: InsightDataset[]) => {
-                                        expect(result4).to.deep.equal(expectedList2);
-                                        return insightFacade.removeDataset(id2)
-                                            .then((result5: string) => {
-                                                expect(result5).to.deep.equal(id2);
-                                                return insightFacade.listDatasets()
-                                                    .then((result6: InsightDataset[]) => {
-                                                        expect(result6).to.deep.equal(expectedList); });
-                                            })
-                                            .catch((err: any) => {
-                                                expect.fail(err, id2, "Should remove"); });
-                                    });
-                            })
-                            .catch((err: any) => {
-                                expect.fail(err, expectedAdd2, "Should not have rejected 2");
-                            });
+                        return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses).then(then3)
+                            .catch(catch2);
+                        function then3(result3: string[]) {
+                            expect(result3).to.deep.equal(expectedAdd2);
+                            return insightFacade.listDatasets()
+                                .then(thenMid);
+                            function thenMid(result4: InsightDataset[]) {
+                                expect(result4).to.deep.equal(expectedList2);
+                                return insightFacade.removeDataset(id2)
+                                    .then(then2)
+                                    .catch(catchInner);
+                                function then2(result5: string) {
+                                    expect(result5).to.deep.equal(id2);
+                                    return insightFacade.listDatasets().then(thenInner);
+                                    function thenInner(result6: InsightDataset[]) {
+                                        expect(result6).to.deep.equal(expectedList);
+                                    }
+                                }
+                                function catchInner(err: any) {
+                                    expect.fail(err, id2, "Should remove");
+                                }
+                            }
+                        }
+                        function catch2(err: any) {
+                            expect.fail(err, expectedAdd2, "Should not have rejected 2");
+                        }
                     })
                     .catch((err: any) => {
                         expect.fail(err, expectedAdd2, "Should not have rejected 2");
@@ -1131,9 +1158,10 @@ describe("InsightFacade Add/Remove Dataset", function () {
                     })
                     .catch((err: any) => {
                         expect(err).to.be.instanceOf(InsightError);
-                        return insightFacade.listDatasets().then((result3: InsightDataset[]) => {
+                        return insightFacade.listDatasets().then(then5);
+                        function then5(result3: InsightDataset[]) {
                             expect(result3).to.deep.equal(expectedList);
-                        });
+                        }
                     });
             })
             .catch((err: any) => {
@@ -1229,17 +1257,16 @@ describe("InsightFacade PerformQuery", () => {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
 
-    // Dynamically create and run a test for each query in testQueries
-    // Creates an extra "test" called "Should run test queries" as a byproduct. Don't worry about it
+    // Dynamically create and run a test for each query in testQueries.
+    // Creates an extra "test" called "Should run test queries" as a byproduct.
     it("Should run test queries", function () {
         describe("Dynamic InsightFacade PerformQuery tests", function () {
             for (const test of testQueries) {
                 it(`[${test.filename}] ${test.title}`, function (done) {
-                    insightFacade.performQuery(test.query).then((result) => {
-                        TestUtil.checkQueryResult(test, result, done);
-                    }).catch((err) => {
-                        TestUtil.checkQueryResult(test, err, done);
-                    });
+                    const resultChecker = TestUtil.getQueryChecker(test, done);
+                    insightFacade.performQuery(test.query)
+                        .then(resultChecker)
+                        .catch(resultChecker);
                 });
             }
         });
