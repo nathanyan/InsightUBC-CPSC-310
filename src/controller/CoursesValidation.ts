@@ -1,5 +1,7 @@
 import Log from "../Util";
 import * as JSZip from "jszip";
+import {InsightError} from "./IInsightFacade";
+import * as fs from "fs";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -12,6 +14,14 @@ export default class CoursesValidation {
     constructor(memoryData: any) {
         Log.trace("Validating Courses");
         this.addedData = memoryData;
+    }
+
+    public convertClassesToString(folder: JSZip, coursesFolderExists: boolean, courseValidator: CoursesValidation,
+                                  promisesListCourses: Array<Promise<any>>) {
+        Object.values(folder.files).forEach((dir) => {
+            coursesFolderExists = courseValidator.checkIfDirectory(dir, coursesFolderExists);
+            courseValidator.checkIfCoursesExist(dir, coursesFolderExists, promisesListCourses);
+        });
     }
 
     public extractDataFromCourses(resultFiles: string[], id: string, data: JSON[]) {
@@ -41,6 +51,32 @@ export default class CoursesValidation {
             }
         }
         return coursesFolderExists;
+    }
+
+    public checkEachCourse(promisesListCourses: Array<Promise<any>>, reject: (reason?: any) => void,
+                           courseValidator: CoursesValidation,
+                           id: string, resolve: (value?: (PromiseLike<string[]> | string[])) => void) {
+        Promise.all(promisesListCourses).then((resultFiles: string[]) => {
+            if (resultFiles.length === 0) {
+                reject(new InsightError());
+            }
+            let data: JSON[] = [];
+            courseValidator.extractDataFromCourses(resultFiles, id, data);
+            if (data.length !== 0) {
+                this.addedData[id] = data;
+                let stringifiedFile = JSON.stringify(this.addedData);
+                try {
+                    fs.writeFileSync("./data/" + id, stringifiedFile);
+                } catch (e) {
+                    reject(new InsightError());
+                }
+                resolve(Object.keys(this.addedData));
+            } else {
+                reject(new InsightError());
+            }
+        }).catch((err: any) => {
+            reject(new InsightError());
+        });
     }
 
     public convertToJSON(file: string): any {

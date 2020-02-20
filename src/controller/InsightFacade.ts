@@ -1,11 +1,18 @@
 import Log from "../Util";
 import * as JSZip from "jszip";
 import * as fs from "fs";
-import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
-import {InsightError, NotFoundError} from "./IInsightFacade";
+import {
+    IInsightFacade,
+    InsightDataset,
+    InsightDatasetKind,
+    InsightError,
+    NotFoundError,
+    ResultTooLargeError
+} from "./IInsightFacade";
 import PerformQueryValid from "./PerformQueryValid";
 import PerformQueryFilterDisplay from "./PerformQueryFilterDisplay";
 import CoursesValidation from "./CoursesValidation";
+import RoomsValidation from "./RoomsValidation";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -30,39 +37,29 @@ export default class InsightFacade implements IInsightFacade {
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         let courseValidator: CoursesValidation = new CoursesValidation(this.addedData);
-        let promisesList: Array<Promise<any>> = [];
+        let roomValidator: RoomsValidation = new RoomsValidation(this.addedData);
+        let promisesListCourses: Array<Promise<any>> = [];
+        let promisesListRooms: Array<Promise<any>> = [];
         return new Promise((resolve, reject) => {
             if (!courseValidator.checkValidId(id)) {
                 reject(new InsightError());
             } else {
                 new JSZip().loadAsync(content, {base64: true}).then((unzipped) => {
-                    let folder = unzipped.folder("courses");
-                    let coursesFolderExists = false;
-                    Object.values(folder.files).forEach((dir) => {
-                        coursesFolderExists = courseValidator.checkIfDirectory(dir, coursesFolderExists);
-                        courseValidator.checkIfCoursesExist(dir, coursesFolderExists, promisesList);
-                    });
-                    Promise.all(promisesList).then((resultFiles: string[]) => {
-                        if (resultFiles.length === 0) {
-                            reject(new InsightError());
-                        }
-                        let data: JSON[] = [];
-                        courseValidator.extractDataFromCourses(resultFiles, id, data);
-                        if (data.length !== 0) {
-                            this.addedData[id] = data;
-                            let stringifiedFile = JSON.stringify(this.addedData);
-                            try {
-                                fs.writeFileSync("./data/" + id, stringifiedFile);
-                            } catch (e) {
-                                reject(new InsightError());
-                            }
-                            resolve(Object.keys(this.addedData));
-                        } else {
-                            reject(new InsightError());
-                        }
-                    }).catch((err: any) => {
-                        reject(new InsightError());
-                    });
+                    if (kind === InsightDatasetKind.Courses) {
+                        let folder = unzipped.folder("courses");
+                        let coursesFolderExists = false;
+                        courseValidator.convertClassesToString(folder, coursesFolderExists, courseValidator,
+                            promisesListCourses);
+                        courseValidator.checkEachCourse(promisesListCourses, reject, courseValidator, id, resolve);
+                    }
+                    if (kind === InsightDatasetKind.Rooms) {
+                        let folder2 = unzipped.folder("rooms");
+                        let roomsFolderExists = false;
+                        let indexFileExists = false;
+                        indexFileExists = roomValidator.convertRoomsToString(folder2, roomsFolderExists, roomValidator,
+                            indexFileExists, promisesListRooms);
+                        roomValidator.checkEachRoom(promisesListRooms, reject, indexFileExists, roomValidator);
+                    }
                 }).catch((err: any) => {
                     reject(new InsightError());
                 });

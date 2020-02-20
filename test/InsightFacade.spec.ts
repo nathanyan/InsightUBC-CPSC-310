@@ -38,7 +38,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
         coursesFolder: "./test/data/coursesFolder.zip",
         coursesWrongFolder: "./test/data/coursesWrongFolder.zip",
         coursesExtraFolder: "./test/data/coursesExtraFolder.zip",
-        coursesJsonOnly: "./test/data/AND.json"
+        coursesJsonOnly: "./test/data/AND.json",
+        rooms: "./test/data/rooms.zip"
     };
     let datasets: { [id: string]: string } = {};
     let insightFacade: InsightFacade;
@@ -1185,6 +1186,17 @@ describe("InsightFacade Add/Remove Dataset", function () {
             });
     });
 
+    it("Should add a valid rooms dataset", function () {
+        const id: string = "rooms";
+        const expected: string[] = [id];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms)
+            .then((result: string[]) => {
+                expect(result).to.deep.equal(expected);
+            })
+            .catch((err: any) => {
+                expect.fail(err, expected, "Should not have rejected");
+            });
+    });
 });
 
 /*
