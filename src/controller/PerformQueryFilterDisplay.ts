@@ -4,10 +4,14 @@ import {InsightError, NotFoundError} from "./IInsightFacade";
 
 let queryKeysAll: string[] = ["WHERE", "OPTIONS"];
 let filterKeysAll: string[] = ["GT", "LT", "EQ", "IS", "NOT", "AND", "OR"];
-let mKeyFieldsAll: string[] = ["avg", "pass", "fail", "audit", "year"];
-let sKeyFieldsAll: string[] = ["dept", "id", "instructor", "title", "uuid"];
-let sKeysMKeysAll: string[] = ["dept", "id", "instructor", "title", "uuid", "avg", "pass", "fail", "audit", "year"];
+let mKeyFieldsAll: string[] = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
+let sKeyFieldsAll: string[] = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number"
+    , "name", "address", "type", "furniture", "href"];
+let sKeysMKeysAll: string[] = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number"
+    , "name", "address", "type", "furniture", "href", "avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
 let optionKeysAll: string[] = ["COLUMNS", "ORDER"];
+let transformationKeysAll: string[] = ["GROUP", "APPLY"];
+let applyTokensAll: string[] = ["MAX", "MIN", "AVG", "COUNT", "SUM"];
 
 export default class PerformQueryFilterDisplay {
 
