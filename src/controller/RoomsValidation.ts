@@ -2,6 +2,7 @@ import Log from "../Util";
 import * as JSZip from "jszip";
 import {InsightError} from "./IInsightFacade";
 import * as parse5 from "parse5";
+import {DefaultTreeNode} from "parse5";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -39,7 +40,13 @@ export default class RoomsValidation {
                              promisesListRooms: Array<Promise<any>>) {
         if ((!dir.dir) && roomsFolderExists) {
             if (dir.name.includes("rooms/")) {
-                promisesListRooms.push(dir.async("text"));
+                promisesListRooms.push(new Promise<any>((resolve, reject) => {
+                    dir.async("text").then((result) => {
+                        resolve({filePath: dir.name, data: result});
+                    }).catch((err: any) => {
+                        reject(new InsightError());
+                    });
+                }));
             }
             if (dir.name.includes("index.htm")) {
                 indexFileExists = true;
@@ -67,8 +74,11 @@ export default class RoomsValidation {
             } catch {
                 return;
             }
-            let table: any = roomValidator.findTable(indexHTMParsed);
+            let htmlMainBody: any = roomValidator.findBodyToParse(indexHTMParsed);
+            let table: any = roomValidator.findSection(htmlMainBody);
+            let tableBody: any = this.findTableBody(table);
 
+            // this is once we follow the link from table
             resultBuildings.forEach((room: string) => {
                 try {
                     let parsedHTMLString: any = parse5.parse(room);
@@ -79,13 +89,71 @@ export default class RoomsValidation {
         }).catch((err: any) => {
             reject(new InsightError());
         });
+        //
     }
 
-    public findTable(indexHTMParsed: any) {
-        if (indexHTMParsed.childNodes === "table") {
-            return indexHTMParsed.childNodes;
+    private findTableBody(table: any): any {
+        let tableBody: any = null;
+        for (let childNode of table.childNodes) {
+            if (childNode.nodeName === "tbody") {
+                tableBody = childNode;
+                break;
+            }
         }
-        this.findTable(indexHTMParsed.childNodes);
+        return tableBody;
     }
 
+    public findBodyToParse(indexHTMParsed: any): any {
+        let htmlFile: any;
+        for (let childNode of indexHTMParsed.childNodes) {
+            if (childNode.nodeName === "html") {
+                htmlFile = childNode;
+            }
+        }
+        let htmlBody: any;
+        for (let childNode of htmlFile.childNodes) {
+            if (childNode.nodeName === "body") {
+                htmlBody = childNode;
+            }
+        }
+        return htmlBody;
+    }
+
+    public findSection(htmlMainBody: any): any {
+        let table: any = null;
+        let section: any;
+        for (let childNode of htmlMainBody.childNodes) {
+            if (childNode.nodeName === "section" && childNode.childNodes.length !== 0) {
+                section = childNode;
+                table = this.findTable(section);
+                break;
+            } else {
+                if (childNode.nodeName === "div" && childNode.childNodes.length !== 0) {
+                    let ret = this.findSection(childNode);
+                    if (ret !== null) {
+                        return ret;
+                    }
+                }
+            }
+        }
+        return table;
+    }
+
+    private findTable(section: DefaultTreeNode | any): any {
+        let returnTable: any = null;
+        for (let child of section.childNodes) {
+            if (child.nodeName === "table" && child.childNodes.length !== 0) {
+                returnTable = child;
+                return returnTable;
+            } else {
+                if (child.nodeName === "div" && child.childNodes.length !== 0) {
+                    let ret = this.findTable(child);
+                    if (ret !== null) {
+                        return ret;
+                    }
+                }
+            }
+        }
+        return returnTable;
+    }
 }

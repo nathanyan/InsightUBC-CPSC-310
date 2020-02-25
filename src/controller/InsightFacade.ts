@@ -21,6 +21,7 @@ import RoomsValidation from "./RoomsValidation";
  */
 export default class InsightFacade implements IInsightFacade {
     private addedData: any;
+    private addedRoomsData: any;
     private uniqueIDsInQuery: any[];
 
     constructor() {
