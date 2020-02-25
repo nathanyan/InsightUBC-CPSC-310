@@ -65,11 +65,14 @@ export default class RoomsValidation {
                 reject(new InsightError());
             }
             let roomData: JSON[] = [];
-            let indexHTMParsed: any;
+            let index: any = null;
+            let indexHTMParsed: any = null;
+            resultBuildings.forEach((file: any) => {
+                if (file["filePath"].includes("index.htm")) {
+                    index = file["data"];
+                }
+            });
             try {
-                let numberOfRooms: number = resultBuildings.length;
-                let last: number = numberOfRooms - 1;
-                let index: string = resultBuildings[last];
                 indexHTMParsed = parse5.parse(index);
             } catch {
                 return;
