@@ -1,8 +1,9 @@
 import Log from "../Util";
 import * as JSZip from "jszip";
-import {InsightError} from "./IInsightFacade";
+import {InsightDatasetKind, InsightError} from "./IInsightFacade";
 import * as parse5 from "parse5";
-import {DefaultTreeNode} from "parse5";
+import * as fs from "fs";
+import RoomChecker from "./RoomChecker";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -10,11 +11,11 @@ import {DefaultTreeNode} from "parse5";
  *
  */
 export default class RoomsValidation {
-    private addedData: any;
+    private addedRoomData: any;
 
     constructor(memoryData: any) {
         Log.trace("Validating Rooms");
-        this.addedData = memoryData;
+        this.addedRoomData = memoryData;
     }
 
     public convertRoomsToString(folder2: JSZip, roomsFolderExists: boolean, roomValidator: RoomsValidation,
@@ -42,7 +43,8 @@ export default class RoomsValidation {
             if (dir.name.includes("rooms/")) {
                 promisesListRooms.push(new Promise<any>((resolve, reject) => {
                     dir.async("text").then((result) => {
-                        resolve({filePath: dir.name, data: result});
+                        let relativePath: string = "." + dir.name.substr(5);
+                        resolve({filePath: relativePath, data: result});
                     }).catch((err: any) => {
                         reject(new InsightError());
                     });
@@ -55,8 +57,10 @@ export default class RoomsValidation {
         return indexFileExists;
     }
 
-    public checkEachRoom(promisesListRooms: Array<Promise<any>>, reject: (reason?: any) => void,
-                         indexFileExists: boolean, roomValidator: RoomsValidation) {
+    public checkEachRoom(promisesListRooms: Array<Promise<any>>, reject: (reason?: any)  => void,
+                         indexFileExists: boolean, roomValidator: RoomsValidation, id: string,
+                         kind: InsightDatasetKind.Rooms, resolve:
+                             (value?: (PromiseLike<string[]> | string[])) => void) {
         Promise.all(promisesListRooms).then((resultBuildings: string[]) => {
             if (resultBuildings.length === 0) {
                 reject(new InsightError());
@@ -64,99 +68,111 @@ export default class RoomsValidation {
             if (indexFileExists === false) {
                 reject(new InsightError());
             }
+            let roomChecker: RoomChecker = new RoomChecker(this.addedRoomData);
             let roomData: JSON[] = [];
-            let index: any = null;
+            let rooms: any = {};
+            // transform result files array into map
+            this.convertResultToMap(resultBuildings, rooms);
+            let indexToParse: string = "";
             let indexHTMParsed: any = null;
-            resultBuildings.forEach((file: any) => {
-                if (file["filePath"].includes("index.htm")) {
-                    index = file["data"];
-                }
-            });
+            indexToParse = rooms["./index.htm"];
             try {
-                indexHTMParsed = parse5.parse(index);
+                indexHTMParsed = parse5.parse(indexToParse);
             } catch {
                 return;
             }
-            let htmlMainBody: any = roomValidator.findBodyToParse(indexHTMParsed);
-            let table: any = roomValidator.findSection(htmlMainBody);
-            let tableBody: any = this.findTableBody(table);
-
-            // this is once we follow the link from table
-            resultBuildings.forEach((room: string) => {
+            let htmlMainBody: any = roomChecker.findBodyToParse(indexHTMParsed);
+            let table: any = roomChecker.findSection(htmlMainBody);
+            let tableBody: any = roomChecker.findTableBody(table);
+            roomData = this.parseEachRoom(tableBody, rooms, roomData, id);
+            if (roomData.length !== 0) {
+                this.addedRoomData[id] = roomData;
+                let saved = {id: id, kind: kind, data: this.addedRoomData};
+                let stringifiedFile = JSON.stringify(saved);
                 try {
-                    let parsedHTMLString: any = parse5.parse(room);
-                } catch {
-                    return;
+                    fs.writeFileSync("./data/" + id, stringifiedFile);
+                } catch (e) {
+                    reject(new InsightError());
                 }
-            });
+                resolve(Object.keys(this.addedRoomData));
+            } else {
+                reject(new InsightError());
+            }
         }).catch((err: any) => {
             reject(new InsightError());
         });
-        //
     }
 
-    private findTableBody(table: any): any {
-        let tableBody: any = null;
-        for (let childNode of table.childNodes) {
-            if (childNode.nodeName === "tbody") {
-                tableBody = childNode;
-                break;
-            }
-        }
-        return tableBody;
+    public convertResultToMap(resultBuildings: any[], rooms: any) {
+        resultBuildings.forEach((json: any) => {
+            rooms[json["filePath"]] = json["data"];
+        });
     }
 
-    public findBodyToParse(indexHTMParsed: any): any {
-        let htmlFile: any;
-        for (let childNode of indexHTMParsed.childNodes) {
-            if (childNode.nodeName === "html") {
-                htmlFile = childNode;
-            }
-        }
-        let htmlBody: any;
-        for (let childNode of htmlFile.childNodes) {
-            if (childNode.nodeName === "body") {
-                htmlBody = childNode;
-            }
-        }
-        return htmlBody;
-    }
-
-    public findSection(htmlMainBody: any): any {
-        let table: any = null;
-        let section: any;
-        for (let childNode of htmlMainBody.childNodes) {
-            if (childNode.nodeName === "section" && childNode.childNodes.length !== 0) {
-                section = childNode;
-                table = this.findTable(section);
-                break;
-            } else {
-                if (childNode.nodeName === "div" && childNode.childNodes.length !== 0) {
-                    let ret = this.findSection(childNode);
-                    if (ret !== null) {
-                        return ret;
+    public parseEachRoom(tableBody: any, rooms: any, roomData: JSON[], id: string): any {
+        let roomChecker: RoomChecker = new RoomChecker(this.addedRoomData);
+        for (let row of tableBody.childNodes) {
+            if (row.nodeName === "tr") {
+                let codeSet: boolean = false, roomShortName: string = null;
+                for (let tableData of row.childNodes) {
+                    if (tableData.nodeName === "td") {
+                        if (!codeSet) {
+                            roomShortName = roomChecker.findRoomShortnameData(tableData);
+                            if (roomShortName !== null) {
+                                codeSet = true;
+                            }
+                        }
+                        for (let child of tableData.childNodes) {
+                            if (child.nodeName === "a") {
+                                for (let sub of child.childNodes) {
+                                    if (sub.nodeName === "#text" && sub.value === "More info") {
+                                        let roomHrefPath = roomChecker.returnHREF(child);
+                                        if (roomHrefPath === "") {
+                                            continue;
+                                        } else {
+                                            let {roomBody, roomTable} =
+                                                roomChecker.returnRoomTable(rooms, roomHrefPath);
+                                            if (roomTable === null) {
+                                                continue;
+                                            }
+                                            let roomTableBody: any = roomChecker.findTableBody(roomTable);
+                                            let roomBuildingInfo: any = roomChecker.findBuildingInfo(roomBody);
+                                            if (roomBuildingInfo === null) {
+                                                continue;
+                                            } else {
+                                                let roomAddress = roomChecker.findRoomAddress(roomBuildingInfo);
+                                                let roomFullname = roomChecker.findRoomFullname(roomBuildingInfo);
+                                                if (roomFullname === null || roomAddress === null) {
+                                                    continue;
+                                                }
+                                                roomData = roomChecker.parseTableRooms(roomTableBody, roomFullname,
+                                                    roomAddress, roomShortName, roomHrefPath, roomData, id);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-        return table;
+        return roomData;
     }
 
-    private findTable(section: DefaultTreeNode | any): any {
-        let returnTable: any = null;
-        for (let child of section.childNodes) {
-            if (child.nodeName === "table" && child.childNodes.length !== 0) {
-                returnTable = child;
-                return returnTable;
-            } else {
-                if (child.nodeName === "div" && child.childNodes.length !== 0) {
-                    let ret = this.findTable(child);
-                    if (ret !== null) {
-                        return ret;
-                    }
-                }
-            }
-        }
-        return returnTable;
+    public formatKeys(roomName: string, roomShortname: string, roomNumber: string, formattedKeys: any, id: string,
+                      roomFullname: string, roomAddress: string, roomSeats: number, roomType: string,
+                      roomFurniture: string, roomHrefPath: string, roomData: any[]) {
+        roomName = roomShortname + "_" + roomNumber;
+        formattedKeys[id + "_" + "fullname"] = roomFullname;
+        formattedKeys[id + "_" + "shortname"] = roomShortname;
+        formattedKeys[id + "_" + "number"] = roomNumber;
+        formattedKeys[id + "_" + "name"] = roomName;
+        formattedKeys[id + "_" + "address"] = roomAddress;
+        formattedKeys[id + "_" + "seats"] = roomSeats;
+        formattedKeys[id + "_" + "type"] = roomType;
+        formattedKeys[id + "_" + "furniture"] = roomFurniture;
+        formattedKeys[id + "_" + "href"] = roomHrefPath;
+        roomData.push(formattedKeys);
     }
 }

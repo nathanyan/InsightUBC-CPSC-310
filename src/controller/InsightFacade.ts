@@ -31,8 +31,14 @@ export default class InsightFacade implements IInsightFacade {
         fs.readdirSync("./data/").forEach((file: string) => {
             let fileData: string = fs.readFileSync(file).toString();
             let parsedFile: any = JSON.parse(fileData);
-            let key: string = Object.keys(parsedFile)[0];
-            this.addedData[key] = parsedFile[key];
+            for (let dataset of parsedFile) {
+                if (dataset["kind"] === InsightDatasetKind.Courses) {
+                    this.addedData[dataset["id"]] = dataset["data"];
+                }
+                if (dataset["kind"] === InsightDatasetKind.Rooms) {
+                    this.addedRoomsData[dataset["id"]] = dataset["data"];
+                }
+            }
         });
     }
 
@@ -51,7 +57,8 @@ export default class InsightFacade implements IInsightFacade {
                         let coursesFolderExists = false;
                         courseValidator.convertClassesToString(folder, coursesFolderExists, courseValidator,
                             promisesListCourses);
-                        courseValidator.checkEachCourse(promisesListCourses, reject, courseValidator, id, resolve);
+                        courseValidator.checkEachCourse(promisesListCourses, reject, courseValidator, id, kind,
+                            resolve);
                     }
                     if (kind === InsightDatasetKind.Rooms) {
                         let folder2 = unzipped.folder("rooms");
@@ -59,7 +66,8 @@ export default class InsightFacade implements IInsightFacade {
                         let indexFileExists = false;
                         indexFileExists = roomValidator.convertRoomsToString(folder2, roomsFolderExists, roomValidator,
                             indexFileExists, promisesListRooms);
-                        roomValidator.checkEachRoom(promisesListRooms, reject, indexFileExists, roomValidator);
+                        roomValidator.checkEachRoom(promisesListRooms, reject, indexFileExists, roomValidator, id,
+                            kind, resolve);
                     }
                 }).catch((err: any) => {
                     reject(new InsightError());

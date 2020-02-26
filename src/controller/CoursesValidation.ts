@@ -1,6 +1,6 @@
 import Log from "../Util";
 import * as JSZip from "jszip";
-import {InsightError} from "./IInsightFacade";
+import {InsightDatasetKind, InsightError} from "./IInsightFacade";
 import * as fs from "fs";
 
 /**
@@ -55,7 +55,8 @@ export default class CoursesValidation {
 
     public checkEachCourse(promisesListCourses: Array<Promise<any>>, reject: (reason?: any) => void,
                            courseValidator: CoursesValidation,
-                           id: string, resolve: (value?: (PromiseLike<string[]> | string[])) => void) {
+                           id: string, kind: InsightDatasetKind.Courses,
+                           resolve: (value?: (PromiseLike<string[]> | string[])) => void) {
         Promise.all(promisesListCourses).then((resultFiles: string[]) => {
             if (resultFiles.length === 0) {
                 reject(new InsightError());
@@ -64,7 +65,9 @@ export default class CoursesValidation {
             courseValidator.extractDataFromCourses(resultFiles, id, data);
             if (data.length !== 0) {
                 this.addedData[id] = data;
-                let stringifiedFile = JSON.stringify(this.addedData);
+                let saved = {id: id, kind: kind, data: this.addedData};
+                // stringify saved instead, then write this result
+                let stringifiedFile = JSON.stringify(saved);
                 try {
                     fs.writeFileSync("./data/" + id, stringifiedFile);
                 } catch (e) {
