@@ -12,7 +12,6 @@ export default class RoomChecker {
     private addedRoomData: any;
 
     constructor(memoryData: any) {
-        Log.trace("Checking Each Room");
         this.addedRoomData = memoryData;
     }
 
