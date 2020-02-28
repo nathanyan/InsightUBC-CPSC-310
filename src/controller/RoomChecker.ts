@@ -2,6 +2,7 @@ import Log from "../Util";
 import * as parse5 from "parse5";
 import {DefaultTreeNode} from "parse5";
 import RoomsValidation from "./RoomsValidation";
+import GeoParse from "./GeoParse";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -218,11 +219,8 @@ export default class RoomChecker {
     public parseTableRooms(roomTableBody: any, roomFullname: string, roomAddress: string, roomShortname: string,
                            roomHrefPath: string, roomData: any[], id: string): any[] {
         for (let tableRow of roomTableBody.childNodes) {
-            let roomNumber: string = null;
-            let roomName: string = null;
-            let roomSeats: number = null;
-            let roomType: string = null;
-            let roomFurniture: string = null;
+            let roomNumber: string, roomName: string, roomSeats: number, roomType: string,
+                roomFurniture: string, roomLat: number, roomLon: number  = null;
             let formattedKeys: any = {};
             if (tableRow.nodeName === "tr") {
                 for (let tableCell of tableRow.childNodes) {
@@ -250,8 +248,12 @@ export default class RoomChecker {
                         }
                     }
                 }
-                if ((roomSeats || roomNumber || roomType || roomFurniture || roomHrefPath || roomShortname ||
-                    roomAddress || roomFullname) === null) {
+                let geoParser: GeoParse = new GeoParse();
+                let roomLocation: any = geoParser.callGeolocater(roomAddress);
+                roomLat = roomLocation["roomLat"];
+                roomLon = roomLocation["roomLon"];
+                if (this.checkKeysAllExist(roomSeats, roomNumber, roomType, roomFurniture, roomHrefPath, roomShortname,
+                    roomAddress, roomFullname, roomLat, roomLon)) {
                     continue;
                 } else {
                     let roomsValidation: RoomsValidation = new RoomsValidation(this.addedRoomData);
@@ -261,6 +263,13 @@ export default class RoomChecker {
             }
         }
         return roomData;
+    }
+
+    private checkKeysAllExist(roomSeats: number, roomNumber: string, roomType: string, roomFurniture: string,
+                              roomHrefPath: string, roomShortname: string, roomAddress: string, roomFullname: string,
+                              roomLat: number, roomLon: number) {
+        return (roomSeats || roomNumber || roomType || roomFurniture || roomHrefPath || roomShortname ||
+            roomAddress || roomFullname || roomLat || roomLon) === null;
     }
 
     private setRoomType(attr: any, roomType: string, tableCell: DefaultTreeNode | any) {
