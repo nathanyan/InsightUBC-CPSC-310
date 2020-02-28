@@ -7,20 +7,17 @@ import * as http from "http";
  *
  */
 export default class GeolocationExtractor {
-    private lat: number;
-    private lon: number;
-    private error: boolean;
 
     constructor() {
         Log.trace("Looking for room's Geolocation!");
-        this.lat = null;
-        this.lon = null;
-        this.error = null;
     }
 
-    public parseGeo(roomAddress: string, webService: string) {
+    // use promise resolve and reject here, and then in caller use promise.then and .catch, but will probably need
+    // promise.all
+    public parseGeo(roomAddress: string) {
+        let urlEncoded: string = encodeURI(roomAddress);
+        let webService: string = "http://cs310.students.cs.ubc.ca:11316/api/v1/project_team020/" + urlEncoded;
         http.get(webService, (res) => {
-            let encodedURL: string = encodeURI(roomAddress);
             const { statusCode } = res;
             const contentType = res.headers["content-type"];
 
