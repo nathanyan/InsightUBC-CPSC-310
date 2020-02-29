@@ -6,7 +6,7 @@ import GeolocationExtractor from "./GeolocationExtractor";
  * Method documentation is in IInsightFacade
  *
  */
-export default class RoomChecker {
+export default class GeoParse {
 
     constructor() {
         Log.trace("Calling GeoLocationExtractor!");
