@@ -47,6 +47,7 @@ export default class GeolocationExtractor {
                         try {
                             const parsedData = JSON.parse(rawData);
                             Log.trace(parsedData);
+                            resolve(parsedData);
                         } catch (e) {
                             Log.error(e.message);
                             reject(e);
