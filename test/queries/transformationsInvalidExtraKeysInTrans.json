@@ -1,0 +1,28 @@
+{
+    "title": "Transformations - invalid query - extra keys in trans",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title",
+	      "overallAvg"
+	    ]
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "AVG": "courses_avg"
+	        }
+	      }
+	    ],
+	      "fdsfsd" : []
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

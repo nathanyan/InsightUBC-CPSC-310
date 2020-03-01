@@ -1,0 +1,27 @@
+{
+    "title": "GroupKey - invalid query - more than 1 dataset",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "overallAvg"
+	    ]
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title",
+	      "courses2_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "AVG": "courses_avg"
+	        }
+	      }
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

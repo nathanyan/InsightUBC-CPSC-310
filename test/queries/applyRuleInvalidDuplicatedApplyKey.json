@@ -1,0 +1,31 @@
+{
+    "title": "ApplyRule - invalid query - duplicated ApplyKey",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title"
+	    ]
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "AVG": "courses_avg"
+	        }
+	      },
+	      {
+	        "overallAvg": {
+	          "SUM": "courses_pass"
+	        }
+	      }
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

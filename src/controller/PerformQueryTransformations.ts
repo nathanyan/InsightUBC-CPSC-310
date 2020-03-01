@@ -1,15 +1,8 @@
 import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
-import {InsightError, NotFoundError} from "./IInsightFacade";
 
-let queryKeysAll: string[] = ["WHERE", "OPTIONS", "TRANSFORMATIONS"];
-let filterKeysAll: string[] = ["GT", "LT", "EQ", "IS", "NOT", "AND", "OR"];
 let mKeyFieldsAll: string[] = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
-let sKeyFieldsAll: string[] = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number"
-    , "name", "address", "type", "furniture", "href"];
 let sKeysMKeysAll: string[] = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number"
     , "name", "address", "type", "furniture", "href", "avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
-let optionKeysAll: string[] = ["COLUMNS", "ORDER"];
 let transformationKeysAll: string[] = ["GROUP", "APPLY"];
 let applyTokensAll: string[] = ["MAX", "MIN", "AVG", "COUNT", "SUM"];
 
@@ -83,11 +76,11 @@ export default class PerformQueryTransformations {
             if (applyKeys.length !== 1) {                   // has to be just 1 object within the applyRule
                 return false;
             }
-            let applyKey = applyKeys[0];
+            let applyKey: any = applyKeys[0];
             if (typeof applyKey !== "string" || applyKey.includes("_")) {         // applyKey must be string with no "_"
                 return false;
             }
-            if (applyKey in applyKeysInQuery) {
+            if (applyKeysInQuery.includes(applyKey)) {
                 return false;               // applyKey is not unique - already shows up in previous applyRule
             } else {
                 applyKeysInQuery.push(applyKey);        // applyKey is unique - add it to list of unique keys
@@ -123,7 +116,7 @@ export default class PerformQueryTransformations {
             return false;
         }
         let attributeField: string = key.split("_")[1];   // key field must match one of above
-        if (applyToken === ("MAX" || "MIN" || "AVG" || "SUM")) {
+        if (applyToken === "MAX" || applyToken === "MIN" || applyToken === "SUM" || applyToken === "AVG") {
             if (!mKeyFieldsAll.includes(attributeField)) {
                 return false;                           // MAX MIN AVG SUM not associated with an mKey
             }

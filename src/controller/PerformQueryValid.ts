@@ -1,6 +1,4 @@
 import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
-import {InsightError, NotFoundError} from "./IInsightFacade";
 import PerformQueryTransformations from "./PerformQueryTransformations";
 
 let queryKeysAll: string[] = ["WHERE", "OPTIONS", "TRANSFORMATIONS"];
@@ -11,8 +9,6 @@ let sKeyFieldsAll: string[] = ["dept", "id", "instructor", "title", "uuid", "ful
 let sKeysMKeysAll: string[] = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number"
     , "name", "address", "type", "furniture", "href", "avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
 let optionKeysAll: string[] = ["COLUMNS", "ORDER"];
-let transformationKeysAll: string[] = ["GROUP", "APPLY"];
-let applyTokensAll: string[] = ["MAX", "MIN", "AVG", "COUNT", "SUM"];
 
 export default class PerformQueryValid {
 
@@ -27,7 +23,7 @@ export default class PerformQueryValid {
                 return false;
             }
         }
-        if (!("WHERE" in query) || !("OPTIONS" in query) || queryKeys.length !== (2 || 3)) {
+        if (!("WHERE" in query) || !("OPTIONS" in query) || queryKeys.length > 3) {
             return false;   // query doesn't have a WHERE or OPTION key (or both), or doesn't have 2/3 things inside
         }
         let where: any = query["WHERE"];
@@ -146,7 +142,6 @@ export default class PerformQueryValid {
     }
 
     public static checkSComparisonValid(sComparisonKeyValue: any, addedData: any, uniqueIDsInQuery: any[]): boolean {
-        Log.trace("Reach beginning of S comparison check");
         if (sComparisonKeyValue === null || sComparisonKeyValue === undefined
             || typeof sComparisonKeyValue !== "object") {  // must be object inside
             return false;
@@ -210,35 +205,35 @@ export default class PerformQueryValid {
         if (!("COLUMNS" in options)) {                      // COLUMNS must be present
             return false;
         }
-        let columnsValues: any[] = options["COLUMNS"];
-        if (!this.checkColumnsValid(columnsValues, addedData, uniqueIDsInQuery, applyKeysInQuery,
+        let columnsVals: any[] = options["COLUMNS"];
+        if (!this.checkColumnsValid(columnsVals, addedData, uniqueIDsInQuery, applyKeysInQuery,
             groupKeysInQuery, query)) {
             return false;                           // check if COLUMNS is valid
         }
         if ("ORDER" in options) {
             let orderValue: any = options["ORDER"];
-            if (!this.checkOrderValid(orderValue, columnsValues, addedData, uniqueIDsInQuery)) {    // check if OPTIONS
+            if (!this.checkOrderValid(orderValue, columnsVals, addedData, uniqueIDsInQuery)) {
                 return false;
             }
         }
         return true;
     }
 
-    public static checkColumnsValid(columnsValues: any[], addedData: any, uniqueIDsInQuery: any[],
+    public static checkColumnsValid(columnsVals: any[], addedData: any, uniqueIDsInQuery: any[],
                                     applyKeysInQuery: any[], groupKeysInQuery: any[], query: any): boolean {
-        if (columnsValues === null || columnsValues === undefined
-            || columnsValues.length === 0 || !Array.isArray(columnsValues)) {
+        if (columnsVals === null || columnsVals === undefined
+            || columnsVals.length === 0 || !Array.isArray(columnsVals)) {
             return false;           // must be non-empty array
         }
-        for (let columnsValue of columnsValues) {               // each thing in array must be a string
+        for (let columnsValue of columnsVals) {               // each thing in array must be a string
             if (typeof columnsValue !== "string") {
                 return false;
             }
             if (("TRANSFORMATIONS" in query)) {
-                if (!(columnsValue in applyKeysInQuery) && !(columnsValue in groupKeysInQuery)) {
+                if (!(applyKeysInQuery.includes(columnsValue)) && !(groupKeysInQuery.includes(columnsValue))) {
                     return false;       // if GROUP + APPLY present,
-                }                       // check if columnsValues correspond to either GROUP keys or applyKeys in APPLY
-            } else {                    // GROUP/APPLY not present, so columnsValues must be mkey or skey
+                }                       // check if columnsVals correspond to either GROUP keys or applyKeys in APPLY
+            } else {                    // GROUP/APPLY not present, so columnsVals must be mkey or skey
                 let attributeField: string = columnsValue.split("_")[1];   // keyField must match one of above
                 if (!sKeysMKeysAll.includes(attributeField)) {
                     return false;
@@ -256,27 +251,40 @@ export default class PerformQueryValid {
         return true;
     }
 
-    public static checkOrderValid(orderValue: any, columnsValues: any[], addedData: any, uniqueIDsInQuery: any[]):
-        boolean {
-        if (orderValue === null || orderValue === undefined || typeof orderValue !== "string") {
-            return false;               // order type must be a string
+    public static checkOrderValid(orderValue: any, columnsVals: any[], addedData: any,
+                                  uniqueIDsInQuery: any[]): boolean {
+        if (orderValue === null || orderValue === undefined ||
+            !(typeof orderValue === "string" || typeof orderValue === "object")) {
+            return false;               // order type must be a string or object
         }
-        let attributeField: string = orderValue.split("_")[1];   // keyField must match one of above
-        if (!sKeysMKeysAll.includes(attributeField)) {
+        if (typeof orderValue === "string") {
+            for (let columnsValue of columnsVals) {      // order string has to match at least one of the column strings
+                if (orderValue === columnsValue) {
+                    return true;
+                }
+            }
             return false;
         }
-        let idString: string = orderValue.split("_")[0];
-        if (!(idString in addedData)) {                                    // id not found in added data sets
-            return false;
-        } else {
-            if (!uniqueIDsInQuery.includes(idString)) {        // if id isn't already in query set of ids, add it
-                uniqueIDsInQuery.push(idString);
+        if (typeof orderValue === "object") {
+            let orderKeys: any[] = Object.keys(orderValue);
+            if (orderKeys.length !== 2 || !("dir" in orderValue) || !("keys" in orderValue)) {
+                return false;           // doesn't have 2 key-value pairs, missing 'dir' or missing 'keys'
             }
-        }
-        for (let columnsValue of columnsValues) {       // order string has to match at least one of the column strings
-            if (orderValue === columnsValue) {
-                return true;
+            if (orderValue["dir"] !== ("UP" || "DOWN")) {
+                return false;
             }
+            if (!(Array.isArray(orderValue["keys"]))) {
+                return false;
+            }
+            if (orderValue["keys"].length === 0) {
+                return false;
+            }
+            for (let anyKey of orderValue["keys"]) {
+                if (!(anyKey in columnsVals)) {
+                    return false;
+                }
+            }
+            return true;
         }
         return false;                                   // if by end none match, return false
     }

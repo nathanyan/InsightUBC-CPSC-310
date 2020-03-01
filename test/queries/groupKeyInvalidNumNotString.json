@@ -1,0 +1,26 @@
+{
+    "title": "GroupKey - invalid query - number, not a string",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "overallAvg"
+	    ]
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      123
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "AVG": "courses_avg"
+	        }
+	      }
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

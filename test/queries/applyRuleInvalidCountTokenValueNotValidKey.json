@@ -1,0 +1,26 @@
+{
+    "title": "ApplyRule - invalid query - value for COUNT not mkey or skey",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title"
+	    ]
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "COUNT": "string"
+	        }
+	      }
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

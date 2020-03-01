@@ -1,0 +1,24 @@
+{
+    "title": "ApplyRule - invalid query - applyRule Value is null, not object",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title"
+	    ]
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": null
+	      }
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

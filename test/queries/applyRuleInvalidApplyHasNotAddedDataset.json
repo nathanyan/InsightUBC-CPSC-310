@@ -1,0 +1,26 @@
+{
+    "title": "ApplyRule - invalid query - apply has not added dataset",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses2_title"
+	    ]
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses2_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "AVG": "courses2_avg"
+	        }
+	      }
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

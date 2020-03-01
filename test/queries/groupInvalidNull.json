@@ -1,0 +1,25 @@
+{
+    "title": "Group - invalid query - null",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title",
+	      "overallAvg"
+	    ]
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": null,
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "AVG": "courses_avg"
+	        }
+	      }
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

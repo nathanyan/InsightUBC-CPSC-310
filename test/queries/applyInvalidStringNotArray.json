@@ -1,0 +1,20 @@
+{
+    "title": "Apply - invalid query - string, must be array",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "overallAvg"
+	    ]
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title"
+	    ],
+	    "APPLY": "string"
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

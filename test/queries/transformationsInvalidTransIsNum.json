@@ -1,0 +1,16 @@
+{
+    "title": "Transformations - invalid query - TRANSFORMATIONS = number",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title",
+	      "overallAvg"
+	    ]
+	  },
+	  "TRANSFORMATIONS": 123
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}
