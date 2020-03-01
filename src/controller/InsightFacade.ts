@@ -27,6 +27,7 @@ export default class InsightFacade implements IInsightFacade {
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
         this.addedData = {};
+        this.addedRoomsData = {};
         this.uniqueIDsInQuery = [];
         fs.readdirSync("./data/").forEach((file: string) => {
             let fileData: string = fs.readFileSync(file).toString();
@@ -48,7 +49,7 @@ export default class InsightFacade implements IInsightFacade {
         let promisesListCourses: Array<Promise<any>> = [];
         let promisesListRooms: Array<Promise<any>> = [];
         return new Promise((resolve, reject) => {
-            if (!courseValidator.checkValidId(id)) {
+            if (!courseValidator.checkValidId(id) || !roomValidator.checkValidId(id)) {
                 reject(new InsightError());
             } else {
                 new JSZip().loadAsync(content, {base64: true}).then((unzipped) => {

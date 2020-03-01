@@ -18,7 +18,8 @@ export default class GeoParse {
         geoExtractor.parseGeo(roomAddress).then((result: any) => {
             let lat: number = result["lat"];
             let lon: number = result["lon"];
-            return geoResponseResult = {roomLat: lat, roomLon: lon};
+            geoResponseResult = {roomLat: lat, roomLon: lon};
+            return geoResponseResult;
         }).catch((error: any) => {
             return null;
         });

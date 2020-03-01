@@ -4,6 +4,7 @@ import {InsightDatasetKind, InsightError} from "./IInsightFacade";
 import * as parse5 from "parse5";
 import * as fs from "fs";
 import RoomChecker from "./RoomChecker";
+import {existsSync} from "fs";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -174,5 +175,14 @@ export default class RoomsValidation {
         formattedKeys[id + "_" + "furniture"] = roomFurniture;
         formattedKeys[id + "_" + "href"] = roomHrefPath;
         roomData.push(formattedKeys);
+    }
+
+    public checkValidId(id: string) {
+        for (let existingIds of Object.keys(this.addedRoomData)) {
+            if (existingIds === id) {
+                return false;
+            }
+        }
+        return true;
     }
 }
