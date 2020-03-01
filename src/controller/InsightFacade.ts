@@ -79,11 +79,15 @@ export default class InsightFacade implements IInsightFacade {
 
     public removeDataset(id: string): Promise<string> {
         let courseValidator: CoursesValidation = new CoursesValidation(this.addedData);
+        let roomsValidator: RoomsValidation = new RoomsValidation(this.addedRoomsData);
         return new Promise((resolve, reject) => {
             if (!courseValidator.checkValidIdToRemove(id)) {
                 reject(new InsightError());
             }
             if (!courseValidator.checkIdExists(id)) {
+                reject(new NotFoundError());
+            }
+            if (!roomsValidator.checkValidId(id)) {
                 reject(new NotFoundError());
             }
             Object.keys(this.addedData).forEach((idKey: string) => {
@@ -93,6 +97,17 @@ export default class InsightFacade implements IInsightFacade {
                             throw err;
                         }
                         delete this.addedData[id];
+                        resolve(id);
+                    });
+                }
+            });
+            Object.keys(this.addedRoomsData).forEach((idKey: string) => {
+                if (idKey === id) {
+                    fs.unlink("./data/" + idKey, (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                        delete this.addedRoomsData[id];
                         resolve(id);
                     });
                 }
@@ -129,12 +144,20 @@ export default class InsightFacade implements IInsightFacade {
     public listDatasets(): Promise<InsightDataset[]> {
         return new Promise((resolve) => {
             let currentDatasets: InsightDataset[] = [];
-            let allData: string[] = Object.keys(this.addedData);
-            allData.forEach((key: string) => {
+            let allCourseData: string[] = Object.keys(this.addedData);
+            let allRoomsData: string[] = Object.keys(this.addedRoomsData);
+            allCourseData.forEach((key: string) => {
                 let dataValues: any = {};
                 dataValues["id"] = key;
                 dataValues["numRows"] = this.addedData[key].length;
                 dataValues["kind"] = InsightDatasetKind.Courses;
+                currentDatasets.push(dataValues);
+            });
+            allRoomsData.forEach((key: string) => {
+                let dataValues: any = {};
+                dataValues["id"] = key;
+                dataValues["numRows"] = this.addedData[key].length;
+                dataValues["kind"] = InsightDatasetKind.Rooms;
                 currentDatasets.push(dataValues);
             });
             resolve(currentDatasets);

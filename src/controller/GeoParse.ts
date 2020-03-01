@@ -14,11 +14,10 @@ export default class GeoParse {
 
     public callGeolocater(roomAddress: string): any {
         let geoExtractor: GeolocationExtractor = new GeolocationExtractor();
-        let geoResponseResult: {} = null;
         geoExtractor.parseGeo(roomAddress).then((result: any) => {
             let lat: number = result["lat"];
             let lon: number = result["lon"];
-            geoResponseResult = {roomLat: lat, roomLon: lon};
+            let geoResponseResult: {} = {roomLat: lat, roomLon: lon};
             return geoResponseResult;
         }).catch((error: any) => {
             return null;
