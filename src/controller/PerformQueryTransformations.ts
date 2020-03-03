@@ -134,4 +134,129 @@ export default class PerformQueryTransformations {
         }
         return true;                    // object with {applyToken : key} is valid
     }
+
+    public static groupAndApply(resultSoFar: any[], transformations: any): any[] {
+        let groupKeys: any[] = transformations["GROUP"];
+        let applyRules: any[] = transformations["APPLY"];
+        let resultGroupings: any[] = this.groupResults(resultSoFar, groupKeys);
+        if (applyRules.length !== 0) {
+            resultGroupings = this.applyTransformations(resultGroupings, applyRules);
+        }
+        return resultGroupings;
+    }
+
+    public static groupResults(resultSoFar: any[], groupKeys: any[]): any[] {
+        let groupedResults: any[] = [];                 // array of {} objects
+        for (let courseSection of resultSoFar) {
+            let isNewGroup: boolean = true;
+            if (groupedResults.length !== 0) {          // if not empty, iterate through groups to see if one matches
+                for (let grouping of groupedResults) {
+                    if (this.checkIfMatchesGroup(grouping, groupKeys, courseSection)) {
+                        isNewGroup = false;     // courseSection found a matching existing group, set isNewGroup to F
+                        break;
+                    }
+                }
+            }
+            if (isNewGroup) {
+                let uniqueGroup: any = {};                          // create new object
+                for (let groupKey of groupKeys) {
+                    if (courseSection[groupKey] === "") {
+                        uniqueGroup[groupKey] = "";
+                    } else {
+                        uniqueGroup[groupKey] = courseSection[groupKey];    // create key-value pair to identify group
+                    }
+                }
+                uniqueGroup["Course Sections"] = [];                // Course sections matching group criteria
+                uniqueGroup["Course Sections"].push(courseSection); // add the member to it
+                groupedResults.push(uniqueGroup);                  // add the group object to array of all unique groups
+            } else {
+                for (let grouping of groupedResults) {
+                    if (this.checkIfMatchesGroup(grouping, groupKeys, courseSection)) { // if find a matching group
+                        grouping["Course Sections"].push(courseSection);    // add to Course Sections array
+                    }
+                }
+            }
+        }
+        return groupedResults;
+    }
+
+    public static checkIfMatchesGroup(grouping: any, groupKeys: any[], courseSection: any): boolean {
+        for (let groupKey of groupKeys) {
+            if (grouping[groupKey] !== courseSection[groupKey]) {
+                return false;    // groupKey's value in courseSection is different from the value identifier in grouping
+            }
+        }
+        return true;      // went through all groupKeys; all values in grouping corresponding to values in courseSection
+    }
+
+    public static applyTransformations(resultGroupings: any[], applyRules: any[]): any[] {
+        let resultAfterApply: any[] = resultGroupings;
+        for (let applyRule of applyRules) {
+            resultAfterApply = this.addApplyRule(resultAfterApply, applyRule);
+        }
+        return resultAfterApply;
+    }
+
+    public static addApplyRule(resultGroupings: any[], applyRule: any): any[] {
+        let applyKeys: any[] = Object.keys(applyRule);
+        let applyKey: any = applyKeys[0];
+        let applyTokenKeyObject: any = applyRule[applyKey];
+        let applyTokens: any[] = Object.keys(applyTokenKeyObject);
+        let applyToken: any = applyTokens[0];
+        let tokenField: any = applyTokenKeyObject[applyToken];
+        for (let group of resultGroupings) {
+            if (applyToken === "MIN") {
+                group = this.applyMin(applyKey, group, tokenField);
+            }
+            if (applyToken === "MAX") {
+                group = this.applyMax(applyKey, group, tokenField);
+            }
+            if (applyToken === "SUM") {
+                group = this.applySum(applyKey, group, tokenField);
+            }
+            if (applyToken === "AVG") {
+                group = this.applyAvg(applyKey, group, tokenField);
+            }
+            if (applyToken === "COUNT") {
+                group = this.applyCount(applyKey, group, tokenField);
+            }
+        }
+        return resultGroupings;
+    }
+
+    public static applyMin(applyKey: any, group: any, tokenField: any): any {
+        let courseSections: any[] = group["Course Sections"];
+        let min: number = Number.MAX_VALUE;
+        for (let courseSection of courseSections) {
+            if (courseSection[tokenField] < min) {
+                min = courseSection[tokenField];
+            }
+        }
+        group[applyKey] = min;
+        return group;
+    }
+
+    public static applyMax(applyKey: any, group: any, tokenField: any): any {
+        let courseSections: any[] = group["Course Sections"];
+        let max: number = Number.MIN_VALUE;
+        for (let courseSection of courseSections) {
+            if (courseSection[tokenField] > max) {
+                max = courseSection[tokenField];
+            }
+        }
+        group[applyKey] = max;
+        return group;
+    }
+
+    public static applySum(applyKey: any, group: any, tokenField: any): any {
+        return null;
+    }
+
+    public static applyAvg(applyKey: any, group: any, tokenField: any): any {
+        return null;
+    }
+
+    public static applyCount(applyKey: any, group: any, tokenField: any): any {
+        return null;
+    }
 }

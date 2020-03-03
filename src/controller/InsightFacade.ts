@@ -6,6 +6,7 @@ import {InsightError, NotFoundError} from "./IInsightFacade";
 import PerformQueryValid from "./PerformQueryValid";
 import PerformQueryFilterDisplay from "./PerformQueryFilterDisplay";
 import CoursesValidation from "./CoursesValidation";
+import PerformQueryTransformations from "./PerformQueryTransformations";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -111,6 +112,10 @@ export default class InsightFacade implements IInsightFacade {
             let resultSoFar: any[] = [];
             let where: any = query["WHERE"];
             resultSoFar = PerformQueryFilterDisplay.filterCourseSections(datasetToParse, where);
+            if ("TRANSFORMATIONS" in query) {
+                let transformations: any = query["TRANSFORMATIONS"];
+                resultSoFar = PerformQueryTransformations.groupAndApply(resultSoFar, transformations);
+            }
             if (resultSoFar.length > 5000) {
                 Log.trace(resultSoFar);
                 this.uniqueIDsInQuery = [];
