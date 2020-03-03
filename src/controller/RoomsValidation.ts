@@ -69,7 +69,6 @@ export default class RoomsValidation {
             }
             let roomChecker: RoomChecker = new RoomChecker(this.addedRoomData);
             let roomData: JSON[] = [];
-            let finalRoomData: any[] = [];
             let rooms: any = {};
             // transform result files array into map
             this.convertResultToMap(resultBuildings, rooms);
@@ -84,20 +83,23 @@ export default class RoomsValidation {
             let htmlMainBody: any = roomChecker.findBodyToParse(indexHTMParsed);
             let table: any = roomChecker.findSection(htmlMainBody);
             let tableBody: any = roomChecker.findTableBody(table);
-            finalRoomData = this.parseEachRoom(tableBody, rooms, roomData, id, reject, resolve, finalRoomData);
-            if (finalRoomData.length !== 0) {
-                this.addedRoomData[id] = finalRoomData;
-                let saved = {id: id, kind: kind, data: this.addedRoomData};
-                let stringifiedFile = JSON.stringify(saved);
-                try {
-                    fs.writeFileSync("./data/" + id, stringifiedFile);
-                } catch (e) {
+            this.parseEachRoom(tableBody, rooms, roomData, id, reject, resolve).then((formattedRooms: any[]) => {
+                if (formattedRooms.length !== 0) {
+                    this.addedRoomData[id] = formattedRooms;
+                    let saved = {id: id, kind: kind, data: this.addedRoomData};
+                    let stringifiedFile = JSON.stringify(saved);
+                    try {
+                        fs.writeFileSync("./data/" + id, stringifiedFile);
+                    } catch (e) {
+                        reject(new InsightError());
+                    }
+                    resolve(Object.keys(this.addedRoomData));
+                } else {
                     reject(new InsightError());
                 }
-                resolve(Object.keys(this.addedRoomData));
-            } else {
+            }).catch((err: any) => {
                 reject(new InsightError());
-            }
+            });
         }).catch((err: any) => {
             reject(new InsightError());
         });
@@ -110,15 +112,30 @@ export default class RoomsValidation {
     }
 
     public parseEachRoom(tableBody: any, rooms: any, roomData: JSON[], id: string, reject: (reason?: any) => void,
-                         resolve: (value?: (PromiseLike<string[]> | string[])) => void, finalRoomData: any[]): any[] {
+                         resolve: (value?: (PromiseLike<string[]> | string[])) => void): any {
         let roomChecker: RoomChecker = new RoomChecker(this.addedRoomData);
-        this.getRooms(tableBody, roomChecker, rooms, roomData, id, finalRoomData, resolve, reject);
-        return finalRoomData;
+        this.getRooms(tableBody, roomChecker, rooms, roomData, id, resolve, reject)
+            .then((formattedRoomsData: any[]) => {
+            resolve(formattedRoomsData);
+        }).catch((err: any) => {
+            reject(new InsightError());
+        });
+        // return finalRoomData;
     }
 
     private getRooms(tableBody: any, roomChecker: RoomChecker, rooms: any, roomData: JSON[], id: string,
-                     finalRoomData: any[], resolve: (value?: (PromiseLike<string[]> | string[])) => void,
-                     reject: (reason?: any) => void) {
+                     resolve: (value?: (PromiseLike<string[]> | string[])) => void,
+                     reject: (reason?: any) => void): Promise<any> {
+        let roomsPromises: Array<Promise<any>> = [];
+        roomsPromises = this.getInfoFromRooms(tableBody, roomChecker, rooms, roomData, roomsPromises, id,
+            resolve, reject);
+        return this.flattenData(roomsPromises, resolve, reject);
+    }
+
+    private getInfoFromRooms(tableBody: any, roomChecker: RoomChecker, rooms: any, roomData: JSON[],
+                             roomsPromises: Array<Promise<any>>, id: string,
+                             resolve: (value?: (PromiseLike<string[]> | string[])) => void, reject:
+                                 (reason?: any) => void): Array<Promise<any>> {
         for (let row of tableBody.childNodes) {
             if (row.nodeName === "tr") {
                 let codeSet: boolean = false, roomShortName: string = null;
@@ -164,14 +181,35 @@ export default class RoomsValidation {
                     }
                 }
             }
-            this.makeHttpCallAndFormatKeys(roomData, id, finalRoomData, resolve, reject);
+            roomsPromises.push(this.makeHttpCallAndFormatKeys(roomData, id, resolve, reject));
         }
-        return finalRoomData;
+        return roomsPromises;
     }
 
-    private makeHttpCallAndFormatKeys(roomData: JSON[], id: string, finalRoomData: any[],
+    private flattenData(roomsPromises: Array<Promise<any>>,
+                        resolve: (value?: (PromiseLike<string[]> | string[])) => void,
+                        reject: (reason?: any) => void): any {
+        let formattedRooms: any[] = [];
+        Promise.all(roomsPromises).then((arrayOfarrays) => {
+            arrayOfarrays.forEach((arrayOfRooms: any[]) => {
+                this.addEachRoom(arrayOfarrays, formattedRooms);
+            });
+            resolve(formattedRooms);
+        }).catch((err: any) => {
+            reject(new InsightError());
+        });
+    }
+
+    private addEachRoom(arrayOfarrays: any[], formmattedRooms: any[]): any[] {
+        arrayOfarrays.forEach((room: any) => {
+            formmattedRooms.push(room);
+        });
+        return formmattedRooms;
+    }
+
+    private makeHttpCallAndFormatKeys(roomData: JSON[], id: string,
                                       resolve: (value?: (PromiseLike<string[]> | string[])) => void,
-                                      reject: (reason?: any) => void) {
+                                      reject: (reason?: any) => void): Promise<any> {
         let eachRoomHttpCall: Array<Promise<any>> = [];
         let geoExtractor: GeoParse = new GeoParse();
         let lastAddress: string = "";
@@ -186,14 +224,14 @@ export default class RoomsValidation {
                 eachRoomHttpCall.push(lastPromise);
             }
         });
-        this.formatDataForEachRoom(eachRoomHttpCall, roomData, id, finalRoomData, resolve, reject);
-        return finalRoomData;
+        return this.formatDataForEachRoom(eachRoomHttpCall, roomData, id, resolve, reject);
     }
 
     private formatDataForEachRoom(eachRoomHttpCall: Array<Promise<any>>, roomData: JSON[], id: string,
-                                  finalRoomData: any[], resolve: (value?: (PromiseLike<string[]> | string[])) => void,
-                                  reject: (reason?: any) => void) {
+                                  resolve: (value?: (PromiseLike<string[]> | string[])) => void,
+                                  reject: (reason?: any) => void): any {
         Promise.all(eachRoomHttpCall).then((geoResponses: any[]) => {
+            let finalRoomData: any[] = [];
             let counter: number = 0;
             geoResponses.forEach((geoResponse: any) => {
                 let room: any = roomData[counter];
