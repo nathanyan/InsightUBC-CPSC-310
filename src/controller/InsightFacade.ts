@@ -90,28 +90,36 @@ export default class InsightFacade implements IInsightFacade {
             if (!roomsValidator.checkValidId(id)) {
                 reject(new NotFoundError());
             }
-            Object.keys(this.addedData).forEach((idKey: string) => {
-                if (idKey === id) {
-                    fs.unlink("./data/" + idKey, (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                        delete this.addedData[id];
-                        resolve(id);
-                    });
-                }
-            });
-            Object.keys(this.addedRoomsData).forEach((idKey: string) => {
-                if (idKey === id) {
-                    fs.unlink("./data/" + idKey, (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                        delete this.addedRoomsData[id];
-                        resolve(id);
-                    });
-                }
-            });
+            this.checkCourses(id, resolve);
+            this.checkRooms(id, resolve);
+        });
+    }
+
+    private checkRooms(id: string, resolve: (value?: (PromiseLike<string> | string)) => void) {
+        Object.keys(this.addedRoomsData).forEach((idKey: string) => {
+            if (idKey === id) {
+                fs.unlink("./data/" + idKey, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                    delete this.addedRoomsData[id];
+                    resolve(id);
+                });
+            }
+        });
+    }
+
+    private checkCourses(id: string, resolve: (value?: (PromiseLike<string> | string)) => void) {
+        Object.keys(this.addedData).forEach((idKey: string) => {
+            if (idKey === id) {
+                fs.unlink("./data/" + idKey, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                    delete this.addedData[id];
+                    resolve(id);
+                });
+            }
         });
     }
 
@@ -146,21 +154,29 @@ export default class InsightFacade implements IInsightFacade {
             let currentDatasets: InsightDataset[] = [];
             let allCourseData: string[] = Object.keys(this.addedData);
             let allRoomsData: string[] = Object.keys(this.addedRoomsData);
-            allCourseData.forEach((key: string) => {
-                let dataValues: any = {};
-                dataValues["id"] = key;
-                dataValues["numRows"] = this.addedData[key].length;
-                dataValues["kind"] = InsightDatasetKind.Courses;
-                currentDatasets.push(dataValues);
-            });
-            allRoomsData.forEach((key: string) => {
-                let dataValues: any = {};
-                dataValues["id"] = key;
-                dataValues["numRows"] = this.addedData[key].length;
-                dataValues["kind"] = InsightDatasetKind.Rooms;
-                currentDatasets.push(dataValues);
-            });
+            this.listCoursesData(allCourseData, currentDatasets);
+            this.listRoomsData(allRoomsData, currentDatasets);
             resolve(currentDatasets);
+        });
+    }
+
+    private listRoomsData(allRoomsData: string[], currentDatasets: InsightDataset[]) {
+        allRoomsData.forEach((key: string) => {
+            let dataValues: any = {};
+            dataValues["id"] = key;
+            dataValues["numRows"] = this.addedRoomsData[key].length;
+            dataValues["kind"] = InsightDatasetKind.Rooms;
+            currentDatasets.push(dataValues);
+        });
+    }
+
+    private listCoursesData(allCourseData: string[], currentDatasets: InsightDataset[]) {
+        allCourseData.forEach((key: string) => {
+            let dataValues: any = {};
+            dataValues["id"] = key;
+            dataValues["numRows"] = this.addedData[key].length;
+            dataValues["kind"] = InsightDatasetKind.Courses;
+            currentDatasets.push(dataValues);
         });
     }
 }

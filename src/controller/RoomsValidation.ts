@@ -120,7 +120,6 @@ export default class RoomsValidation {
         }).catch((err: any) => {
             reject(new InsightError());
         });
-        // return finalRoomData;
     }
 
     private getRooms(tableBody: any, roomChecker: RoomChecker, rooms: any, roomData: JSON[], id: string,
