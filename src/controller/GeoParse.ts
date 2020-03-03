@@ -1,4 +1,3 @@
-import Log from "../Util";
 import GeolocationExtractor from "./GeolocationExtractor";
 
 /**
@@ -9,18 +8,17 @@ import GeolocationExtractor from "./GeolocationExtractor";
 export default class GeoParse {
 
     constructor() {
-        Log.trace("Calling GeoLocationExtractor!");
+        //
     }
 
     public callGeolocater(roomAddress: string): any {
         let geoExtractor: GeolocationExtractor = new GeolocationExtractor();
-        geoExtractor.parseGeo(roomAddress).then((result: any) => {
-            let lat: number = result["lat"];
-            let lon: number = result["lon"];
-            let geoResponseResult: {} = {roomLat: lat, roomLon: lon};
-            return geoResponseResult;
-        }).catch((error: any) => {
-            return null;
+        return new Promise((resolve, reject) => {
+            geoExtractor.parseGeo(roomAddress).then((result: any) => {
+                resolve(result);
+            }).catch((error: any) => {
+                reject(error);
+            });
         });
     }
 }

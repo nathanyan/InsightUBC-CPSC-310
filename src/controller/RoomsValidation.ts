@@ -1,10 +1,9 @@
-import Log from "../Util";
 import * as JSZip from "jszip";
 import {InsightDatasetKind, InsightError} from "./IInsightFacade";
 import * as parse5 from "parse5";
 import * as fs from "fs";
 import RoomChecker from "./RoomChecker";
-import {existsSync} from "fs";
+import GeoParse from "./GeoParse";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -15,7 +14,6 @@ export default class RoomsValidation {
     private addedRoomData: any;
 
     constructor(memoryData: any) {
-        Log.trace("Validating Rooms");
         this.addedRoomData = memoryData;
     }
 
@@ -110,8 +108,15 @@ export default class RoomsValidation {
         });
     }
 
-    public parseEachRoom(tableBody: any, rooms: any, roomData: JSON[], id: string): any {
+    public parseEachRoom(tableBody: any, rooms: any, roomData: JSON[], id: string): any[] {
         let roomChecker: RoomChecker = new RoomChecker(this.addedRoomData);
+        let finalRoomData: any[] = [];
+        this.getRooms(tableBody, roomChecker, rooms, roomData, id, finalRoomData);
+        return finalRoomData;
+    }
+
+    private getRooms(tableBody: any, roomChecker: RoomChecker, rooms: any, roomData: JSON[], id: string,
+                     finalRoomData: any[]) {
         for (let row of tableBody.childNodes) {
             if (row.nodeName === "tr") {
                 let codeSet: boolean = false, roomShortName: string = null;
@@ -147,7 +152,7 @@ export default class RoomsValidation {
                                                     continue;
                                                 }
                                                 roomData = roomChecker.parseTableRooms(roomTableBody, roomFullname,
-                                                    roomAddress, roomShortName, roomHrefPath, roomData, id);
+                                                    roomAddress, roomShortName, roomHrefPath, roomData);
                                             }
                                         }
                                     }
@@ -157,24 +162,55 @@ export default class RoomsValidation {
                     }
                 }
             }
+            this.makeHttpCallAndFormatKeys(roomData, id, finalRoomData);
         }
-        return roomData;
     }
 
-    public formatKeys(roomName: string, roomShortname: string, roomNumber: string, formattedKeys: any, id: string,
-                      roomFullname: string, roomAddress: string, roomSeats: number, roomType: string,
-                      roomFurniture: string, roomHrefPath: string, roomData: any[]) {
-        roomName = roomShortname + "_" + roomNumber;
-        formattedKeys[id + "_" + "fullname"] = roomFullname;
-        formattedKeys[id + "_" + "shortname"] = roomShortname;
-        formattedKeys[id + "_" + "number"] = roomNumber;
-        formattedKeys[id + "_" + "name"] = roomName;
-        formattedKeys[id + "_" + "address"] = roomAddress;
-        formattedKeys[id + "_" + "seats"] = roomSeats;
-        formattedKeys[id + "_" + "type"] = roomType;
-        formattedKeys[id + "_" + "furniture"] = roomFurniture;
-        formattedKeys[id + "_" + "href"] = roomHrefPath;
-        roomData.push(formattedKeys);
+    private makeHttpCallAndFormatKeys(roomData: JSON[], id: string, finalRoomData: any[]) {
+        let eachRoomHttpCall: Array<Promise<any>> = [];
+        let geoExtractor: GeoParse = new GeoParse();
+        roomData.forEach((room: any) => {
+            let address: string = room["roomAddress"];
+            eachRoomHttpCall.push(geoExtractor.callGeolocater(address));
+        });
+        this.formatDataForEachRoom(eachRoomHttpCall, roomData, id, finalRoomData);
+    }
+
+    private formatDataForEachRoom(eachRoomHttpCall: Array<Promise<any>>, roomData: JSON[], id: string,
+                                  finalRoomData: any[]) {
+        Promise.all(eachRoomHttpCall).then((geoResponses: any[]) => {
+            let counter: number = 0;
+            geoResponses.forEach((geoResponse: any) => {
+                let room: any = roomData[counter];
+                room["roomLat"] = geoResponse["lat"];
+                room["roomLon"] = geoResponse["lon"];
+                if (!this.checkKeysAllExist(room)) {
+                    counter++;
+                    return;
+                } else {
+                    this.formatKeys(room, id, finalRoomData);
+                    counter++;
+                }
+            });
+            // resolve
+        }).catch((err: any) => {
+            // reject
+        });
+    }
+
+    public formatKeys(room: any, id: string, finalRoomData: any[]) {
+        let formattedKeys: any = {};
+        formattedKeys[id + "_" + "name"] = room["roomShortname"] + "_" + room["roomNumber"];
+        formattedKeys[id + "_" + "fullname"] = room["roomFullname"];
+        formattedKeys[id + "_" + "shortname"] = room["roomShortname"];
+        formattedKeys[id + "_" + "number"] = room["roomNumber"];
+        formattedKeys[id + "_" + "name"] = room["roomName"];
+        formattedKeys[id + "_" + "address"] = room["roomAddress"];
+        formattedKeys[id + "_" + "seats"] = room["roomSeats"];
+        formattedKeys[id + "_" + "type"] = room["roomType"];
+        formattedKeys[id + "_" + "furniture"] = room["roomFurniture"];
+        formattedKeys[id + "_" + "href"] = room["roomHref"];
+        finalRoomData.push(formattedKeys);
     }
 
     public checkValidId(id: string) {
@@ -184,5 +220,16 @@ export default class RoomsValidation {
             }
         }
         return true;
+    }
+
+
+    private checkKeysAllExist(room: any) {
+        if (room["roomSeats"] !== null && room["roomNumber"] !== null && room["roomType"] !== null &&
+            room["roomFurniture"] !== null && room["roomHref"] !== null && room["roomShortname"] !== null &&
+            room["roomAddress"] !== null && room["roomFullname"] !== null && room["roomLat"] !== null &&
+            room["roomLon"] !== null) {
+            return true;
+        }
+        return false;
     }
 }

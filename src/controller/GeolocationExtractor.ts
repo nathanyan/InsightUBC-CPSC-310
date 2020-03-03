@@ -9,7 +9,7 @@ import * as http from "http";
 export default class GeolocationExtractor {
 
     constructor() {
-        Log.trace("Looking for room's Geolocation!");
+        //
     }
 
     // use promise resolve and reject here, and then in caller use promise.then and .catch, but will probably need
