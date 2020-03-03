@@ -69,6 +69,7 @@ export default class RoomsValidation {
             }
             let roomChecker: RoomChecker = new RoomChecker(this.addedRoomData);
             let roomData: JSON[] = [];
+            let finalRoomData: any[] = [];
             let rooms: any = {};
             // transform result files array into map
             this.convertResultToMap(resultBuildings, rooms);
@@ -83,9 +84,9 @@ export default class RoomsValidation {
             let htmlMainBody: any = roomChecker.findBodyToParse(indexHTMParsed);
             let table: any = roomChecker.findSection(htmlMainBody);
             let tableBody: any = roomChecker.findTableBody(table);
-            roomData = this.parseEachRoom(tableBody, rooms, roomData, id);
-            if (roomData.length !== 0) {
-                this.addedRoomData[id] = roomData;
+            finalRoomData = this.parseEachRoom(tableBody, rooms, roomData, id, reject, resolve, finalRoomData);
+            if (finalRoomData.length !== 0) {
+                this.addedRoomData[id] = finalRoomData;
                 let saved = {id: id, kind: kind, data: this.addedRoomData};
                 let stringifiedFile = JSON.stringify(saved);
                 try {
@@ -108,15 +109,16 @@ export default class RoomsValidation {
         });
     }
 
-    public parseEachRoom(tableBody: any, rooms: any, roomData: JSON[], id: string): any[] {
+    public parseEachRoom(tableBody: any, rooms: any, roomData: JSON[], id: string, reject: (reason?: any) => void,
+                         resolve: (value?: (PromiseLike<string[]> | string[])) => void, finalRoomData: any[]): any[] {
         let roomChecker: RoomChecker = new RoomChecker(this.addedRoomData);
-        let finalRoomData: any[] = [];
-        this.getRooms(tableBody, roomChecker, rooms, roomData, id, finalRoomData);
+        this.getRooms(tableBody, roomChecker, rooms, roomData, id, finalRoomData, resolve, reject);
         return finalRoomData;
     }
 
     private getRooms(tableBody: any, roomChecker: RoomChecker, rooms: any, roomData: JSON[], id: string,
-                     finalRoomData: any[]) {
+                     finalRoomData: any[], resolve: (value?: (PromiseLike<string[]> | string[])) => void,
+                     reject: (reason?: any) => void) {
         for (let row of tableBody.childNodes) {
             if (row.nodeName === "tr") {
                 let codeSet: boolean = false, roomShortName: string = null;
@@ -162,22 +164,35 @@ export default class RoomsValidation {
                     }
                 }
             }
-            this.makeHttpCallAndFormatKeys(roomData, id, finalRoomData);
+            this.makeHttpCallAndFormatKeys(roomData, id, finalRoomData, resolve, reject);
         }
+        return finalRoomData;
     }
 
-    private makeHttpCallAndFormatKeys(roomData: JSON[], id: string, finalRoomData: any[]) {
+    private makeHttpCallAndFormatKeys(roomData: JSON[], id: string, finalRoomData: any[],
+                                      resolve: (value?: (PromiseLike<string[]> | string[])) => void,
+                                      reject: (reason?: any) => void) {
         let eachRoomHttpCall: Array<Promise<any>> = [];
         let geoExtractor: GeoParse = new GeoParse();
+        let lastAddress: string = "";
+        let lastPromise: Promise<any> = null;
         roomData.forEach((room: any) => {
             let address: string = room["roomAddress"];
-            eachRoomHttpCall.push(geoExtractor.callGeolocater(address));
+            if (address !== lastAddress) {
+                lastPromise = geoExtractor.callGeolocater(address);
+                lastAddress = address;
+                eachRoomHttpCall.push(lastPromise);
+            } else {
+                eachRoomHttpCall.push(lastPromise);
+            }
         });
-        this.formatDataForEachRoom(eachRoomHttpCall, roomData, id, finalRoomData);
+        this.formatDataForEachRoom(eachRoomHttpCall, roomData, id, finalRoomData, resolve, reject);
+        return finalRoomData;
     }
 
     private formatDataForEachRoom(eachRoomHttpCall: Array<Promise<any>>, roomData: JSON[], id: string,
-                                  finalRoomData: any[]) {
+                                  finalRoomData: any[], resolve: (value?: (PromiseLike<string[]> | string[])) => void,
+                                  reject: (reason?: any) => void) {
         Promise.all(eachRoomHttpCall).then((geoResponses: any[]) => {
             let counter: number = 0;
             geoResponses.forEach((geoResponse: any) => {
@@ -188,13 +203,13 @@ export default class RoomsValidation {
                     counter++;
                     return;
                 } else {
-                    this.formatKeys(room, id, finalRoomData);
+                    finalRoomData = this.formatKeys(room, id, finalRoomData);
                     counter++;
                 }
             });
-            // resolve
+            resolve(finalRoomData);
         }).catch((err: any) => {
-            // reject
+            reject(new InsightError());
         });
     }
 
@@ -204,13 +219,15 @@ export default class RoomsValidation {
         formattedKeys[id + "_" + "fullname"] = room["roomFullname"];
         formattedKeys[id + "_" + "shortname"] = room["roomShortname"];
         formattedKeys[id + "_" + "number"] = room["roomNumber"];
-        formattedKeys[id + "_" + "name"] = room["roomName"];
         formattedKeys[id + "_" + "address"] = room["roomAddress"];
         formattedKeys[id + "_" + "seats"] = room["roomSeats"];
         formattedKeys[id + "_" + "type"] = room["roomType"];
         formattedKeys[id + "_" + "furniture"] = room["roomFurniture"];
         formattedKeys[id + "_" + "href"] = room["roomHref"];
+        formattedKeys[id + "_" + "lat"] = room["roomLat"];
+        formattedKeys[id + "_" + "lon"] = room["roomLon"];
         finalRoomData.push(formattedKeys);
+        return finalRoomData;
     }
 
     public checkValidId(id: string) {

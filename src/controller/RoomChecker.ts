@@ -255,7 +255,7 @@ export default class RoomChecker {
                 roomsKeys["roomSeats"] = roomSeats;
                 roomsKeys["roomType"] = roomType;
                 roomsKeys["roomFurniture"] = roomFurniture;
-                roomsKeys["roomName"] = "";
+                roomsKeys["roomName"] = null;
                 roomsKeys["roomLat"] = null;
                 roomsKeys["roomLon"] = null;
                 roomData.push(roomsKeys);
