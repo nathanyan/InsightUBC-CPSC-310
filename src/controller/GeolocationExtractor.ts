@@ -23,7 +23,7 @@ export default class GeolocationExtractor {
                     const contentType = res.headers["content-type"];
 
                     let error;
-                    if (statusCode !== 200) {
+                    if (statusCode !== 200 && statusCode !== 404) {
                         error = new Error("Request Failed.\n" + `Status Code: ${statusCode}`);
                     } else if (!/^application\/json/.test(contentType)) {
                         error = new Error("Invalid content-type.\n" +
@@ -45,19 +45,17 @@ export default class GeolocationExtractor {
                     });
                     res.on("end", () => {
                         try {
-                            const parsedData = JSON.parse(rawData);
+                            let parsedData = JSON.parse(rawData);
                             Log.trace(parsedData);
-                            resolve(parsedData);
+                            return resolve(parsedData);
                         } catch (e) {
                             Log.error(e.message);
-                            reject(e);
-                            return;
+                            return reject(e);
                         }
                     });
                 }).on("error", (e) => {
                     Log.error(`Got error: ${e.message}`);
-                    reject(e);
-                    return;
+                    return reject(e);
                 });
             });
     }

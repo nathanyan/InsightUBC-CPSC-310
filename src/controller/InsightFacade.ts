@@ -67,8 +67,13 @@ export default class InsightFacade implements IInsightFacade {
                         let indexFileExists = false;
                         indexFileExists = roomValidator.convertRoomsToString(folder2, roomsFolderExists, roomValidator,
                             indexFileExists, promisesListRooms);
-                        roomValidator.checkEachRoom(promisesListRooms, reject, indexFileExists, roomValidator, id,
-                            kind, resolve);
+                        roomValidator.checkEachRoom(promisesListRooms, indexFileExists, roomValidator, id, kind)
+                            .then((finalDataAllRooms: any[]) => {
+                                resolve(finalDataAllRooms);
+                            })
+                            .catch((err: any) => {
+                                reject(new InsightError());
+                            });
                     }
                 }).catch((err: any) => {
                     reject(new InsightError());
