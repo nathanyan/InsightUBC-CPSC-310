@@ -1154,7 +1154,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
                 expect(result).to.deep.equal(expectedAdd);
                 return insightFacade.addDataset(idNotExist, datasets[idNotExist], InsightDatasetKind.Courses)
                     .then((result2: string[]) => {
-                        expect.fail(result2, expectedAdd, "Should not have added non-existing dataset with valid ID");
+                       expect.fail(result2, expectedAdd, "Should not have added non-existing dataset with valid ID");
                     })
                     .catch((err: any) => {
                         expect(err).to.be.instanceOf(InsightError);

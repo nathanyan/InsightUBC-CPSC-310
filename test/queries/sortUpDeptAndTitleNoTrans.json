@@ -1,0 +1,182 @@
+{
+    "title": "Sort UP by dept AND title - no transformation",
+    "query": {
+	  "WHERE": {
+	    "LT": {
+	      "courses_avg": 50
+	    }
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_dept",
+	      "courses_title"
+	    ],
+	    "ORDER": {
+	      "dir": "UP",
+	      "keys": [
+	        "courses_dept",
+	        "courses_title"
+	      ]
+	    }
+	  }
+    },
+    "isQueryValid": true,
+    "result": [
+      {
+         "courses_dept":"busi",
+         "courses_title":"cpt aid ms pr as"
+      },
+      {
+         "courses_dept":"busi",
+         "courses_title":"found re apprai"
+      },
+      {
+         "courses_dept":"busi",
+         "courses_title":"found re apprai"
+      },
+      {
+         "courses_dept":"busi",
+         "courses_title":"re crit analysis"
+      },
+      {
+         "courses_dept":"busi",
+         "courses_title":"resdnt prp study"
+      },
+      {
+         "courses_dept":"busi",
+         "courses_title":"resdnt prp study"
+      },
+      {
+         "courses_dept":"busi",
+         "courses_title":"resdnt prp study"
+      },
+      {
+         "courses_dept":"busi",
+         "courses_title":"stat&comp ap val"
+      },
+      {
+         "courses_dept":"busi",
+         "courses_title":"stat&comp ap val"
+      },
+      {
+         "courses_dept":"chbe",
+         "courses_title":"electrochem eng"
+      },
+      {
+         "courses_dept":"chbe",
+         "courses_title":"electrochem eng"
+      },
+      {
+         "courses_dept":"chem",
+         "courses_title":"chem integ lab i"
+      },
+      {
+         "courses_dept":"civl",
+         "courses_title":"engr econ anlys"
+      },
+      {
+         "courses_dept":"civl",
+         "courses_title":"wtr treat&wst mg"
+      },
+      {
+         "courses_dept":"comm",
+         "courses_title":"financial acctng"
+      },
+      {
+         "courses_dept":"comm",
+         "courses_title":"financial acctng"
+      },
+      {
+         "courses_dept":"educ",
+         "courses_title":"language & curr"
+      },
+      {
+         "courses_dept":"educ",
+         "courses_title":"language & curr"
+      },
+      {
+         "courses_dept":"fopr",
+         "courses_title":"sustnbt&frst ops"
+      },
+      {
+         "courses_dept":"frst",
+         "courses_title":"forest ecology"
+      },
+      {
+         "courses_dept":"frst",
+         "courses_title":"intr biometrics"
+      },
+      {
+         "courses_dept":"frst",
+         "courses_title":"intr biometrics"
+      },
+      {
+         "courses_dept":"hist",
+         "courses_title":"hist 1500 - 20 c"
+      },
+      {
+         "courses_dept":"hist",
+         "courses_title":"hist 1500 - 20 c"
+      },
+      {
+         "courses_dept":"hist",
+         "courses_title":"hist 1500 - 20 c"
+      },
+      {
+         "courses_dept":"hist",
+         "courses_title":"hist 1500 - 20 c"
+      },
+      {
+         "courses_dept":"hist",
+         "courses_title":"hist 1500 - 20 c"
+      },
+      {
+         "courses_dept":"lfs",
+         "courses_title":"in land food com"
+      },
+      {
+         "courses_dept":"lfs",
+         "courses_title":"in land food com"
+      },
+      {
+         "courses_dept":"lled",
+         "courses_title":"intro acad writ"
+      },
+      {
+         "courses_dept":"lled",
+         "courses_title":"intro acad writ"
+      },
+      {
+         "courses_dept":"lled",
+         "courses_title":"intro acad writ"
+      },
+      {
+         "courses_dept":"lled",
+         "courses_title":"intro acad writ"
+      },
+      {
+         "courses_dept":"lled",
+         "courses_title":"intro acad writ"
+      },
+      {
+         "courses_dept":"math",
+         "courses_title":"dif calc phys ap"
+      },
+      {
+         "courses_dept":"math",
+         "courses_title":"dif calc phys ap"
+      },
+      {
+         "courses_dept":"phil",
+         "courses_title":"log & crit think"
+      },
+      {
+         "courses_dept":"psyc",
+         "courses_title":"health psycholgy"
+      },
+      {
+         "courses_dept":"wood",
+         "courses_title":"prpty,ident&uses"
+      }
+   ]
+}

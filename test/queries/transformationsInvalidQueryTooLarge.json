@@ -1,25 +1,24 @@
 {
     "title": "Transformations - invalid query - result too large",
-    "query": 
-    {
-	  "WHERE": {},
-	  "OPTIONS": {
-	    "COLUMNS": [
-	      "courses_uuid"
-	    ]
-	  },
-	  "TRANSFORMATIONS": {
-	    "GROUP": [
-	      "courses_uuid"
-	    ],
-	    "APPLY": [
-	      {
-	        "overallAvg": {
-	          "AVG": "courses_avg"
-	        }
-	      }
-	    ]
-	  }
+    "query": {
+        "WHERE": {},
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor"
+            ]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_instructor"
+            ],
+            "APPLY": [
+                {
+                    "overallAvg": {
+                        "AVG": "courses_avg"
+                    }
+                }
+            ]
+        }
 	},
     "isQueryValid": false,
     "result": "ResultTooLargeError"

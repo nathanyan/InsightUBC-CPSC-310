@@ -1,4 +1,5 @@
 import Log from "../Util";
+import {Decimal} from "decimal.js";
 
 let mKeyFieldsAll: string[] = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
 let sKeysMKeysAll: string[] = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number"
@@ -148,33 +149,37 @@ export default class PerformQueryTransformations {
     public static groupResults(resultSoFar: any[], groupKeys: any[]): any[] {
         let groupedResults: any[] = [];                 // array of {} objects
         for (let courseSection of resultSoFar) {
-            let isNewGroup: boolean = true;
-            if (groupedResults.length !== 0) {          // if not empty, iterate through groups to see if one matches
-                for (let grouping of groupedResults) {
-                    if (this.checkIfMatchesGroup(grouping, groupKeys, courseSection)) {
-                        isNewGroup = false;     // courseSection found a matching existing group, set isNewGroup to F
-                        break;
+            if (groupedResults.length <= 5000) {            // as long as <= 5000 groups, keep adding
+                let isNewGroup: boolean = true;
+                if (groupedResults.length !== 0) {         // if not empty, iterate through groups to see if one matches
+                    for (let grouping of groupedResults) {
+                        if (this.checkIfMatchesGroup(grouping, groupKeys, courseSection)) {
+                            isNewGroup = false;    // courseSection found a matching existing group, set isNewGroup to F
+                            break;
+                        }
                     }
                 }
-            }
-            if (isNewGroup) {
-                let uniqueGroup: any = {};                          // create new object
-                for (let groupKey of groupKeys) {
-                    if (courseSection[groupKey] === "") {
-                        uniqueGroup[groupKey] = "";
-                    } else {
-                        uniqueGroup[groupKey] = courseSection[groupKey];    // create key-value pair to identify group
+                if (isNewGroup) {
+                    let uniqueGroup: any = {};                          // create new object
+                    for (let groupKey of groupKeys) {
+                        if (courseSection[groupKey] === "") {
+                            uniqueGroup[groupKey] = "";
+                        } else {
+                            uniqueGroup[groupKey] = courseSection[groupKey];  // create key-value pair to identify group
+                        }
+                    }
+                    uniqueGroup["Course Sections"] = [];                // Course sections matching group criteria
+                    uniqueGroup["Course Sections"].push(courseSection); // add the member to it
+                    groupedResults.push(uniqueGroup);              // add the group object to array of all unique groups
+                } else {
+                    for (let grouping of groupedResults) {
+                        if (this.checkIfMatchesGroup(grouping, groupKeys, courseSection)) { // if find a matching group
+                            grouping["Course Sections"].push(courseSection);    // add to Course Sections array
+                        }
                     }
                 }
-                uniqueGroup["Course Sections"] = [];                // Course sections matching group criteria
-                uniqueGroup["Course Sections"].push(courseSection); // add the member to it
-                groupedResults.push(uniqueGroup);                  // add the group object to array of all unique groups
-            } else {
-                for (let grouping of groupedResults) {
-                    if (this.checkIfMatchesGroup(grouping, groupKeys, courseSection)) { // if find a matching group
-                        grouping["Course Sections"].push(courseSection);    // add to Course Sections array
-                    }
-                }
+            } else {            // 5001 or more groups, just return result back so ResultTooLarge can be returned
+                return groupedResults;
             }
         }
         return groupedResults;
@@ -191,7 +196,7 @@ export default class PerformQueryTransformations {
 
     public static applyTransformations(resultGroupings: any[], applyRules: any[]): any[] {
         let resultAfterApply: any[] = resultGroupings;
-        for (let applyRule of applyRules) {
+        for (let applyRule of applyRules) {                     // Perform applyRule on results list one at a time
             resultAfterApply = this.addApplyRule(resultAfterApply, applyRule);
         }
         return resultAfterApply;
@@ -204,7 +209,7 @@ export default class PerformQueryTransformations {
         let applyTokens: any[] = Object.keys(applyTokenKeyObject);
         let applyToken: any = applyTokens[0];
         let tokenField: any = applyTokenKeyObject[applyToken];
-        for (let group of resultGroupings) {
+        for (let group of resultGroupings) {                // for each group in result list, check Token
             if (applyToken === "MIN") {
                 group = this.applyMin(applyKey, group, tokenField);
             }
@@ -249,14 +254,38 @@ export default class PerformQueryTransformations {
     }
 
     public static applySum(applyKey: any, group: any, tokenField: any): any {
-        return null;
+        let courseSections: any[] = group["Course Sections"];
+        let sum: number = 0;
+        for (let courseSection of courseSections) {
+            sum = sum + courseSection[tokenField];
+        }
+        sum = Number(sum.toFixed(2));
+        group[applyKey] = sum;
+        return group;
     }
 
     public static applyAvg(applyKey: any, group: any, tokenField: any): any {
-        return null;
+        let courseSections: any[] = group["Course Sections"];
+        let total: Decimal = new Decimal(0);
+        for (let courseSection of courseSections) {
+            let decimalValue = new Decimal(courseSection[tokenField]);
+            total = total.add(decimalValue);
+        }
+        let avg: any = total.toNumber() / courseSections.length;
+        let res: number = Number(avg.toFixed(2));
+        group[applyKey] = res;
+        return group;
     }
 
     public static applyCount(applyKey: any, group: any, tokenField: any): any {
-        return null;
+        let courseSections: any[] = group["Course Sections"];
+        let listOfUnique: any[] = [];
+        for (let courseSection of courseSections) {
+            if (!(listOfUnique.includes(courseSection[tokenField]))) {
+                listOfUnique.push(courseSection[tokenField]);
+            }
+        }
+        let totalUnique: number = listOfUnique.length;
+        group[applyKey] = totalUnique;
     }
 }

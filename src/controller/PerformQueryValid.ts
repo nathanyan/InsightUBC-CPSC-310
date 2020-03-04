@@ -270,7 +270,7 @@ export default class PerformQueryValid {
             if (orderKeys.length !== 2 || !("dir" in orderValue) || !("keys" in orderValue)) {
                 return false;           // doesn't have 2 key-value pairs, missing 'dir' or missing 'keys'
             }
-            if (orderValue["dir"] !== ("UP" || "DOWN")) {
+            if (orderValue["dir"] !== "UP" && orderValue["dir"] !== "DOWN") {
                 return false;
             }
             if (!(Array.isArray(orderValue["keys"]))) {
@@ -280,7 +280,7 @@ export default class PerformQueryValid {
                 return false;
             }
             for (let anyKey of orderValue["keys"]) {
-                if (!(anyKey in columnsVals)) {
+                if (!(columnsVals.includes(anyKey))) {
                     return false;
                 }
             }

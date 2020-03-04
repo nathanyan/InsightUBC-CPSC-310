@@ -112,7 +112,7 @@ export default class InsightFacade implements IInsightFacade {
             let resultSoFar: any[] = [];
             let where: any = query["WHERE"];
             resultSoFar = PerformQueryFilterDisplay.filterCourseSections(datasetToParse, where);
-            if ("TRANSFORMATIONS" in query) {
+            if ("TRANSFORMATIONS" in query) {       // put sections into groups
                 let transformations: any = query["TRANSFORMATIONS"];
                 resultSoFar = PerformQueryTransformations.groupAndApply(resultSoFar, transformations);
             }

@@ -1,0 +1,208 @@
+{
+    "title": "Group by courses_title, apply AVG of averages",
+    "query": {
+	  "WHERE": {
+	    "IS": {
+	      "courses_dept": "apbi"
+	    }
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title",
+	      "avgOfAverages"
+	    ],
+	    "ORDER": "avgOfAverages"
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "avgOfAverages": {
+	          "AVG": "courses_avg"
+	        }
+	      }
+	    ]
+	  }
+    },
+    "isQueryValid": true,
+    "result": [
+      {
+         "courses_title":"plnt phys",
+         "avgOfAverages":64.34
+      },
+      {
+         "courses_title":"frst &agr climat",
+         "avgOfAverages":67.76
+      },
+      {
+         "courses_title":"vascular plants",
+         "avgOfAverages":71.58
+      },
+      {
+         "courses_title":"intro biometeoro",
+         "avgOfAverages":71.63
+      },
+      {
+         "courses_title":"weed science",
+         "avgOfAverages":72.13
+      },
+      {
+         "courses_title":"adv agroecology",
+         "avgOfAverages":72.5
+      },
+      {
+         "courses_title":"intr soil scie",
+         "avgOfAverages":73.4
+      },
+      {
+         "courses_title":"agroforestry",
+         "avgOfAverages":73.95
+      },
+      {
+         "courses_title":"intr entomology",
+         "avgOfAverages":74.86
+      },
+      {
+         "courses_title":"intr sd plnt tax",
+         "avgOfAverages":75
+      },
+      {
+         "courses_title":"lab soil sci",
+         "avgOfAverages":75.04
+      },
+      {
+         "courses_title":"wildlife mngment",
+         "avgOfAverages":75.15
+      },
+      {
+         "courses_title":"fish diseases",
+         "avgOfAverages":75.48
+      },
+      {
+         "courses_title":"plnt-micr inter",
+         "avgOfAverages":76.62
+      },
+      {
+         "courses_title":"key ndctr ag sus",
+         "avgOfAverages":76.66
+      },
+      {
+         "courses_title":"inten fish pro",
+         "avgOfAverages":77.15
+      },
+      {
+         "courses_title":"soil s,a&di",
+         "avgOfAverages":77.2
+      },
+      {
+         "courses_title":"soil process",
+         "avgOfAverages":77.34
+      },
+      {
+         "courses_title":"food & enviro i",
+         "avgOfAverages":77.39
+      },
+      {
+         "courses_title":"prd & psthrv veg",
+         "avgOfAverages":77.55
+      },
+      {
+         "courses_title":"soil biology",
+         "avgOfAverages":78.09
+      },
+      {
+         "courses_title":"animal phys ii",
+         "avgOfAverages":78.16
+      },
+      {
+         "courses_title":"agroecology ii",
+         "avgOfAverages":78.36
+      },
+      {
+         "courses_title":"animal phys i",
+         "avgOfAverages":78.65
+      },
+      {
+         "courses_title":"agroecology i",
+         "avgOfAverages":79.19
+      },
+      {
+         "courses_title":"eq biol",
+         "avgOfAverages":79.22
+      },
+      {
+         "courses_title":"integr pest man",
+         "avgOfAverages":79.28
+      },
+      {
+         "courses_title":"plant genomics",
+         "avgOfAverages":79.37
+      },
+      {
+         "courses_title":"hort techniques",
+         "avgOfAverages":79.81
+      },
+      {
+         "courses_title":"appld anml behav",
+         "avgOfAverages":80.04
+      },
+      {
+         "courses_title":"food&enviro ii",
+         "avgOfAverages":80.06
+      },
+      {
+         "courses_title":"berry crop biol",
+         "avgOfAverages":80.63
+      },
+      {
+         "courses_title":"an wlfr&ethc a u",
+         "avgOfAverages":80.78
+      },
+      {
+         "courses_title":"stress & coping",
+         "avgOfAverages":80.9
+      },
+      {
+         "courses_title":"undergrad essay",
+         "avgOfAverages":81.58
+      },
+      {
+         "courses_title":"tpcs appl biolgy",
+         "avgOfAverages":81.77
+      },
+      {
+         "courses_title":"animls globl iss",
+         "avgOfAverages":83.07
+      },
+      {
+         "courses_title":"sus soil mgmt",
+         "avgOfAverages":83.21
+      },
+      {
+         "courses_title":"res apl anml bio",
+         "avgOfAverages":84.26
+      },
+      {
+         "courses_title":"anml hlth&physio",
+         "avgOfAverages":84.53
+      },
+      {
+         "courses_title":"animal welfare",
+         "avgOfAverages":85.33
+      },
+      {
+         "courses_title":"animals&society",
+         "avgOfAverages":85.55
+      },
+      {
+         "courses_title":"sustain agr&food",
+         "avgOfAverages":87.33
+      },
+      {
+         "courses_title":"undergrad thesis",
+         "avgOfAverages":87.53
+      }
+   ]
+}
