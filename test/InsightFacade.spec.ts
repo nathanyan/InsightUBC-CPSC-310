@@ -1272,7 +1272,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
                 expect(result).to.deep.equal(expected);
                 return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms)
                     .then((result2: string[]) => {
-                        expect(result2).to.equal(expected2);
+                        expect(result2).to.deep.equal(expected2);
                     })
                     .catch((err: any) => {
                         expect.fail(err, expected, "Should not have rejected inner");
@@ -1565,11 +1565,9 @@ describe("InsightFacade Add/Remove Dataset", function () {
                 expect(result).to.deep.equal(collection);
                 return insightFacade.removeDataset(id)
                     .then((result2: string) => {
-                        Log.trace(result2);
                         expect(result2).to.deep.equal(id);
                     })
                     .catch((err: any) => {
-                        Log.trace(err);
                         expect.fail(err, id, "Should have removed valid dataset");
                     });
             })
@@ -1718,7 +1716,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
                     });
             })
             .catch((err: any) => {
-                Log.error(err);
                 expect.fail(err, expectedAdd, "Should not have rejected");
             });
     });
@@ -1779,7 +1776,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             expect(result).to.deep.equal(expectedAdd);
             return insightFacade.listDatasets().then((result2: InsightDataset[]) => {
                 expect(result2).to.deep.equal(expectedList);
-                return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses).then(then3)
+                return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms).then(then3)
                     .catch(catch2);
                 function then3(result3: string[]) {
                     expect(result3).to.deep.equal(expectedAdd2);
