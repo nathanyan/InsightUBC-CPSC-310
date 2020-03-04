@@ -72,11 +72,12 @@ export default class InsightFacade implements IInsightFacade {
                                 resolve(finalDataAllRooms);
                             })
                             .catch((err: any) => {
+                                Log.error(err);
                                 reject(new InsightError());
                             });
                     }
                 }).catch((err: any) => {
-                    reject(new InsightError());
+                    reject(new InsightError(err));
                 });
             }
         });
@@ -171,6 +172,7 @@ export default class InsightFacade implements IInsightFacade {
             dataValues["id"] = key;
             dataValues["numRows"] = this.addedRoomsData[key].length;
             dataValues["kind"] = InsightDatasetKind.Rooms;
+            // dataValues = dataValues as InsightDataset;
             currentDatasets.push(dataValues);
         });
     }
@@ -181,6 +183,7 @@ export default class InsightFacade implements IInsightFacade {
             dataValues["id"] = key;
             dataValues["numRows"] = this.addedData[key].length;
             dataValues["kind"] = InsightDatasetKind.Courses;
+            // dataValues = dataValues as InsightDataset;
             currentDatasets.push(dataValues);
         });
     }

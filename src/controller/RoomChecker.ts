@@ -214,7 +214,8 @@ export default class RoomChecker {
     }
 
     public parseTableRooms(roomTableBody: any, roomFullname: string, roomAddress: string, roomShortname: string,
-                           roomHrefPath: string, roomData: any[]): any[] {
+                           roomHrefPath: string): any[] {
+        let buildingRooms: any[] = [];
         for (let tableRow of roomTableBody.childNodes) {
             let roomNumber: string = null;
             let roomSeats: number = null;
@@ -258,10 +259,10 @@ export default class RoomChecker {
                 roomsKeys["roomName"] = null;
                 roomsKeys["roomLat"] = null;
                 roomsKeys["roomLon"] = null;
-                roomData.push(roomsKeys);
+                buildingRooms.push(roomsKeys);
             }
         }
-        return roomData;
+        return buildingRooms;
     }
 
     private setRoomType(attr: any, roomType: string, tableCell: DefaultTreeNode | any) {

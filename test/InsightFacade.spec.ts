@@ -1210,6 +1210,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
     it("Should add 2 valid rooms datasets", function () {
+        this.timeout(40000);
         const id: string = "rooms";
         const id2: string = "roomsSmaller";
         const expected: string[] = [id];
@@ -1701,6 +1702,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
 
     it("List 1 rooms dataset added", function () {
+        this.timeout(30000);
         const id: string = "rooms";
         const expectedAdd: string[] = [id];
         const coursesDataset: InsightDataset =
@@ -1715,6 +1717,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
                     });
             })
             .catch((err: any) => {
+                Log.error(err);
                 expect.fail(err, expectedAdd, "Should not have rejected");
             });
     });

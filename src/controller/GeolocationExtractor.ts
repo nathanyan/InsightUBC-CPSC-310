@@ -33,9 +33,7 @@ export default class GeolocationExtractor {
                         Log.error(error.message);
                         // Consume response data to free up memory
                         res.resume();
-                        // changed this line to reject with an error instead of just return so that can handle in caller
-                        reject(error);
-                        return;
+                        return reject(error);
                     }
 
                     res.setEncoding("utf8");
@@ -54,6 +52,7 @@ export default class GeolocationExtractor {
                         }
                     });
                 }).on("error", (e) => {
+                    Log.trace(`Failed request with: ${webService}`);
                     Log.error(`Got error: ${e.message}`);
                     return reject(e);
                 });

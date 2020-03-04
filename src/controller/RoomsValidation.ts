@@ -44,7 +44,7 @@ export default class RoomsValidation {
                         let relativePath: string = "." + dir.name.substr(5);
                         resolve({filePath: relativePath, data: result});
                     }).catch((err: any) => {
-                        reject(new InsightError());
+                        reject(new InsightError(err));
                     });
                 }));
             }
@@ -67,7 +67,7 @@ export default class RoomsValidation {
                     reject(new InsightError());
                 }
                 let roomChecker: RoomChecker = new RoomChecker(this.addedRoomData);
-                let roomData: JSON[] = [];
+                let roomData: {} = {};
                 let rooms: any = {};
                 // transform result files array into map
                 this.convertResultToMap(resultBuildings, rooms);
@@ -77,7 +77,7 @@ export default class RoomsValidation {
                 try {
                     indexHTMParsed = parse5.parse(indexToParse);
                 } catch {
-                    return;
+                    reject(new InsightError());
                 }
                 let htmlMainBody: any = roomChecker.findBodyToParse(indexHTMParsed);
                 let table: any = roomChecker.findSection(htmlMainBody);
@@ -97,10 +97,10 @@ export default class RoomsValidation {
                         reject(new InsightError());
                     }
                 }).catch((err: any) => {
-                    reject(new InsightError());
+                    reject(new InsightError(err));
                 });
             }).catch((err: any) => {
-                reject(new InsightError());
+                reject(new InsightError(err));
             });
         });
     }
@@ -111,37 +111,43 @@ export default class RoomsValidation {
         });
     }
 
-    public parseEachRoom(tableBody: any, rooms: any, roomData: JSON[], id: string): Promise<any> {
+    public parseEachRoom(tableBody: any, rooms: any, roomData: any, id: string): Promise<any> {
         return new Promise((resolve, reject) => {
             let roomChecker: RoomChecker = new RoomChecker(this.addedRoomData);
             this.getRooms(tableBody, roomChecker, rooms, roomData, id)
                 .then((formattedRoomsData: any[]) => {
                     resolve(formattedRoomsData);
                 }).catch((err: any) => {
-                reject(new InsightError());
+                    reject(new InsightError(err));
             });
         });
     }
 
-    private getRooms(tableBody: any, roomChecker: RoomChecker, rooms: any, roomData: JSON[], id: string): Promise<any> {
+    private getRooms(tableBody: any, roomChecker: RoomChecker, rooms: any, roomData: any, id: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            let roomsPromises: Array<Promise<any>> = [];
-            Promise.all(this.getInfoFromRooms(tableBody, roomChecker, rooms, roomData, roomsPromises, id))
-                .then((roomsGeolocationsPromises: Array<Promise<any>>) => {
-                    this.flattenData(roomsGeolocationsPromises).then((formattedArray: any[]) => {
-                        resolve(formattedArray);
-                    }).catch((err: any) => {
-                        reject(new InsightError());
-                    });
+            this.getInfoFromRooms(tableBody, roomChecker, rooms, roomData, id)
+                .then((finalData: any[]) => {
+                        resolve(finalData);
                 })
                 .catch((err: any) => {
-                    reject(new InsightError());
+                    reject(new InsightError(err));
                 });
         });
     }
 
-    private getInfoFromRooms(tableBody: any, roomChecker: RoomChecker, rooms: any, roomData: JSON[],
-                             roomsPromises: Array<Promise<any>> = [], id: string): Array<Promise<any>> {
+    private getInfoFromRooms(tableBody: any, roomChecker: RoomChecker, rooms: any, roomData: any, id: string):
+        Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.fillRoomData(tableBody, roomChecker, rooms, roomData);
+            this.makeHttpCallAndFormatKeys(roomData, id).then((res) => {
+                resolve(res);
+            }).catch((err: any) => {
+                reject(new InsightError(err));
+            });
+        });
+    }
+
+    private fillRoomData(tableBody: any, roomChecker: RoomChecker, rooms: any, roomData: any) {
         for (let row of tableBody.childNodes) {
             if (row.nodeName === "tr") {
                 let codeSet: boolean = false, roomShortName: string = null;
@@ -176,8 +182,8 @@ export default class RoomsValidation {
                                                 if (roomFullname === null || roomAddress === null) {
                                                     continue;
                                                 }
-                                                roomData = roomChecker.parseTableRooms(roomTableBody, roomFullname,
-                                                    roomAddress, roomShortName, roomHrefPath, roomData);
+                                                roomData[roomAddress] = roomChecker.parseTableRooms(roomTableBody,
+                                                    roomFullname, roomAddress, roomShortName, roomHrefPath);
                                             }
                                         }
                                     }
@@ -187,81 +193,62 @@ export default class RoomsValidation {
                     }
                 }
             }
-            roomsPromises.push(this.makeHttpCallAndFormatKeys(roomData, id));
         }
-        return roomsPromises;
     }
 
-    private flattenData(roomsPromises: Array<Promise<any>>): Promise<any> {
-        return new Promise((resolve, reject) => {
-            let formattedRooms: any[] = [];
-            Promise.all(roomsPromises).then((arrayOfarrays) => {
-                arrayOfarrays.forEach((arrayOfRooms: any[]) => {
-                    this.addEachRoom(arrayOfRooms, formattedRooms);
-                });
-                resolve(formattedRooms);
-            }).catch((err: any) => {
-                reject(new InsightError());
-            });
-        });
-    }
-
-    private addEachRoom(arrayOfarrays: any[], formmattedRooms: any[]): any[] {
-        arrayOfarrays.forEach((room: any) => {
-            formmattedRooms.push(room);
-        });
-        return formmattedRooms;
-    }
-
-    private makeHttpCallAndFormatKeys(roomData: JSON[], id: string): Promise<any> {
+    private makeHttpCallAndFormatKeys(roomData: any, id: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             let eachRoomHttpCall: Array<Promise<any>> = [];
             let geoExtractor: GeoParse = new GeoParse();
-            let lastAddress: string = "";
-            let lastPromise: Promise<any> = null;
-            roomData.forEach((room: any) => {
-                let address: string = room["roomAddress"];
-                if (address !== lastAddress) {
-                    lastPromise = geoExtractor.callGeolocater(address);
-                    lastAddress = address;
-                    eachRoomHttpCall.push(lastPromise);
-                } else {
-                    eachRoomHttpCall.push(lastPromise);
-                }
+            let buildings: string[] = Object.keys(roomData);
+            buildings.forEach((buildingAddress: any) => {
+                eachRoomHttpCall.push(geoExtractor.callGeolocater(buildingAddress));
             });
             this.formatDataForEachRoom(eachRoomHttpCall, roomData, id).then((formattedRoomData: any[]) => {
                 resolve(formattedRoomData);
             }).catch((err: any) => {
-                reject(new InsightError());
+                reject(new InsightError(err));
             });
         });
     }
 
-    private formatDataForEachRoom(eachRoomHttpCall: Array<Promise<any>>, roomData: JSON[], id: string): any {
+    private formatDataForEachRoom(eachRoomHttpCall: Array<Promise<any>>, roomData: any, id: string): any {
         return new Promise((resolve, reject) => {
             Promise.all(eachRoomHttpCall).then((geoResponses: any[]) => {
                 let finalRoomData: any[] = [];
                 let counter: number = 0;
-                geoResponses.forEach((geoResponse: any) => {
-                    let room: any = roomData[counter];
-                    room["roomLat"] = geoResponse["lat"];
-                    room["roomLon"] = geoResponse["lon"];
-                    if (!this.checkKeysAllExist(room)) {
-                        counter++;
-                        return;
-                    } else {
-                        finalRoomData = this.formatKeys(room, id, finalRoomData);
-                        counter++;
-                    }
-                });
+                let roomsOfEachBuilding: any[] = Object.values(roomData);
+                finalRoomData = this.addRoomLatLon(geoResponses, roomsOfEachBuilding, counter, finalRoomData, id);
                 resolve(finalRoomData);
             }).catch((err: any) => {
-                reject(new InsightError());
+                reject(new InsightError(err));
             });
         });
     }
 
-    public formatKeys(room: any, id: string, finalRoomData: any[]) {
+    private addRoomLatLon(geoResponses: any[], roomsOfEachBuilding: any[], counter: number, finalRoomData: any[],
+                          id: string): any[] {
+        geoResponses.forEach((geoResponse: any) => {
+            let len = roomsOfEachBuilding.length;
+            let roomsOfOneBuilding: any[] = roomsOfEachBuilding[counter];
+            roomsOfOneBuilding.forEach((room: any) => {
+                room["roomLat"] = geoResponse["lat"];
+                room["roomLon"] = geoResponse["lon"];
+                if (!this.checkKeysAllExist(room)) {
+                    return;
+                } else {
+                    finalRoomData = this.formatKeys(room, id, finalRoomData);
+                }
+            });
+            counter++;
+            if (counter === len) {
+                return finalRoomData;
+            }
+        });
+        return finalRoomData;
+    }
+
+    public formatKeys(room: any, id: string, finalRoomData: any[]): any[] {
         let formattedKeys: any = {};
         formattedKeys[id + "_" + "name"] = room["roomShortname"] + "_" + room["roomNumber"];
         formattedKeys[id + "_" + "fullname"] = room["roomFullname"];
