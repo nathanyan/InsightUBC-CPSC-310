@@ -45,7 +45,7 @@ export default class InsightFacade implements IInsightFacade {
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         let courseValidator: CoursesValidation = new CoursesValidation(this.addedData);
-        let roomValidator: RoomsValidation = new RoomsValidation(this.addedData);
+        let roomValidator: RoomsValidation = new RoomsValidation(this.addedRoomsData);
         let promisesListCourses: Array<Promise<any>> = [];
         let promisesListRooms: Array<Promise<any>> = [];
         return new Promise((resolve, reject) => {
