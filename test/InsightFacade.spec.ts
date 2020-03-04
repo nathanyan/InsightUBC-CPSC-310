@@ -1210,15 +1210,14 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
     it("Should add 2 valid rooms datasets", function () {
-        this.timeout(40000);
         const id: string = "rooms";
-        const id2: string = "roomsSmaller";
+        const id2: string = "rooms2";
         const expected: string[] = [id];
         const expected2: string[] = [id, id2];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms)
             .then((result: string[]) => {
                 expect(result).to.deep.equal(expected);
-                return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms)
+                return insightFacade.addDataset(id2, datasets["rooms"], InsightDatasetKind.Rooms)
                     .then((result2: string[]) => {
                         expect(result2).to.deep.equal(expected2);
                     })
@@ -1245,7 +1244,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
     it("Should reject invalid then add valid", function () {
         const id: string = "roomsNoneValid";
-        const id2: string = "roomsSmaller";
+        const id2: string = "rooms";
         const expected: string[] = [id2];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms)
             .then((result: string[]) => {
@@ -1273,14 +1272,14 @@ describe("InsightFacade Add/Remove Dataset", function () {
                 expect(result).to.deep.equal(expected);
                 return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms)
                     .then((result2: string[]) => {
-                        expect(result2).to.deep.equal(expected2);
+                        expect(result2).to.equal(expected2);
                     })
                     .catch((err: any) => {
-                        expect.fail(err, expected, "Should not have rejected");
+                        expect.fail(err, expected, "Should not have rejected inner");
                     });
             })
             .catch((err: any) => {
-                expect.fail(err, expected, "Should not have rejected");
+                expect.fail(err, expected, "Should not have rejected outer");
             });
     });
 
@@ -1311,7 +1310,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     it("Should add a valid rooms dataset with whitespace in front of id", function () {
         const id: string = " rooms";
         const expected: string[] = [id];
-        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms)
+        return insightFacade.addDataset(id, datasets["rooms"], InsightDatasetKind.Rooms)
             .then((result: string[]) => {
                 expect(result).to.deep.equal(expected);
             })
@@ -1323,7 +1322,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     it("Should add a valid rooms dataset with whitespace in middle of id", function () {
         const id: string = "ro oms";
         const expected: string[] = [id];
-        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms)
+        return insightFacade.addDataset(id, datasets["rooms"], InsightDatasetKind.Rooms)
             .then((result: string[]) => {
                 expect(result).to.deep.equal(expected);
             })
@@ -1335,7 +1334,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     it("Should add a valid rooms dataset with whitespace at end of id", function () {
         const id: string = "rooms ";
         const expected: string[] = [id];
-        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms)
+        return insightFacade.addDataset(id, datasets["rooms"], InsightDatasetKind.Rooms)
             .then((result: string[]) => {
                 expect(result).to.deep.equal(expected);
             })
@@ -1450,7 +1449,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
     it("Should reject a dataset with existing id when multiple added", function () {
         const id: string = "rooms";
-        const id2: string = "roomsSmaller";
+        const id2: string = "rooms2";
         const id3: string = "courses";
         const expected1: string[] = [id];
         const expected2: string[] = [id, id2];
@@ -1458,7 +1457,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms)
             .then((result: string[]) => {
                 expect(result).to.deep.equal(expected1);
-                return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms)
+                return insightFacade.addDataset(id2, datasets["rooms"], InsightDatasetKind.Rooms)
                     .then((result2: string[]) => {
                         expect(result2).to.deep.equal(expected2);
                         return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses)
@@ -1566,9 +1565,11 @@ describe("InsightFacade Add/Remove Dataset", function () {
                 expect(result).to.deep.equal(collection);
                 return insightFacade.removeDataset(id)
                     .then((result2: string) => {
+                        Log.trace(result2);
                         expect(result2).to.deep.equal(id);
                     })
                     .catch((err: any) => {
+                        Log.trace(err);
                         expect.fail(err, id, "Should have removed valid dataset");
                     });
             })
@@ -1671,20 +1672,20 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
     it("Should remove valid rooms dataset while existing", function () {
-        const id: string = "roomsSmaller";
-        const id2: string = "roomsOverallValid";
+        const id: string = "rooms";
+        const id2: string = "rooms2";
         const expected: string[] = [id];
         const expected2: string[] = [id, id2];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms)
             .then((result: string[]) => {
                 expect(result).to.deep.equal(expected);
-                return insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms)
+                return insightFacade.addDataset(id2, datasets["rooms"], InsightDatasetKind.Rooms)
                     .then((result2: string[]) => {
                         expect(result2).to.deep.equal(expected2);
                         return insightFacade.removeDataset(id2)
                             .then(thenInner)
                             .catch(catchInner);
-                        function catchInner(err: InsightError) {
+                        function catchInner(err: any) {
                             expect.fail(err, id2, "Should have removed existing dataset");
                         }
                         function thenInner(result3: string) {

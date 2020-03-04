@@ -10,10 +10,12 @@ import * as fs from "fs";
  */
 export default class CoursesValidation {
     private addedData: any;
+    private  addedRoomsData: any;
 
-    constructor(memoryData: any) {
+    constructor(memoryData: any, memoryRoomsData: any) {
         Log.trace("Validating Courses");
         this.addedData = memoryData;
+        this.addedRoomsData = memoryRoomsData;
     }
 
     public convertClassesToString(folder: JSZip, coursesFolderExists: boolean, courseValidator: CoursesValidation,
@@ -73,7 +75,14 @@ export default class CoursesValidation {
                 } catch (e) {
                     reject(new InsightError());
                 }
-                resolve(Object.keys(this.addedData));
+                let allKeys: string[] = [];
+                Object.keys(this.addedData).forEach((course: any) => {
+                    allKeys.push(course);
+                });
+                Object.keys(this.addedRoomsData).forEach((room: any) => {
+                    allKeys.push(room);
+                });
+                resolve(allKeys);
             } else {
                 reject(new InsightError());
             }

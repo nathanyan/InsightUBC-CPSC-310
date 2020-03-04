@@ -4,7 +4,6 @@ import * as parse5 from "parse5";
 import * as fs from "fs";
 import RoomChecker from "./RoomChecker";
 import GeoParse from "./GeoParse";
-
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -12,8 +11,10 @@ import GeoParse from "./GeoParse";
  */
 export default class RoomsValidation {
     private addedRoomData: any;
-    constructor(memoryData: any) {
-        this.addedRoomData = memoryData;
+    private addedData: any;
+    constructor(memoryRoomData: any, memoryCoursesData: any) {
+        this.addedRoomData = memoryRoomData;
+        this.addedData = memoryCoursesData;
     }
 
     public convertRoomsToString(folder2: JSZip, roomsFolderExists: boolean, roomValidator: RoomsValidation,
@@ -92,7 +93,8 @@ export default class RoomsValidation {
                         } catch (e) {
                             reject(new InsightError());
                         }
-                        resolve(Object.keys(this.addedRoomData));
+                        let allKeys = this.getTotalKeysToOneArray();
+                        resolve(allKeys);
                     } else {
                         reject(new InsightError());
                     }
@@ -103,6 +105,17 @@ export default class RoomsValidation {
                 reject(new InsightError(err));
             });
         });
+    }
+
+    private getTotalKeysToOneArray(): string[] {
+        let allKeys: string[] = [];
+        Object.keys(this.addedData).forEach((course: any) => {
+            allKeys.push(course);
+        });
+        Object.keys(this.addedRoomData).forEach((room: any) => {
+            allKeys.push(room);
+        });
+        return allKeys;
     }
 
     public convertResultToMap(resultBuildings: any[], rooms: any) {

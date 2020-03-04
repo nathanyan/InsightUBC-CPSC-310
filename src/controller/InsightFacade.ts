@@ -44,8 +44,8 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        let courseValidator: CoursesValidation = new CoursesValidation(this.addedData);
-        let roomValidator: RoomsValidation = new RoomsValidation(this.addedRoomsData);
+        let courseValidator: CoursesValidation = new CoursesValidation(this.addedData, this.addedRoomsData);
+        let roomValidator: RoomsValidation = new RoomsValidation(this.addedRoomsData, this.addedData);
         let promisesListCourses: Array<Promise<any>> = [];
         let promisesListRooms: Array<Promise<any>> = [];
         return new Promise((resolve, reject) => {
@@ -84,16 +84,13 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public removeDataset(id: string): Promise<string> {
-        let courseValidator: CoursesValidation = new CoursesValidation(this.addedData);
-        let roomsValidator: RoomsValidation = new RoomsValidation(this.addedRoomsData);
+        let courseValidator: CoursesValidation = new CoursesValidation(this.addedData, this.addedRoomsData);
+        let roomsValidator: RoomsValidation = new RoomsValidation(this.addedRoomsData, this.addedData);
         return new Promise((resolve, reject) => {
             if (!courseValidator.checkValidIdToRemove(id)) {
                 reject(new InsightError());
             }
-            if (!courseValidator.checkIdExists(id)) {
-                reject(new NotFoundError());
-            }
-            if (!roomsValidator.checkValidId(id)) {
+            if (!courseValidator.checkIdExists(id) && roomsValidator.checkValidId(id)) {
                 reject(new NotFoundError());
             }
             this.checkCourses(id, resolve);
@@ -172,7 +169,6 @@ export default class InsightFacade implements IInsightFacade {
             dataValues["id"] = key;
             dataValues["numRows"] = this.addedRoomsData[key].length;
             dataValues["kind"] = InsightDatasetKind.Rooms;
-            // dataValues = dataValues as InsightDataset;
             currentDatasets.push(dataValues);
         });
     }
@@ -183,7 +179,6 @@ export default class InsightFacade implements IInsightFacade {
             dataValues["id"] = key;
             dataValues["numRows"] = this.addedData[key].length;
             dataValues["kind"] = InsightDatasetKind.Courses;
-            // dataValues = dataValues as InsightDataset;
             currentDatasets.push(dataValues);
         });
     }
