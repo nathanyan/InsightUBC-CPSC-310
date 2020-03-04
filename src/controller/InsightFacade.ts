@@ -1,11 +1,18 @@
 import Log from "../Util";
 import * as JSZip from "jszip";
 import * as fs from "fs";
-import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
-import {InsightError, NotFoundError} from "./IInsightFacade";
+import {
+    IInsightFacade,
+    InsightDataset,
+    InsightDatasetKind,
+    InsightError,
+    NotFoundError,
+    ResultTooLargeError
+} from "./IInsightFacade";
 import PerformQueryValid from "./PerformQueryValid";
 import PerformQueryFilterDisplay from "./PerformQueryFilterDisplay";
 import CoursesValidation from "./CoursesValidation";
+import RoomsValidation from "./RoomsValidation";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -14,82 +21,108 @@ import CoursesValidation from "./CoursesValidation";
  */
 export default class InsightFacade implements IInsightFacade {
     private addedData: any;
+    private addedRoomsData: any;
     private uniqueIDsInQuery: any[];
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
         this.addedData = {};
+        this.addedRoomsData = {};
         this.uniqueIDsInQuery = [];
         fs.readdirSync("./data/").forEach((file: string) => {
             let fileData: string = fs.readFileSync(file).toString();
             let parsedFile: any = JSON.parse(fileData);
-            let key: string = Object.keys(parsedFile)[0];
-            this.addedData[key] = parsedFile[key];
+            for (let dataset of parsedFile) {
+                if (dataset["kind"] === InsightDatasetKind.Courses) {
+                    this.addedData[dataset["id"]] = dataset["data"];
+                }
+                if (dataset["kind"] === InsightDatasetKind.Rooms) {
+                    this.addedRoomsData[dataset["id"]] = dataset["data"];
+                }
+            }
         });
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        let courseValidator: CoursesValidation = new CoursesValidation(this.addedData);
-        let promisesList: Array<Promise<any>> = [];
+        let courseValidator: CoursesValidation = new CoursesValidation(this.addedData, this.addedRoomsData);
+        let roomValidator: RoomsValidation = new RoomsValidation(this.addedRoomsData, this.addedData);
+        let promisesListCourses: Array<Promise<any>> = [];
+        let promisesListRooms: Array<Promise<any>> = [];
         return new Promise((resolve, reject) => {
-            if (!courseValidator.checkValidId(id)) {
+            if (!courseValidator.checkValidId(id) || !roomValidator.checkValidId(id)) {
                 reject(new InsightError());
             } else {
                 new JSZip().loadAsync(content, {base64: true}).then((unzipped) => {
-                    let folder = unzipped.folder("courses");
-                    let coursesFolderExists = false;
-                    Object.values(folder.files).forEach((dir) => {
-                        coursesFolderExists = courseValidator.checkIfDirectory(dir, coursesFolderExists);
-                        courseValidator.checkIfCoursesExist(dir, coursesFolderExists, promisesList);
-                    });
-                    Promise.all(promisesList).then((resultFiles: string[]) => {
-                        if (resultFiles.length === 0) {
-                            reject(new InsightError());
-                        }
-                        let data: JSON[] = [];
-                        courseValidator.extractDataFromCourses(resultFiles, id, data);
-                        if (data.length !== 0) {
-                            this.addedData[id] = data;
-                            let stringifiedFile = JSON.stringify(this.addedData);
-                            try {
-                                fs.writeFileSync("./data/" + id, stringifiedFile);
-                            } catch (e) {
+                    if (kind === InsightDatasetKind.Courses) {
+                        let folder = unzipped.folder("courses");
+                        let coursesFolderExists = false;
+                        courseValidator.convertClassesToString(folder, coursesFolderExists, courseValidator,
+                            promisesListCourses);
+                        courseValidator.checkEachCourse(promisesListCourses, reject, courseValidator, id, kind,
+                            resolve);
+                    }
+                    if (kind === InsightDatasetKind.Rooms) {
+                        let folder2 = unzipped.folder("rooms");
+                        let roomsFolderExists = false;
+                        let indexFileExists = false;
+                        indexFileExists = roomValidator.convertRoomsToString(folder2, roomsFolderExists, roomValidator,
+                            indexFileExists, promisesListRooms);
+                        roomValidator.checkEachRoom(promisesListRooms, indexFileExists, roomValidator, id, kind)
+                            .then((finalDataAllRooms: any[]) => {
+                                resolve(finalDataAllRooms);
+                            })
+                            .catch((err: any) => {
+                                Log.error(err);
                                 reject(new InsightError());
-                            }
-                            resolve(Object.keys(this.addedData));
-                        } else {
-                            reject(new InsightError());
-                        }
-                    }).catch((err: any) => {
-                        reject(new InsightError());
-                    });
+                            });
+                    }
                 }).catch((err: any) => {
-                    reject(new InsightError());
+                    reject(new InsightError(err));
                 });
             }
         });
     }
 
     public removeDataset(id: string): Promise<string> {
-        let courseValidator: CoursesValidation = new CoursesValidation(this.addedData);
+        let courseValidator: CoursesValidation = new CoursesValidation(this.addedData, this.addedRoomsData);
+        let roomsValidator: RoomsValidation = new RoomsValidation(this.addedRoomsData, this.addedData);
         return new Promise((resolve, reject) => {
             if (!courseValidator.checkValidIdToRemove(id)) {
                 reject(new InsightError());
             }
-            if (!courseValidator.checkIdExists(id)) {
+            if (!courseValidator.checkIdExists(id) && roomsValidator.checkValidId(id)) {
                 reject(new NotFoundError());
             }
-            Object.keys(this.addedData).forEach((idKey: string) => {
-                if (idKey === id) {
-                    fs.unlink("./data/" + idKey, (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                        delete this.addedData[id];
-                        resolve(id);
-                    });
-                }
-            });
+            this.checkCourses(id, resolve);
+            this.checkRooms(id, resolve);
+        });
+    }
+
+    private checkRooms(id: string, resolve: (value?: (PromiseLike<string> | string)) => void) {
+        Object.keys(this.addedRoomsData).forEach((idKey: string) => {
+            if (idKey === id) {
+                fs.unlink("./data/" + idKey, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                    delete this.addedRoomsData[id];
+                    resolve(id);
+                });
+            }
+        });
+    }
+
+    private checkCourses(id: string, resolve: (value?: (PromiseLike<string> | string)) => void) {
+        Object.keys(this.addedData).forEach((idKey: string) => {
+            if (idKey === id) {
+                fs.unlink("./data/" + idKey, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                    delete this.addedData[id];
+                    resolve(id);
+                });
+            }
         });
     }
 
@@ -122,15 +155,31 @@ export default class InsightFacade implements IInsightFacade {
     public listDatasets(): Promise<InsightDataset[]> {
         return new Promise((resolve) => {
             let currentDatasets: InsightDataset[] = [];
-            let allData: string[] = Object.keys(this.addedData);
-            allData.forEach((key: string) => {
-                let dataValues: any = {};
-                dataValues["id"] = key;
-                dataValues["numRows"] = this.addedData[key].length;
-                dataValues["kind"] = InsightDatasetKind.Courses;
-                currentDatasets.push(dataValues);
-            });
+            let allCourseData: string[] = Object.keys(this.addedData);
+            let allRoomsData: string[] = Object.keys(this.addedRoomsData);
+            this.listCoursesData(allCourseData, currentDatasets);
+            this.listRoomsData(allRoomsData, currentDatasets);
             resolve(currentDatasets);
+        });
+    }
+
+    private listRoomsData(allRoomsData: string[], currentDatasets: InsightDataset[]) {
+        allRoomsData.forEach((key: string) => {
+            let dataValues: any = {};
+            dataValues["id"] = key;
+            dataValues["numRows"] = this.addedRoomsData[key].length;
+            dataValues["kind"] = InsightDatasetKind.Rooms;
+            currentDatasets.push(dataValues);
+        });
+    }
+
+    private listCoursesData(allCourseData: string[], currentDatasets: InsightDataset[]) {
+        allCourseData.forEach((key: string) => {
+            let dataValues: any = {};
+            dataValues["id"] = key;
+            dataValues["numRows"] = this.addedData[key].length;
+            dataValues["kind"] = InsightDatasetKind.Courses;
+            currentDatasets.push(dataValues);
         });
     }
 }
