@@ -1,0 +1,34 @@
+{
+    "title": "Rooms - invalid query, rooms asks for a courses skey",
+    "query": {
+	  "WHERE": {
+	    "AND": [
+	      {
+	        "IS": {
+	          "rooms_instructor": "*Chair*"
+	        }
+	      },
+	      {
+	        "LT": {
+	          "rooms_seats": 15
+	        }
+	      }
+	    ]
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "rooms_shortname",
+	      "rooms_number"
+	    ],
+	    "ORDER": {
+	      "dir": "UP",
+	      "keys": [
+	        "rooms_shortname",
+	        "rooms_number"
+	      ]
+	    }
+	  }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

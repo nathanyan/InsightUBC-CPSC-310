@@ -1,0 +1,278 @@
+{
+    "title": "Rooms - test with no transformations, testing furniture, href, type, seats, lon and lat",
+    "query": {
+	  "WHERE": {
+	    "AND": [
+	      {
+	        "IS": {
+	          "rooms_furniture": "*Tables*"
+	        }
+	      },
+	      {
+	        "GT": {
+	          "rooms_seats": 100
+	        }
+	      }
+	    ]
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "rooms_furniture",
+	      "rooms_href",
+	      "rooms_type",
+	      "rooms_seats",
+	      "rooms_lon",
+	      "rooms_lat"
+	    ],
+	    "ORDER": {
+	      "dir": "DOWN",
+	      "keys": [
+	        "rooms_furniture"
+	      ]
+	    }
+	  }
+    },
+    "isQueryValid": true,
+    "result": [
+      {
+         "rooms_furniture":"Classroom-Movable Tables & Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-261",
+         "rooms_type":"Open Design General Purpose",
+         "rooms_seats":112,
+         "rooms_lon":-123.2521,
+         "rooms_lat":49.26766
+      },
+      {
+         "rooms_furniture":"Classroom-Movable Tables & Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/OSBO-A",
+         "rooms_type":"Open Design General Purpose",
+         "rooms_seats":442,
+         "rooms_lon":-123.24467,
+         "rooms_lat":49.26047
+      },
+      {
+         "rooms_furniture":"Classroom-Movable Tables & Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SRC-220A",
+         "rooms_type":"TBD",
+         "rooms_seats":299,
+         "rooms_lon":-123.24894,
+         "rooms_lat":49.2683
+      },
+      {
+         "rooms_furniture":"Classroom-Movable Tables & Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SRC-220B",
+         "rooms_type":"TBD",
+         "rooms_seats":299,
+         "rooms_lon":-123.24894,
+         "rooms_lat":49.2683
+      },
+      {
+         "rooms_furniture":"Classroom-Movable Tables & Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SRC-220C",
+         "rooms_type":"TBD",
+         "rooms_seats":299,
+         "rooms_lon":-123.24894,
+         "rooms_lat":49.2683
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/CHBE-101",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":200,
+         "rooms_lon":-123.24718,
+         "rooms_lat":49.26228
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/FRDM-153",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":160,
+         "rooms_lon":-123.24608,
+         "rooms_lat":49.26541
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/ANGU-098",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":260,
+         "rooms_lon":-123.25364,
+         "rooms_lat":49.26486
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-110",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":120,
+         "rooms_lon":-123.24807,
+         "rooms_lat":49.26125
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-310",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":160,
+         "rooms_lon":-123.24807,
+         "rooms_lat":49.26125
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1001",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":350,
+         "rooms_lon":-123.24494,
+         "rooms_lat":49.26236
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1002",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":350,
+         "rooms_lon":-123.24494,
+         "rooms_lat":49.26236
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1003",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":125,
+         "rooms_lon":-123.24494,
+         "rooms_lat":49.26236
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-1101",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":236,
+         "rooms_lon":-123.24342,
+         "rooms_lat":49.26229
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-1201",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":167,
+         "rooms_lon":-123.24342,
+         "rooms_lat":49.26229
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-121",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":187,
+         "rooms_lon":-123.25431,
+         "rooms_lat":49.26293
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-122",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":188,
+         "rooms_lon":-123.25431,
+         "rooms_lat":49.26293
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-221",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":190,
+         "rooms_lon":-123.25431,
+         "rooms_lat":49.26293
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-222",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":190,
+         "rooms_lon":-123.25431,
+         "rooms_lat":49.26293
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-1",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":120,
+         "rooms_lon":-123.24673,
+         "rooms_lat":49.26478
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-4",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":120,
+         "rooms_lon":-123.24673,
+         "rooms_lat":49.26478
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Movable Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-5",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":120,
+         "rooms_lon":-123.24673,
+         "rooms_lat":49.26478
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Fixed Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-A202",
+         "rooms_type":"Case Style",
+         "rooms_seats":108,
+         "rooms_lon":-123.25468,
+         "rooms_lat":49.26826
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Fixed Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-A203",
+         "rooms_type":"Case Style",
+         "rooms_seats":108,
+         "rooms_lon":-123.25468,
+         "rooms_lat":49.26826
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Fixed Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/HEBB-100",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":375,
+         "rooms_lon":-123.25165,
+         "rooms_lat":49.2661
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Fixed Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-182",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":154,
+         "rooms_lon":-123.2521,
+         "rooms_lat":49.26766
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Fixed Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSK-200",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":205,
+         "rooms_lon":-123.25533,
+         "rooms_lat":49.26545
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Fixed Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSK-201",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":183,
+         "rooms_lon":-123.25533,
+         "rooms_lat":49.26545
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Fixed Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCLD-202",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":123,
+         "rooms_lon":-123.24935,
+         "rooms_lat":49.26176
+      },
+      {
+         "rooms_furniture":"Classroom-Fixed Tables/Fixed Chairs",
+         "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCLD-228",
+         "rooms_type":"Tiered Large Group",
+         "rooms_seats":136,
+         "rooms_lon":-123.24935,
+         "rooms_lat":49.26176
+      }
+   ]
+}

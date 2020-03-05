@@ -1,0 +1,335 @@
+{
+    "title": "Rooms - test with no transformations, testing fullname, shortname, number, address, name",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "rooms_furniture": "*Chair*"
+                    }
+                },
+                {
+                    "LT": {
+                        "rooms_seats": 15
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_fullname",
+                "rooms_shortname",
+                "rooms_number",
+                "rooms_address",
+                "rooms_name",
+                "rooms_href"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "rooms_fullname",
+                    "rooms_number"
+                ]
+            }
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "rooms_fullname":"Woodward (Instructional Resources Centre-IRC)",
+            "rooms_shortname":"WOOD",
+            "rooms_number":"G65",
+            "rooms_address":"2194 Health Sciences Mall",
+            "rooms_name":"WOOD_G65",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-G65"
+        },
+        {
+            "rooms_fullname":"Woodward (Instructional Resources Centre-IRC)",
+            "rooms_shortname":"WOOD",
+            "rooms_number":"G59",
+            "rooms_address":"2194 Health Sciences Mall",
+            "rooms_name":"WOOD_G59",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-G59"
+        },
+        {
+            "rooms_fullname":"Woodward (Instructional Resources Centre-IRC)",
+            "rooms_shortname":"WOOD",
+            "rooms_number":"G57",
+            "rooms_address":"2194 Health Sciences Mall",
+            "rooms_name":"WOOD_G57",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-G57"
+        },
+        {
+            "rooms_fullname":"Woodward (Instructional Resources Centre-IRC)",
+            "rooms_shortname":"WOOD",
+            "rooms_number":"G55",
+            "rooms_address":"2194 Health Sciences Mall",
+            "rooms_name":"WOOD_G55",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-G55"
+        },
+        {
+            "rooms_fullname":"Woodward (Instructional Resources Centre-IRC)",
+            "rooms_shortname":"WOOD",
+            "rooms_number":"G53",
+            "rooms_address":"2194 Health Sciences Mall",
+            "rooms_name":"WOOD_G53",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-G53"
+        },
+        {
+            "rooms_fullname":"Woodward (Instructional Resources Centre-IRC)",
+            "rooms_shortname":"WOOD",
+            "rooms_number":"G44",
+            "rooms_address":"2194 Health Sciences Mall",
+            "rooms_name":"WOOD_G44",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-G44"
+        },
+        {
+            "rooms_fullname":"School of Population and Public Health",
+            "rooms_shortname":"SPPH",
+            "rooms_number":"B138",
+            "rooms_address":"2206 East Mall",
+            "rooms_name":"SPPH_B138",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SPPH-B138"
+        },
+        {
+            "rooms_fullname":"School of Population and Public Health",
+            "rooms_shortname":"SPPH",
+            "rooms_number":"B136",
+            "rooms_address":"2206 East Mall",
+            "rooms_name":"SPPH_B136",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SPPH-B136"
+        },
+        {
+            "rooms_fullname":"Pharmaceutical Sciences Building",
+            "rooms_shortname":"PHRM",
+            "rooms_number":"3124",
+            "rooms_address":"2405 Wesbrook Mall",
+            "rooms_name":"PHRM_3124",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-3124"
+        },
+        {
+            "rooms_fullname":"Pharmaceutical Sciences Building",
+            "rooms_shortname":"PHRM",
+            "rooms_number":"3122",
+            "rooms_address":"2405 Wesbrook Mall",
+            "rooms_name":"PHRM_3122",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-3122"
+        },
+        {
+            "rooms_fullname":"Pharmaceutical Sciences Building",
+            "rooms_shortname":"PHRM",
+            "rooms_number":"3120",
+            "rooms_address":"2405 Wesbrook Mall",
+            "rooms_name":"PHRM_3120",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-3120"
+        },
+        {
+            "rooms_fullname":"Pharmaceutical Sciences Building",
+            "rooms_shortname":"PHRM",
+            "rooms_number":"3118",
+            "rooms_address":"2405 Wesbrook Mall",
+            "rooms_name":"PHRM_3118",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-3118"
+        },
+        {
+            "rooms_fullname":"Pharmaceutical Sciences Building",
+            "rooms_shortname":"PHRM",
+            "rooms_number":"3116",
+            "rooms_address":"2405 Wesbrook Mall",
+            "rooms_name":"PHRM_3116",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-3116"
+        },
+        {
+            "rooms_fullname":"Pharmaceutical Sciences Building",
+            "rooms_shortname":"PHRM",
+            "rooms_number":"3115",
+            "rooms_address":"2405 Wesbrook Mall",
+            "rooms_name":"PHRM_3115",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-3115"
+        },
+        {
+            "rooms_fullname":"Pharmaceutical Sciences Building",
+            "rooms_shortname":"PHRM",
+            "rooms_number":"3114",
+            "rooms_address":"2405 Wesbrook Mall",
+            "rooms_name":"PHRM_3114",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-3114"
+        },
+        {
+            "rooms_fullname":"Pharmaceutical Sciences Building",
+            "rooms_shortname":"PHRM",
+            "rooms_number":"3112",
+            "rooms_address":"2405 Wesbrook Mall",
+            "rooms_name":"PHRM_3112",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-3112"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360M",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360M",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360M"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360L",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360L",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360L"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360K",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360K",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360K"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360J",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360J",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360J"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360H",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360H",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360H"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360G",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360G",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360G"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360F",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360F",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360F"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360E",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360E",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360E"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360D",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360D",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360D"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360C",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360C",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360C"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360B",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360B",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360B"
+        },
+        {
+            "rooms_fullname":"MacMillan",
+            "rooms_shortname":"MCML",
+            "rooms_number":"360A",
+            "rooms_address":"2357 Main Mall",
+            "rooms_name":"MCML_360A",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCML-360A"
+        },
+        {
+            "rooms_fullname":"Jack Bell Building for the School of Social Work",
+            "rooms_shortname":"SOWK",
+            "rooms_number":"122",
+            "rooms_address":"2080 West Mall",
+            "rooms_name":"SOWK_122",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SOWK-122"
+        },
+        {
+            "rooms_fullname":"Irving K Barber Learning Centre",
+            "rooms_shortname":"IBLC",
+            "rooms_number":"266",
+            "rooms_address":"1961 East Mall V6T 1Z1",
+            "rooms_name":"IBLC_266",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-266"
+        },
+        {
+            "rooms_fullname":"Irving K Barber Learning Centre",
+            "rooms_shortname":"IBLC",
+            "rooms_number":"265",
+            "rooms_address":"1961 East Mall V6T 1Z1",
+            "rooms_name":"IBLC_265",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-265"
+        },
+        {
+            "rooms_fullname":"Irving K Barber Learning Centre",
+            "rooms_shortname":"IBLC",
+            "rooms_number":"264",
+            "rooms_address":"1961 East Mall V6T 1Z1",
+            "rooms_name":"IBLC_264",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-264"
+        },
+        {
+            "rooms_fullname":"Irving K Barber Learning Centre",
+            "rooms_shortname":"IBLC",
+            "rooms_number":"263",
+            "rooms_address":"1961 East Mall V6T 1Z1",
+            "rooms_name":"IBLC_263",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-263"
+        },
+        {
+            "rooms_fullname":"Irving K Barber Learning Centre",
+            "rooms_shortname":"IBLC",
+            "rooms_number":"195",
+            "rooms_address":"1961 East Mall V6T 1Z1",
+            "rooms_name":"IBLC_195",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-195"
+        },
+        {
+            "rooms_fullname":"Irving K Barber Learning Centre",
+            "rooms_shortname":"IBLC",
+            "rooms_number":"194",
+            "rooms_address":"1961 East Mall V6T 1Z1",
+            "rooms_name":"IBLC_194",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-194"
+        },
+        {
+            "rooms_fullname":"Irving K Barber Learning Centre",
+            "rooms_shortname":"IBLC",
+            "rooms_number":"193",
+            "rooms_address":"1961 East Mall V6T 1Z1",
+            "rooms_name":"IBLC_193",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-193"
+        },
+        {
+            "rooms_fullname":"Irving K Barber Learning Centre",
+            "rooms_shortname":"IBLC",
+            "rooms_number":"192",
+            "rooms_address":"1961 East Mall V6T 1Z1",
+            "rooms_name":"IBLC_192",
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-192"
+        }
+    ]
+}

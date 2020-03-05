@@ -1,0 +1,33 @@
+{
+    "title": "Sort - invalid query - keys key not one of column",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title",
+	      "overallAvg"
+	    ],
+	      "ORDER": {
+	        "dir": "UP",
+	          "keys": [
+	            "string"
+	          ]
+	      }
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "AVG": "courses_avg"
+	        }
+	      }
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

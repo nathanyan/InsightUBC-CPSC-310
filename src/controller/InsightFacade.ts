@@ -12,6 +12,7 @@ import {
 import PerformQueryValid from "./PerformQueryValid";
 import PerformQueryFilterDisplay from "./PerformQueryFilterDisplay";
 import CoursesValidation from "./CoursesValidation";
+import PerformQueryTransformations from "./PerformQueryTransformations";
 import RoomsValidation from "./RoomsValidation";
 
 /**
@@ -23,12 +24,16 @@ export default class InsightFacade implements IInsightFacade {
     private addedData: any;
     private addedRoomsData: any;
     private uniqueIDsInQuery: any[];
+    private applyKeysInQuery: any[];
+    private groupKeysInQuery: any[];
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
         this.addedData = {};
         this.addedRoomsData = {};
         this.uniqueIDsInQuery = [];
+        this.applyKeysInQuery = [];
+        this.groupKeysInQuery = [];
         fs.readdirSync("./data/").forEach((file: string) => {
             let fileData: string = fs.readFileSync(file).toString();
             let parsedFile: any = JSON.parse(fileData);
@@ -128,24 +133,40 @@ export default class InsightFacade implements IInsightFacade {
 
     public performQuery(query: any): Promise <any[]> {
         return new Promise((resolve, reject) => {
-            if (!PerformQueryValid.isQueryValid(query, this.addedData, this.uniqueIDsInQuery)) {
-                this.uniqueIDsInQuery.pop();
+            if (!PerformQueryValid.isQueryValid(query, this.addedData, this.uniqueIDsInQuery, this.applyKeysInQuery,
+                this.groupKeysInQuery, this.addedRoomsData)) {
+                this.uniqueIDsInQuery = [];
+                this.applyKeysInQuery = [];
+                this.groupKeysInQuery = [];
                 return reject(new InsightError("Query is invalid"));
             }
             let idToQuery: string = this.uniqueIDsInQuery[0];           // only 1 id in uniqueIDsInQuery = one to query
-            let datasetToParse: any[] = this.addedData[idToQuery];      // the only dataset we need to look at
+            let datasetToParse: any[] = [];
+            if (idToQuery in this.addedData) {
+                datasetToParse = this.addedData[idToQuery];      // the only dataset we need to look at
+            } else {
+                datasetToParse = this.addedRoomsData[idToQuery];
+            }
             let resultSoFar: any[] = [];
             let where: any = query["WHERE"];
             resultSoFar = PerformQueryFilterDisplay.filterCourseSections(datasetToParse, where);
+            if ("TRANSFORMATIONS" in query) {       // put sections into groups
+                let transformations: any = query["TRANSFORMATIONS"];
+                resultSoFar = PerformQueryTransformations.groupAndApply(resultSoFar, transformations);
+            }
             if (resultSoFar.length > 5000) {
                 Log.trace(resultSoFar);
-                this.uniqueIDsInQuery.pop();
+                this.uniqueIDsInQuery = [];
+                this.applyKeysInQuery = [];
+                this.groupKeysInQuery = [];
                 return reject (new ResultTooLargeError());
             } else {
                 let options: any = query["OPTIONS"];
                 let finalResult: any[];
                 finalResult = PerformQueryFilterDisplay.displayByOptions(resultSoFar, options);
-                this.uniqueIDsInQuery.pop();
+                this.uniqueIDsInQuery = [];
+                this.applyKeysInQuery = [];
+                this.groupKeysInQuery = [];
                 Log.trace(finalResult);
                 return resolve(finalResult);
             }

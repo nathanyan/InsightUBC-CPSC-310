@@ -4,10 +4,14 @@ import {InsightError, NotFoundError} from "./IInsightFacade";
 
 let queryKeysAll: string[] = ["WHERE", "OPTIONS"];
 let filterKeysAll: string[] = ["GT", "LT", "EQ", "IS", "NOT", "AND", "OR"];
-let mKeyFieldsAll: string[] = ["avg", "pass", "fail", "audit", "year"];
-let sKeyFieldsAll: string[] = ["dept", "id", "instructor", "title", "uuid"];
-let sKeysMKeysAll: string[] = ["dept", "id", "instructor", "title", "uuid", "avg", "pass", "fail", "audit", "year"];
+let mKeyFieldsAll: string[] = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
+let sKeyFieldsAll: string[] = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number"
+    , "name", "address", "type", "furniture", "href"];
+let sKeysMKeysAll: string[] = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number"
+    , "name", "address", "type", "furniture", "href", "avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
 let optionKeysAll: string[] = ["COLUMNS", "ORDER"];
+let transformationKeysAll: string[] = ["GROUP", "APPLY"];
+let applyTokensAll: string[] = ["MAX", "MIN", "AVG", "COUNT", "SUM"];
 
 export default class PerformQueryFilterDisplay {
 
@@ -191,8 +195,7 @@ export default class PerformQueryFilterDisplay {
         for (i = 0 ; i < resultSoFar.length ; i++) {           // each course section in resultSoFar-> create new object
             let sectionWithColumns: any = {};
             for (let attribute of columnsAttributes) {      // put each attribute with its value into object
-                if (!(resultSoFar[i][attribute] === null) && (attribute in resultSoFar[i])
-                    && !(resultSoFar[i][attribute] === "")) {
+                if (!(resultSoFar[i][attribute] === null) && (attribute in resultSoFar[i])) {
                     sectionWithColumns[attribute] = resultSoFar[i][attribute];
                 }
             }
@@ -204,20 +207,40 @@ export default class PerformQueryFilterDisplay {
         let finalResultOrdered: any[] = [];
         if ("ORDER" in options) {                   // if there is an ORDER -> sort by the value in ORDER
             let displayOrder: any = options["ORDER"];
-            if (displayOrder !== null && typeof displayOrder === "string" && displayOrder !== "") {
-                finalResultOrdered = finalResultUnordered.sort((x, y) => {
-                    if (x[displayOrder] > y[displayOrder]) {
-                        return 1;
-                    }
-                    if (x[displayOrder] < y[displayOrder]) {
-                        return -1;
-                    }
-                    return 0;
-                });
+            if (displayOrder !== null && typeof displayOrder === "string" && displayOrder !== "") { // single key
+                finalResultOrdered = this.sortResultsAscending(finalResultUnordered, displayOrder);
+            } else {                                                // dir and keys present
+                finalResultOrdered = this.sortByDirAndKeys(finalResultUnordered, displayOrder);
             }
             return finalResultOrdered;      // return ordered result if ORDER is present
         } else {
             return finalResultUnordered;    // return unordered result if no ORDER present
         }
+    }
+
+    public static sortResultsAscending(listOfResults: any[], displayOrder: any): any[] {    // sort function refactored
+        return listOfResults.sort((x, y) => {
+            if (x[displayOrder] > y[displayOrder]) {
+                return 1;
+            }
+            if (x[displayOrder] < y[displayOrder]) {
+                return -1;
+            }
+            return 0;
+        });
+    }
+
+    public static sortByDirAndKeys(finalResultUnordered: any[], displayOrder: any): any[] {
+        let dir: any = displayOrder["dir"];
+        let keys: any[] = displayOrder["keys"];
+        let finalResultOrdered: any[] = finalResultUnordered;
+        for (let i: number = keys.length - 1 ; i >= 0 ; i--) {      // apply the last sort key first, if multiple exist
+            let displayKey = keys[i];
+            finalResultOrdered = this.sortResultsAscending(finalResultOrdered, displayKey);
+        }
+        if (dir === "DOWN") {
+            finalResultOrdered.reverse();
+        }
+        return finalResultOrdered;
     }
 }

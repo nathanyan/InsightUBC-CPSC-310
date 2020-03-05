@@ -1165,7 +1165,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
                 expect(result).to.deep.equal(expectedAdd);
                 return insightFacade.addDataset(idNotExist, datasets[idNotExist], InsightDatasetKind.Courses)
                     .then((result2: string[]) => {
-                        expect.fail(result2, expectedAdd, "Should not have added non-existing dataset with valid ID");
+                       expect.fail(result2, expectedAdd, "Should not have added non-existing dataset with valid ID");
                     })
                     .catch((err: any) => {
                         expect(err).to.be.instanceOf(InsightError);
@@ -1875,22 +1875,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
  */
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery: { [id: string]: {path: string, kind: InsightDatasetKind} } = {
-        courses: {path: "./test/data/courses.zip", kind: InsightDatasetKind.Courses},
-        // coursesNullKey: {path: "./test/data/coursesNullKey.zip", kind: InsightDatasetKind.Courses},
-        // coursesInvalidKey: {path: "./test/data/coursesInvalidkey.zip", kind: InsightDatasetKind.Courses},
-        // coursesNoValidFile: {path: "./test/data/coursesNoneValid.zip", kind: InsightDatasetKind.Courses},
-        // coursesNullValue: {path: "./test/data/coursesNullValue.zip", kind: InsightDatasetKind.Courses},
-        // coursesNoFiles: {path: "./test/data/coursesNoFiles.zip", kind: InsightDatasetKind.Courses},
-        // coursesSomeEmpty: {path: "./test/data/coursesSomeEmpty.zip", kind: InsightDatasetKind.Courses},
-        // coursesAllEmpty: {path: "./test/data/coursesAllEmpty.zip", kind: InsightDatasetKind.Courses},
-        // courses2: {path: "./test/data/coursesValid2.zip", kind: InsightDatasetKind.Courses},
-        // courses3: {path: "./test/data/coursesValid3.zip", kind: InsightDatasetKind.Courses},
-        // coursesGarbage: {path: "./test/data/coursesHalfGarbage.zip", kind: InsightDatasetKind.Courses},
-        // testJPG: {path: "./test/data/test.jpg", kind: InsightDatasetKind.Courses},
-        // courseOnlyOneFile: {path: "./test/data/oneCourse", kind: InsightDatasetKind.Courses},
-        // coursesFolder: {path: "./test/data/coursesFolder.zip", kind: InsightDatasetKind.Courses},
-        // coursesWrongFolder: {path: "./test/data/coursesWrongFolder.zip", kind: InsightDatasetKind.Courses},
-        // coursesJsonOnly: {path: "./test/data/AND.json", kind: InsightDatasetKind.Courses}
+        // courses: {path: "./test/data/courses.zip", kind: InsightDatasetKind.Courses},
+        rooms: {path: "./test/data/rooms.zip", kind: InsightDatasetKind.Rooms},
     };
     let insightFacade: InsightFacade;
     let testQueries: ITestQuery[] = [];
@@ -1902,7 +1888,8 @@ describe("InsightFacade PerformQuery", () => {
         // Load the query JSON files under test/queries.
         // Fail if there is a problem reading ANY query.
         try {
-            testQueries = TestUtil.readTestQueries();
+            // testQueries = TestUtil.readTestQueries();
+            testQueries = TestUtil.readTestQueries("test/queries/rooms");
         } catch (err) {
             expect.fail("", "", `Failed to read one or more test queries. ${err}`);
         }

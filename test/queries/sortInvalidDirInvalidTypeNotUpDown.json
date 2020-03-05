@@ -1,0 +1,33 @@
+{
+    "title": "Sort - invalid query - dir invalid type3",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title",
+	      "overallAvg"
+	    ],
+	      "ORDER": {
+	        "dir": "string",
+	          "keys": [
+	            "overallAvg"
+	          ]
+	      }
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "AVG": "courses_avg"
+	        }
+	      }
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

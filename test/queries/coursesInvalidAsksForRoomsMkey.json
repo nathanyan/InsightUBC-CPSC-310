@@ -1,0 +1,36 @@
+{
+    "title": "Courses - invalid query, courses asks for a rooms mkey",
+    "query": {
+	  "WHERE": {
+	    "LT": {
+	      "courses_lon": 80
+	    }
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_dept",
+	      "overallAvg"
+	    ],
+	    "ORDER": {
+	      "dir": "UP",
+	      "keys": [
+	        "overallAvg"
+	      ]
+	    }
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_dept"
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "AVG": "courses_avg"
+	        }
+	      }
+	    ]
+	  }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

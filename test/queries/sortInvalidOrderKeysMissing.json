@@ -1,0 +1,33 @@
+{
+    "title": "Sort - invalid query - ORDER keys missing",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title",
+	      "overallAvg"
+	    ],
+	      "ORDER": {
+	        "dir": "UP",
+	          "string": [
+	            "overallAvg"
+	          ]
+	      }
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "overallAvg": {
+	          "AVG": "courses_avg"
+	        }
+	      }
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

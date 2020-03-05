@@ -1,0 +1,182 @@
+{
+    "title": "Sort UP by dept AND instructor - no transformation",
+    "query": {
+	  "WHERE": {
+	    "LT": {
+	      "courses_avg": 50
+	    }
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_dept",
+	      "courses_instructor"
+	    ],
+	    "ORDER": {
+	      "dir": "UP",
+	      "keys": [
+	        "courses_dept",
+	        "courses_instructor"
+	      ]
+	    }
+	  }
+    },
+    "isQueryValid": true,
+    "result": [
+      {
+         "courses_dept":"busi",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"busi",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"busi",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"busi",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"busi",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"busi",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"busi",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"busi",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"busi",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"chbe",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"chbe",
+         "courses_instructor":"gyenge, elod lajos"
+      },
+      {
+         "courses_dept":"chem",
+         "courses_instructor":"bussiere, guillaume;monga, vishakha;rogers, christine;stoodley, robin"
+      },
+      {
+         "courses_dept":"civl",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"civl",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"comm",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"comm",
+         "courses_instructor":"sinclair, scott"
+      },
+      {
+         "courses_dept":"educ",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"educ",
+         "courses_instructor":"james, kedrick"
+      },
+      {
+         "courses_dept":"fopr",
+         "courses_instructor":"bendickson, dennis"
+      },
+      {
+         "courses_dept":"frst",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"frst",
+         "courses_instructor":"watts, susan"
+      },
+      {
+         "courses_dept":"frst",
+         "courses_instructor":"watts, susan"
+      },
+      {
+         "courses_dept":"hist",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"hist",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"hist",
+         "courses_instructor":"gossen, david"
+      },
+      {
+         "courses_dept":"hist",
+         "courses_instructor":"gossen, david"
+      },
+      {
+         "courses_dept":"hist",
+         "courses_instructor":"gossen, david"
+      },
+      {
+         "courses_dept":"lfs",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"lfs",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"lled",
+         "courses_instructor":"ferreira, alfredo"
+      },
+      {
+         "courses_dept":"lled",
+         "courses_instructor":"shaw, amber"
+      },
+      {
+         "courses_dept":"lled",
+         "courses_instructor":"shaw, amber"
+      },
+      {
+         "courses_dept":"lled",
+         "courses_instructor":"shaw, amber"
+      },
+      {
+         "courses_dept":"lled",
+         "courses_instructor":"walsh marr, jennifer"
+      },
+      {
+         "courses_dept":"math",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"math",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"phil",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"psyc",
+         "courses_instructor":""
+      },
+      {
+         "courses_dept":"wood",
+         "courses_instructor":""
+      }
+   ]
+}

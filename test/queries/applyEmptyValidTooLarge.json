@@ -1,0 +1,22 @@
+{
+    "title": "Apply - valid query - empty apply, result too large",
+    "query": 
+    {
+	  "WHERE": {},
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_instructor"
+	    ]
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_instructor"
+	    ],
+	    "APPLY": [
+
+	    ]
+	  }
+	},
+    "isQueryValid": false,
+    "result": "ResultTooLargeError"
+}

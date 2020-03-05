@@ -1,0 +1,214 @@
+{
+    "title": "Sort DOWN by applykey, then course title - yes transformation",
+    "query": {
+	  "WHERE": {
+	    "IS": {
+	      "courses_dept": "apbi"
+	    }
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title",
+	      "numPasses"
+	    ],
+	    "ORDER": {
+	      "dir": "DOWN",
+	      "keys": [
+	        "numPasses",
+	        "courses_title"
+	      ]
+	    }
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "numPasses": {
+	          "COUNT": "courses_pass"
+	        }
+	      }
+	    ]
+	  }
+    },
+    "isQueryValid": true,
+    "result": [
+      {
+         "courses_title":"intr soil scie",
+         "numPasses":26
+      },
+      {
+         "courses_title":"integr pest man",
+         "numPasses":13
+      },
+      {
+         "courses_title":"tpcs appl biolgy",
+         "numPasses":12
+      },
+      {
+         "courses_title":"inten fish pro",
+         "numPasses":10
+      },
+      {
+         "courses_title":"animals&society",
+         "numPasses":9
+      },
+      {
+         "courses_title":"soil process",
+         "numPasses":8
+      },
+      {
+         "courses_title":"undergrad thesis",
+         "numPasses":7
+      },
+      {
+         "courses_title":"an wlfr&ethc a u",
+         "numPasses":7
+      },
+      {
+         "courses_title":"wildlife mngment",
+         "numPasses":6
+      },
+      {
+         "courses_title":"undergrad essay",
+         "numPasses":6
+      },
+      {
+         "courses_title":"res apl anml bio",
+         "numPasses":6
+      },
+      {
+         "courses_title":"key ndctr ag sus",
+         "numPasses":6
+      },
+      {
+         "courses_title":"hort techniques",
+         "numPasses":6
+      },
+      {
+         "courses_title":"fish diseases",
+         "numPasses":6
+      },
+      {
+         "courses_title":"animal phys ii",
+         "numPasses":6
+      },
+      {
+         "courses_title":"animal phys i",
+         "numPasses":6
+      },
+      {
+         "courses_title":"vascular plants",
+         "numPasses":5
+      },
+      {
+         "courses_title":"sus soil mgmt",
+         "numPasses":5
+      },
+      {
+         "courses_title":"soil biology",
+         "numPasses":5
+      },
+      {
+         "courses_title":"intro biometeoro",
+         "numPasses":5
+      },
+      {
+         "courses_title":"intr sd plnt tax",
+         "numPasses":5
+      },
+      {
+         "courses_title":"intr entomology",
+         "numPasses":5
+      },
+      {
+         "courses_title":"agroforestry",
+         "numPasses":5
+      },
+      {
+         "courses_title":"agroecology i",
+         "numPasses":5
+      },
+      {
+         "courses_title":"adv agroecology",
+         "numPasses":5
+      },
+      {
+         "courses_title":"weed science",
+         "numPasses":4
+      },
+      {
+         "courses_title":"plnt phys",
+         "numPasses":4
+      },
+      {
+         "courses_title":"eq biol",
+         "numPasses":4
+      },
+      {
+         "courses_title":"animls globl iss",
+         "numPasses":4
+      },
+      {
+         "courses_title":"agroecology ii",
+         "numPasses":4
+      },
+      {
+         "courses_title":"sustain agr&food",
+         "numPasses":3
+      },
+      {
+         "courses_title":"prd & psthrv veg",
+         "numPasses":3
+      },
+      {
+         "courses_title":"plnt-micr inter",
+         "numPasses":3
+      },
+      {
+         "courses_title":"lab soil sci",
+         "numPasses":3
+      },
+      {
+         "courses_title":"appld anml behav",
+         "numPasses":3
+      },
+      {
+         "courses_title":"plant genomics",
+         "numPasses":2
+      },
+      {
+         "courses_title":"frst &agr climat",
+         "numPasses":2
+      },
+      {
+         "courses_title":"food&enviro ii",
+         "numPasses":2
+      },
+      {
+         "courses_title":"food & enviro i",
+         "numPasses":2
+      },
+      {
+         "courses_title":"anml hlth&physio",
+         "numPasses":2
+      },
+      {
+         "courses_title":"stress & coping",
+         "numPasses":1
+      },
+      {
+         "courses_title":"soil s,a&di",
+         "numPasses":1
+      },
+      {
+         "courses_title":"berry crop biol",
+         "numPasses":1
+      },
+      {
+         "courses_title":"animal welfare",
+         "numPasses":1
+      }
+   ]
+}
