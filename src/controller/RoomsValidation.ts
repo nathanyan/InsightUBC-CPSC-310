@@ -70,7 +70,6 @@ export default class RoomsValidation {
                 let roomChecker: RoomChecker = new RoomChecker(this.addedRoomData);
                 let roomData: {} = {};
                 let rooms: any = {};
-                // transform result files array into map
                 this.convertResultToMap(resultBuildings, rooms);
                 let indexToParse: string = "";
                 let indexHTMParsed: any = null;
@@ -271,7 +270,8 @@ export default class RoomsValidation {
         formattedKeys[id + "_" + "seats"] = room["roomSeats"];
         formattedKeys[id + "_" + "type"] = room["roomType"];
         formattedKeys[id + "_" + "furniture"] = room["roomFurniture"];
-        formattedKeys[id + "_" + "href"] = room["roomHref"];
+        formattedKeys[id + "_" + "href"] = "http://students.ubc.ca" + room["roomHref"].substring(1) + "-" +
+            room["roomNumber"];
         formattedKeys[id + "_" + "lat"] = room["roomLat"];
         formattedKeys[id + "_" + "lon"] = room["roomLon"];
         finalRoomData.push(formattedKeys);
