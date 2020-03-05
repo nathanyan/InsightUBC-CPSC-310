@@ -1,16 +1,23 @@
 import Log from "../Util";
 import {Decimal} from "decimal.js";
+import PerformQueryTransformationsApply from "./PerformQueryTransformationsApply";
 
-let mKeyFieldsAll: string[] = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
-let sKeysMKeysAll: string[] = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number"
-    , "name", "address", "type", "furniture", "href", "avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
+let mKeyFieldsCourses: string[] = ["avg", "pass", "fail", "audit", "year"];
+let sKeyFieldsCourses: string[] = ["dept", "id", "instructor", "title", "uuid"];
+let sKeysMKeysCoursesAll: string[] = ["dept", "id", "instructor", "title", "uuid", "avg", "pass",
+    "fail", "audit", "year"];
+let mKeyFieldsRooms: string[] = ["lat", "lon", "seats"];
+let sKeyFieldsRooms: string[] = ["fullname", "shortname", "number", "name", "address", "type", "furniture", "href"];
+let sKeysMKeysRoomsAll: string[] = ["fullname", "shortname", "number"
+    , "name", "address", "type", "furniture", "href", "lat", "lon", "seats"];
 let transformationKeysAll: string[] = ["GROUP", "APPLY"];
 let applyTokensAll: string[] = ["MAX", "MIN", "AVG", "COUNT", "SUM"];
 
 export default class PerformQueryTransformations {
 
     public static isTransformationsValid(transformations: any, addedData: any, uniqueIDsInQuery: any[],
-                                         applyKeysInQuery: any[], groupKeysInQuery: any[]): boolean {
+                                         applyKeysInQuery: any[], groupKeysInQuery: any[],
+                                         addedRoomsData: any): boolean {
         let transKeys: any[] = Object.keys(transformations);
         if (transKeys.length !== 2) {               // has to be exactly 2 keys
             return false;
@@ -24,18 +31,18 @@ export default class PerformQueryTransformations {
             }
         }
         let group: any[] = transformations["GROUP"];
-        if (!this.checkGroupValid(group, addedData, uniqueIDsInQuery, groupKeysInQuery)) {    // check if GROUP is valid
-            return false;
+        if (!this.checkGroupValid(group, addedData, uniqueIDsInQuery, groupKeysInQuery, addedRoomsData)) {
+            return false;       // check if GROUP is valid
         }
         let apply: any[] = transformations["APPLY"];
-        if (!this.checkApplyValid(apply, addedData, uniqueIDsInQuery, applyKeysInQuery)) {    // check if APPLY is valid
-            return false;
+        if (!this.checkApplyValid(apply, addedData, uniqueIDsInQuery, applyKeysInQuery, addedRoomsData)) {
+            return false;           // check if APPLY is valid
         }
         return true;
     }
 
     public static checkGroupValid(group: any[], addedData: any, uniqueIDsInQuery: any[],
-                                  groupKeysInQuery: any[]): boolean {
+                                  groupKeysInQuery: any[], addedRoomsData: any): boolean {
         if (group === null || group === undefined || group.length === 0 || !Array.isArray(group)) {
             return false;                                       // must be non-empty array
         }
@@ -43,12 +50,8 @@ export default class PerformQueryTransformations {
             if (typeof groupKey !== "string") {
                 return false;
             }
-            let attributeField: string = groupKey.split("_")[1];   // key field must match one of above
-            if (!sKeysMKeysAll.includes(attributeField)) {
-                return false;
-            }
             let idString: string = groupKey.split("_")[0];
-            if (!(idString in addedData)) {                            // id not found in added data sets
+            if (!(idString in addedData) && !(idString in addedRoomsData)) {         // id not found in added data sets
                 return false;
             } else {
                 if (!uniqueIDsInQuery.includes(idString)) {    // if id isn't already in query set of ids, add it
@@ -56,12 +59,22 @@ export default class PerformQueryTransformations {
                 }
             }
             groupKeysInQuery.push(groupKey);
+            let attributeField: string = groupKey.split("_")[1];   // key field must match one of above
+            if (idString in addedData) {
+                if (!sKeysMKeysCoursesAll.includes(attributeField)) {
+                    return false;           // if Courses id, check it matches one of the skeys or mkeys
+                }
+            } else {
+                if (!sKeysMKeysRoomsAll.includes(attributeField)) {
+                    return false;           // if Rooms id, check it matches one of the skeys or mkeys
+                }
+            }
         }
         return true;
     }
 
     public static checkApplyValid(apply: any[], addedData: any, uniqueIDsInQuery: any[],
-                                  applyKeysInQuery: any[]): boolean {
+                                  applyKeysInQuery: any[], addedRoomsData: any): boolean {
         if (apply === null || apply === undefined || !Array.isArray(apply)) {
             return false;                                       // must be array, can be empty
         }
@@ -87,7 +100,7 @@ export default class PerformQueryTransformations {
                 applyKeysInQuery.push(applyKey);        // applyKey is unique - add it to list of unique keys
             }
             let applyTokenAndKeyObject: any = applyRule[applyKey];      // object for applyKey
-            if (!this.checkApplyTokenKeyObject(applyTokenAndKeyObject, addedData, uniqueIDsInQuery)) {
+            if (!this.checkApplyTokenKeyObject(applyTokenAndKeyObject, addedData, uniqueIDsInQuery, addedRoomsData)) {
                 return false;                       // check the object within applyRule
             }
         }
@@ -95,7 +108,7 @@ export default class PerformQueryTransformations {
     }
 
     public static checkApplyTokenKeyObject(applyTokenAndKeyObject: any, addedData: any,
-                                           uniqueIDsInQuery: any[]): boolean {
+                                           uniqueIDsInQuery: any[], addedRoomsData: any): boolean {
         if (applyTokenAndKeyObject === null || typeof applyTokenAndKeyObject !== "object"
             || typeof applyTokenAndKeyObject === "string" || applyTokenAndKeyObject === undefined
             || Array.isArray(applyTokenAndKeyObject)) {
@@ -116,24 +129,43 @@ export default class PerformQueryTransformations {
         if (typeof key !== "string") {
             return false;
         }
-        let attributeField: string = key.split("_")[1];   // key field must match one of above
-        if (applyToken === "MAX" || applyToken === "MIN" || applyToken === "SUM" || applyToken === "AVG") {
-            if (!mKeyFieldsAll.includes(attributeField)) {
-                return false;                           // MAX MIN AVG SUM not associated with an mKey
-            }
-        }
-        if (!sKeysMKeysAll.includes(attributeField)) {
-            return false;
-        }
         let idString: string = key.split("_")[0];
-        if (!(idString in addedData)) {                            // id not found in added data sets
+        if (!(idString in addedData) && !(idString in addedRoomsData)) {       // id not found in added data sets
             return false;
         } else {
             if (!uniqueIDsInQuery.includes(idString)) {    // if id isn't already in query set of ids, add it
                 uniqueIDsInQuery.push(idString);
             }
         }
+        let attributeField: string = key.split("_")[1];   // key field must match one of above
+        if (!this.checkApplyToken(applyToken, idString, addedData, attributeField)) {
+            return false;
+        }
+        if (idString in addedData) {
+            if (!sKeysMKeysCoursesAll.includes(attributeField)) {
+                return false;
+            }
+        } else {
+            if (!sKeysMKeysRoomsAll.includes(attributeField)) {
+                return false;
+            }
+        }
         return true;                    // object with {applyToken : key} is valid
+    }
+
+    public static checkApplyToken(applyToken: any, idString: any, addedData: any, attributeField: any): boolean {
+        if (applyToken === "MAX" || applyToken === "MIN" || applyToken === "SUM" || applyToken === "AVG") {
+            if (idString in addedData) {
+                if (!mKeyFieldsCourses.includes(attributeField)) {
+                    return false;                           // MAX MIN AVG SUM not associated with an mKey in Courses
+                }
+            } else {
+                if (!mKeyFieldsRooms.includes(attributeField)) {
+                    return false;                            // MAX MIN AVG SUM not associated with an mKey in Rooms
+                }
+            }
+        }
+        return true;
     }
 
     public static groupAndApply(resultSoFar: any[], transformations: any): any[] {
@@ -141,7 +173,7 @@ export default class PerformQueryTransformations {
         let applyRules: any[] = transformations["APPLY"];
         let resultGroupings: any[] = this.groupResults(resultSoFar, groupKeys);
         if (applyRules.length !== 0) {
-            resultGroupings = this.applyTransformations(resultGroupings, applyRules);
+            resultGroupings = PerformQueryTransformationsApply.applyTransformations(resultGroupings, applyRules);
         }
         return resultGroupings;
     }
@@ -192,100 +224,5 @@ export default class PerformQueryTransformations {
             }
         }
         return true;      // went through all groupKeys; all values in grouping corresponding to values in courseSection
-    }
-
-    public static applyTransformations(resultGroupings: any[], applyRules: any[]): any[] {
-        let resultAfterApply: any[] = resultGroupings;
-        for (let applyRule of applyRules) {                     // Perform applyRule on results list one at a time
-            resultAfterApply = this.addApplyRule(resultAfterApply, applyRule);
-        }
-        return resultAfterApply;
-    }
-
-    public static addApplyRule(resultGroupings: any[], applyRule: any): any[] {
-        let applyKeys: any[] = Object.keys(applyRule);
-        let applyKey: any = applyKeys[0];
-        let applyTokenKeyObject: any = applyRule[applyKey];
-        let applyTokens: any[] = Object.keys(applyTokenKeyObject);
-        let applyToken: any = applyTokens[0];
-        let tokenField: any = applyTokenKeyObject[applyToken];
-        for (let group of resultGroupings) {                // for each group in result list, check Token
-            if (applyToken === "MIN") {
-                group = this.applyMin(applyKey, group, tokenField);
-            }
-            if (applyToken === "MAX") {
-                group = this.applyMax(applyKey, group, tokenField);
-            }
-            if (applyToken === "SUM") {
-                group = this.applySum(applyKey, group, tokenField);
-            }
-            if (applyToken === "AVG") {
-                group = this.applyAvg(applyKey, group, tokenField);
-            }
-            if (applyToken === "COUNT") {
-                group = this.applyCount(applyKey, group, tokenField);
-            }
-        }
-        return resultGroupings;
-    }
-
-    public static applyMin(applyKey: any, group: any, tokenField: any): any {
-        let courseSections: any[] = group["Course Sections"];
-        let min: number = Number.MAX_VALUE;
-        for (let courseSection of courseSections) {
-            if (courseSection[tokenField] < min) {
-                min = courseSection[tokenField];
-            }
-        }
-        group[applyKey] = min;
-        return group;
-    }
-
-    public static applyMax(applyKey: any, group: any, tokenField: any): any {
-        let courseSections: any[] = group["Course Sections"];
-        let max: number = Number.MIN_VALUE;
-        for (let courseSection of courseSections) {
-            if (courseSection[tokenField] > max) {
-                max = courseSection[tokenField];
-            }
-        }
-        group[applyKey] = max;
-        return group;
-    }
-
-    public static applySum(applyKey: any, group: any, tokenField: any): any {
-        let courseSections: any[] = group["Course Sections"];
-        let sum: number = 0;
-        for (let courseSection of courseSections) {
-            sum = sum + courseSection[tokenField];
-        }
-        sum = Number(sum.toFixed(2));
-        group[applyKey] = sum;
-        return group;
-    }
-
-    public static applyAvg(applyKey: any, group: any, tokenField: any): any {
-        let courseSections: any[] = group["Course Sections"];
-        let total: Decimal = new Decimal(0);
-        for (let courseSection of courseSections) {
-            let decimalValue = new Decimal(courseSection[tokenField]);
-            total = total.add(decimalValue);
-        }
-        let avg: any = total.toNumber() / courseSections.length;
-        let res: number = Number(avg.toFixed(2));
-        group[applyKey] = res;
-        return group;
-    }
-
-    public static applyCount(applyKey: any, group: any, tokenField: any): any {
-        let courseSections: any[] = group["Course Sections"];
-        let listOfUnique: any[] = [];
-        for (let courseSection of courseSections) {
-            if (!(listOfUnique.includes(courseSection[tokenField]))) {
-                listOfUnique.push(courseSection[tokenField]);
-            }
-        }
-        let totalUnique: number = listOfUnique.length;
-        group[applyKey] = totalUnique;
     }
 }

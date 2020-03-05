@@ -134,14 +134,19 @@ export default class InsightFacade implements IInsightFacade {
     public performQuery(query: any): Promise <any[]> {
         return new Promise((resolve, reject) => {
             if (!PerformQueryValid.isQueryValid(query, this.addedData, this.uniqueIDsInQuery, this.applyKeysInQuery,
-                this.groupKeysInQuery)) {
+                this.groupKeysInQuery, this.addedRoomsData)) {
                 this.uniqueIDsInQuery = [];
                 this.applyKeysInQuery = [];
                 this.groupKeysInQuery = [];
                 return reject(new InsightError("Query is invalid"));
             }
             let idToQuery: string = this.uniqueIDsInQuery[0];           // only 1 id in uniqueIDsInQuery = one to query
-            let datasetToParse: any[] = this.addedData[idToQuery];      // the only dataset we need to look at
+            let datasetToParse: any[] = [];
+            if (idToQuery in this.addedData) {
+                datasetToParse = this.addedData[idToQuery];      // the only dataset we need to look at
+            } else {
+                datasetToParse = this.addedRoomsData[idToQuery];
+            }
             let resultSoFar: any[] = [];
             let where: any = query["WHERE"];
             resultSoFar = PerformQueryFilterDisplay.filterCourseSections(datasetToParse, where);
