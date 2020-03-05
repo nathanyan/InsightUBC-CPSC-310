@@ -1,5 +1,7 @@
 import Log from "../Util";
 import * as JSZip from "jszip";
+import {InsightDatasetKind, InsightError} from "./IInsightFacade";
+import * as fs from "fs";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -8,10 +10,20 @@ import * as JSZip from "jszip";
  */
 export default class CoursesValidation {
     private addedData: any;
+    private  addedRoomsData: any;
 
-    constructor(memoryData: any) {
+    constructor(memoryData: any, memoryRoomsData: any) {
         Log.trace("Validating Courses");
         this.addedData = memoryData;
+        this.addedRoomsData = memoryRoomsData;
+    }
+
+    public convertClassesToString(folder: JSZip, coursesFolderExists: boolean, courseValidator: CoursesValidation,
+                                  promisesListCourses: Array<Promise<any>>) {
+        Object.values(folder.files).forEach((dir) => {
+            coursesFolderExists = courseValidator.checkIfDirectory(dir, coursesFolderExists);
+            courseValidator.checkIfCoursesExist(dir, coursesFolderExists, promisesListCourses);
+        });
     }
 
     public extractDataFromCourses(resultFiles: string[], id: string, data: JSON[]) {
@@ -41,6 +53,42 @@ export default class CoursesValidation {
             }
         }
         return coursesFolderExists;
+    }
+
+    public checkEachCourse(promisesListCourses: Array<Promise<any>>, reject: (reason?: any) => void,
+                           courseValidator: CoursesValidation,
+                           id: string, kind: InsightDatasetKind.Courses,
+                           resolve: (value?: (PromiseLike<string[]> | string[])) => void) {
+        Promise.all(promisesListCourses).then((resultFiles: string[]) => {
+            if (resultFiles.length === 0) {
+                reject(new InsightError());
+            }
+            let data: JSON[] = [];
+            courseValidator.extractDataFromCourses(resultFiles, id, data);
+            if (data.length !== 0) {
+                this.addedData[id] = data;
+                let saved = {id: id, kind: kind, data: this.addedData};
+                // stringify saved instead, then write this result
+                let stringifiedFile = JSON.stringify(saved);
+                try {
+                    fs.writeFileSync("./data/" + id, stringifiedFile);
+                } catch (e) {
+                    reject(new InsightError());
+                }
+                let allKeys: string[] = [];
+                Object.keys(this.addedData).forEach((course: any) => {
+                    allKeys.push(course);
+                });
+                Object.keys(this.addedRoomsData).forEach((room: any) => {
+                    allKeys.push(room);
+                });
+                resolve(allKeys);
+            } else {
+                reject(new InsightError());
+            }
+        }).catch((err: any) => {
+            reject(new InsightError());
+        });
     }
 
     public convertToJSON(file: string): any {
