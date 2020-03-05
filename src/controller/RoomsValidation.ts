@@ -270,8 +270,8 @@ export default class RoomsValidation {
         formattedKeys[id + "_" + "seats"] = room["roomSeats"];
         formattedKeys[id + "_" + "type"] = room["roomType"];
         formattedKeys[id + "_" + "furniture"] = room["roomFurniture"];
-        formattedKeys[id + "_" + "href"] = "http://students.ubc.ca" + room["roomHref"].substring(1) + "-" +
-            room["roomNumber"];
+        formattedKeys[id + "_" + "href"] = "http://students.ubc.ca" + room["roomHref"].substring(1)
+            .replace(room["roomShortname"], "room/" + room["roomShortname"] + "-" + room["roomNumber"]);
         formattedKeys[id + "_" + "lat"] = room["roomLat"];
         formattedKeys[id + "_" + "lon"] = room["roomLon"];
         finalRoomData.push(formattedKeys);
