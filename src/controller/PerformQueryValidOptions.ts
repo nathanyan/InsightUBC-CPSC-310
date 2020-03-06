@@ -12,6 +12,8 @@ let sKeyFieldsRooms: string[] = ["fullname", "shortname", "number", "name", "add
 let sKeysMKeysRoomsAll: string[] = ["fullname", "shortname", "number"
     , "name", "address", "type", "furniture", "href", "lat", "lon", "seats"];
 let optionKeysAll: string[] = ["COLUMNS", "ORDER"];
+let dirKeysAll: string[] = ["UP", "DOWN"];
+let sortKeysAll: string[] = ["dir", "keys"];
 
 export default class PerformQueryValidOptions {
 
@@ -56,9 +58,14 @@ export default class PerformQueryValidOptions {
                 return false;
             }
             if (("TRANSFORMATIONS" in query)) {
-                if (!(applyKeysInQuery.includes(columnsValue)) && !(groupKeysInQuery.includes(columnsValue))) {
-                    return false;       // if GROUP + APPLY present,
-                }                       // check if columnsVals correspond to either GROUP keys or applyKeys in APPLY
+                let transformations: any = query["TRANSFORMATIONS"];
+                if ("GROUP" in transformations) {
+                    if (!(applyKeysInQuery.includes(columnsValue)) && !(groupKeysInQuery.includes(columnsValue))) {
+                        return false;       // if GROUP + APPLY present,
+                    }                      // check if columnsVals correspond to either GROUP keys or applyKeys in APPLY
+                } else {
+                    return false;
+                }
             } else {                    // GROUP/APPLY not present, so columnsVals must be mkey or skey
                 let idString: string = columnsValue.split("_")[0];
                 if (!(idString in addedData) && !(idString in addedRoomsData)) {      // id not found in added data sets
@@ -84,9 +91,11 @@ export default class PerformQueryValidOptions {
     }
 
     public static checkOrderValid(orderValue: any, columnsVals: any[]): boolean {
-        if (orderValue === null || orderValue === undefined ||
-            !(typeof orderValue === "string" || typeof orderValue === "object")) {
-            return false;               // order type must be a string or object
+        if (orderValue === null || orderValue === undefined || Array.isArray(orderValue)) {
+            return false;               // order type cannot be null, undefined or an array
+        }
+        if (!(typeof orderValue === "string" || typeof orderValue === "object")) {
+            return false;
         }
         if (typeof orderValue === "string") {
             for (let columnsValue of columnsVals) {      // order string has to match at least one of the column strings
@@ -95,13 +104,17 @@ export default class PerformQueryValidOptions {
                 }
             }
             return false;
-        }
-        if (typeof orderValue === "object") {
+        } else {
             let orderKeys: any[] = Object.keys(orderValue);
             if (orderKeys.length !== 2 || !("dir" in orderValue) || !("keys" in orderValue)) {
                 return false;           // doesn't have 2 key-value pairs, missing 'dir' or missing 'keys'
             }
-            if (orderValue["dir"] !== "UP" && orderValue["dir"] !== "DOWN") {
+            for (let orderKey of orderKeys) {
+                if (!sortKeysAll.includes(orderKey)) {
+                    return false;
+                }
+            }
+            if (!dirKeysAll.includes(orderValue["dir"])) {
                 return false;
             }
             if (!(Array.isArray(orderValue["keys"]))) {
