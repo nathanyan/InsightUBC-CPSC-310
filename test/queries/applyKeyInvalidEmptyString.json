@@ -1,0 +1,36 @@
+{
+    "title": "Apply invalid empty applyKey string",
+    "query": {
+	  "WHERE": {
+	    "IS": {
+	      "courses_dept": "apbi"
+	    }
+	  },
+	  "OPTIONS": {
+	    "COLUMNS": [
+	      "courses_title"
+	    ],
+	    "ORDER": {
+	      "dir": "UP",
+	      "keys": [
+	        "courses_title"
+	      ]
+	    }
+	  },
+	  "TRANSFORMATIONS": {
+	    "GROUP": [
+	      "courses_title",
+	      "courses_title"
+	    ],
+	    "APPLY": [
+	      {
+	        "": {
+	          "COUNT": "courses_pass"
+	        }
+	      }
+	    ]
+	  }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

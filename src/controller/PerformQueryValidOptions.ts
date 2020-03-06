@@ -57,6 +57,9 @@ export default class PerformQueryValidOptions {
             if (typeof columnsValue !== "string") {
                 return false;
             }
+            if (columnsValue === "") {
+                return false;
+            }
             if (("TRANSFORMATIONS" in query)) {
                 let transformations: any = query["TRANSFORMATIONS"];
                 if ("GROUP" in transformations) {
@@ -98,6 +101,9 @@ export default class PerformQueryValidOptions {
             return false;
         }
         if (typeof orderValue === "string") {
+            if (orderValue === "") {
+                return false;
+            }
             for (let columnsValue of columnsVals) {      // order string has to match at least one of the column strings
                 if (orderValue === columnsValue) {
                     return true;
@@ -114,10 +120,15 @@ export default class PerformQueryValidOptions {
                     return false;
                 }
             }
+            if (typeof orderValue["dir"] !== "string" || typeof orderValue["dir"] === null ||
+                typeof orderValue["dir"] === undefined) {
+                return false;
+            }
             if (!dirKeysAll.includes(orderValue["dir"])) {
                 return false;
             }
-            if (!(Array.isArray(orderValue["keys"]))) {
+            if (!(Array.isArray(orderValue["keys"])) || typeof orderValue["keys"] === null ||
+                typeof orderValue["keys"] === undefined) {
                 return false;
             }
             if (orderValue["keys"].length === 0) {

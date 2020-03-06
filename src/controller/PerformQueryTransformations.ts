@@ -50,6 +50,9 @@ export default class PerformQueryTransformations {
             if (typeof groupKey !== "string") {
                 return false;
             }
+            if (groupKey === "") {
+                return false;
+            }
             let idString: string = groupKey.split("_")[0];
             if (!(idString in addedData) && !(idString in addedRoomsData)) {         // id not found in added data sets
                 return false;
@@ -94,6 +97,9 @@ export default class PerformQueryTransformations {
             if (typeof applyKey !== "string" || applyKey.includes("_")) {         // applyKey must be string with no "_"
                 return false;
             }
+            if (applyKey === "") {
+                return false;
+            }
             if (applyKeysInQuery.includes(applyKey)) {
                 return false;               // applyKey is not unique - already shows up in previous applyRule
             } else {
@@ -127,6 +133,9 @@ export default class PerformQueryTransformations {
         }
         let key: any = applyTokenAndKeyObject[applyToken];      // key associated with Apply Token
         if (typeof key !== "string") {
+            return false;
+        }
+        if (key === "") {
             return false;
         }
         let idString: string = key.split("_")[0];
