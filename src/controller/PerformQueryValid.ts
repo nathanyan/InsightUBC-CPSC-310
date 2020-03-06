@@ -51,8 +51,7 @@ export default class PerformQueryValid {
         let filterKeys: any[] = Object.keys(where);
         if (filterKeys.length === 0) {                      // a blank WHERE is valid
             return (PerformQueryValidOptions.isOptionsValid(query, addedData, uniqueIDsInQuery, applyKeysInQuery,
-                groupKeysInQuery, addedRoomsData)
-                && (uniqueIDsInQuery.length === 1));
+                groupKeysInQuery, addedRoomsData) && (uniqueIDsInQuery.length === 1));
         }
         if (!this.isWhereFiltersValid(where, addedData, uniqueIDsInQuery, addedRoomsData)) {
             return false;               // check filters in WHERE are correct
