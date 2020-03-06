@@ -60,7 +60,7 @@ export default class PerformQueryValid {
             groupKeysInQuery, addedRoomsData)) {
             return false;                               // check OPTIONS selections are correct
         }
-        if (uniqueIDsInQuery.length > 1) {             // should only have 1 id in query to be valid
+        if (uniqueIDsInQuery.length !== 1) {             // should only have 1 id in query to be valid
             return false;
         }
         return true;
