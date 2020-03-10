@@ -5,6 +5,9 @@
 import fs = require("fs");
 import restify = require("restify");
 import Log from "../Util";
+import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "../controller/IInsightFacade";
+import InsightFacade from "../controller/InsightFacade";
+import * as JSZip from "jszip";
 
 /**
  * This configures the REST endpoints for the server.
@@ -64,6 +67,13 @@ export default class Server {
                 that.rest.get("/echo/:msg", Server.echo);
 
                 // NOTE: your endpoints should go here
+
+                that.rest.put("/dataset/:id/:kind", Server.callAddDataset);
+                that.rest.del("/dataset/:id", Server.callRemoveDataset);
+                that.rest.get("/datasets", Server.callListDataset);
+                that.rest.post("/query", Server.callQueries);
+
+                // end my endpoints here
 
                 // This must be the last endpoint!
                 that.rest.get("/.*", Server.getStatic);
@@ -130,4 +140,61 @@ export default class Server {
         });
     }
 
+    private static callAddDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let kind: InsightDatasetKind = req.params.kind;
+        let id: string = req.params.id;
+        let dataset = req.body; // base64
+        dataset = new JSZip(dataset, {base64: true});
+
+        let insightFacade: InsightFacade = new InsightFacade();
+        insightFacade.addDataset(id, dataset, kind).then((ids: string[]) => {
+            Log.info("Server::echo(..) - responding " + 200);
+            res.json(200, {result: ids});
+        }).catch((err: any) => {
+            Log.error("Server::echo(..) - responding 400");
+            res.json(400, {error: err.toString()});
+        });
+        return next();
+    }
+
+    private static callRemoveDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let id: string = req.params.id;
+        let insightFacade: InsightFacade = new InsightFacade();
+        insightFacade.removeDataset(id).then((idDeleted: string) => {
+            Log.info("Server::echo(..) - responding " + 200);
+            res.json(200, {result: idDeleted});
+        }).catch((err: any) => {
+            if (err === InsightError) {
+                Log.error("Server::echo(..) - responding 400");
+                res.json(400, {error: err.toString()});
+            }
+            if (err === NotFoundError) {
+                Log.error("Server::echo(..) - responding 404");
+                res.json(404, {error: err.toString()});
+            }
+        });
+        return next();
+    }
+
+    private static callListDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let insightFacade: InsightFacade = new InsightFacade();
+        insightFacade.listDatasets().then((result: InsightDataset[]) => {
+            Log.info("Server::echo(..) - responding " + 200);
+            res.json(200, {result: result});
+        });
+        return next();
+    }
+
+    private static callQueries(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let query: any = req.body;
+        let insightFacade: InsightFacade = new InsightFacade();
+        insightFacade.performQuery(query).then((result: any[]) => {
+            Log.info("Server::echo(..) - responding " + 200);
+            res.json(200, {result: result});
+        }).catch((err: any) => {
+            Log.error("Server::echo(..) - responding 400");
+            res.json(400, {error: err.toString()});
+        });
+        return next();
+    }
 }
