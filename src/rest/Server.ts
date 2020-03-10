@@ -144,7 +144,7 @@ export default class Server {
         let kind: InsightDatasetKind = req.params.kind;
         let id: string = req.params.id;
         let dataset = req.body; // base64
-        dataset = new JSZip(dataset, {base64: true});
+        dataset = fs.readFileSync(dataset).toString("base64");
 
         let insightFacade: InsightFacade = new InsightFacade();
         insightFacade.addDataset(id, dataset, kind).then((ids: string[]) => {
