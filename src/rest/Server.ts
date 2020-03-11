@@ -7,7 +7,6 @@ import restify = require("restify");
 import Log from "../Util";
 import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "../controller/IInsightFacade";
 import InsightFacade from "../controller/InsightFacade";
-import * as JSZip from "jszip";
 
 /**
  * This configures the REST endpoints for the server.
