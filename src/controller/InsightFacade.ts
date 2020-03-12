@@ -35,9 +35,9 @@ export default class InsightFacade implements IInsightFacade {
         this.applyKeysInQuery = [];
         this.groupKeysInQuery = [];
         fs.readdirSync("./data/").forEach((file: string) => {
-            let fileData: string = fs.readFileSync(file).toString();
+            let fileData: string = fs.readFileSync("./data/" + file).toString();
             let parsedFile: any = JSON.parse(fileData);
-            for (let dataset of parsedFile) {
+            for (let dataset of parsedFile["data"][file]) {
                 if (dataset["kind"] === InsightDatasetKind.Courses) {
                     this.addedData[dataset["id"]] = dataset["data"];
                 }
