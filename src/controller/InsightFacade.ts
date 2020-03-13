@@ -37,14 +37,21 @@ export default class InsightFacade implements IInsightFacade {
         fs.readdirSync("./data/").forEach((file: string) => {
             let fileData: string = fs.readFileSync("./data/" + file).toString();
             let parsedFile: any = JSON.parse(fileData);
-            for (let dataset of parsedFile["data"][file]) {
-                if (dataset["kind"] === InsightDatasetKind.Courses) {
-                    this.addedData[dataset["id"]] = dataset["data"];
+            // for (let dataset of parsedFile["data"][file]) {
+            //     if (dataset["kind"] === InsightDatasetKind.Courses) {
+            //         this.addedData[dataset["id"]] = dataset["data"];
+            //     }
+            //     if (dataset["kind"] === InsightDatasetKind.Rooms) {
+            //         this.addedRoomsData[dataset["id"]] = dataset["data"];
+            //     }
+            // }
+
+            if (parsedFile["kind"] === InsightDatasetKind.Courses) {
+                    this.addedData[parsedFile["id"]] = parsedFile["data"];
                 }
-                if (dataset["kind"] === InsightDatasetKind.Rooms) {
-                    this.addedRoomsData[dataset["id"]] = dataset["data"];
+            if (parsedFile["kind"] === InsightDatasetKind.Rooms) {
+                    this.addedRoomsData[parsedFile["id"]] = parsedFile["data"];
                 }
-            }
         });
     }
 
@@ -57,7 +64,7 @@ export default class InsightFacade implements IInsightFacade {
             if (!courseValidator.checkValidId(id) || !roomValidator.checkValidId(id)) {
                 reject(new InsightError());
             } else {
-                new JSZip().loadAsync(content, {base64: true}).then((unzipped) => {
+                return new JSZip().loadAsync(content, {base64: true}).then((unzipped) => {
                     if (kind === InsightDatasetKind.Courses) {
                         let folder = unzipped.folder("courses");
                         let coursesFolderExists = false;
@@ -93,10 +100,10 @@ export default class InsightFacade implements IInsightFacade {
         let roomsValidator: RoomsValidation = new RoomsValidation(this.addedRoomsData, this.addedData);
         return new Promise((resolve, reject) => {
             if (!courseValidator.checkValidIdToRemove(id)) {
-                reject(new InsightError());
+                return reject(new InsightError());
             }
             if (!courseValidator.checkIdExists(id) && roomsValidator.checkValidId(id)) {
-                reject(new NotFoundError());
+                return reject(new NotFoundError());
             }
             this.checkCourses(id, resolve);
             this.checkRooms(id, resolve);

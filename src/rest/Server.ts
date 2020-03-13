@@ -15,6 +15,7 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
+    private static facade: InsightFacade = new InsightFacade();
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
@@ -146,28 +147,27 @@ export default class Server {
         dataset = dataset.toString("base64");
 
         let insightFacade: InsightFacade = new InsightFacade();
-        insightFacade.addDataset(id, dataset, kind).then((ids: string[]) => {
-            Log.info("Server::echo(..) - responding " + 200);
-            res.json(200, {result: ids});
+        return insightFacade.addDataset(id, dataset, kind).then((ids: string[]) => {
+                Log.info("Server::echo(..) - responding " + 200);
+                res.json(200, {result: ids});
+                return next();
         }).catch((err: any) => {
-            Log.error("Server::echo(..) - responding 400");
-            res.json(400, {error: err.toString()});
-        });
-        return next();
+                Log.error("Server::echo(..) - responding 400");
+                res.json(400, {error: err.toString()});
+            });
     }
 
     private static callRemoveDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         let id: string = req.params.id;
-        let insightFacade: InsightFacade = new InsightFacade();
-        insightFacade.removeDataset(id).then((idDeleted: string) => {
+        Server.facade.removeDataset(id).then((idDeleted: string) => {
             Log.info("Server::echo(..) - responding " + 200);
             res.json(200, {result: idDeleted});
         }).catch((err: any) => {
-            if (err === InsightError) {
+            if (err instanceof InsightError) {
                 Log.error("Server::echo(..) - responding 400");
                 res.json(400, {error: err.toString()});
             }
-            if (err === NotFoundError) {
+            if (err instanceof NotFoundError) {
                 Log.error("Server::echo(..) - responding 404");
                 res.json(404, {error: err.toString()});
             }
