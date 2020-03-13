@@ -144,7 +144,7 @@ export default class Server {
         let kind: InsightDatasetKind = req.params.kind;
         let id: string = req.params.id;
         let dataset = req.body;
-        dataset = dataset.toString("base64"); ////
+        dataset = dataset.toString("base64"); // trivial change to commit
 
         Server.facade.addDataset(id, dataset, kind).then((ids: string[]) => {
             Log.info("Server::echo(..) - responding " + 200);
