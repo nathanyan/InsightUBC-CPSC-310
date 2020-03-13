@@ -64,10 +64,11 @@ describe("Facade D3", function () {
 
     it("PUT test for courses dataset (success)", function () {
         try {
-            let data: string = fs.readFileSync("./test/data/courses.zip").toString();
-            return chai.request(server)
-                .put("/dataset/:id/:kind")
-                .send(facade.addDataset("courses2", data, InsightDatasetKind.Courses))
+            let data: Buffer = fs.readFileSync("./test/data/courses.zip");
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses/" + InsightDatasetKind.Courses)
+                .send(data)
+                .set("Content-Type", "application/x-zip-compressed")
                 .then(function (res: Response) {
                     Log.info("Server::echo(..) - responding " + 200);
                     expect(res.status).to.be.equal(200);
@@ -84,9 +85,11 @@ describe("Facade D3", function () {
 
     it("PUT test for courses dataset (fail)", function () {
         try {
-            return chai.request(server)
-                .put("/dataset/:id/:kind")
-                .send(facade.addDataset("coursesJSON", "./test/data/AND.json", InsightDatasetKind.Courses))
+            let data: Buffer = fs.readFileSync("./test/data/courses.zip");
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses_/" + InsightDatasetKind.Courses)
+                .send(data)
+                .set("Content-Type", "application/x-zip-compressed")
                 .then(function (res: Response) {
                     Log.info("Should not add dataset");
                     expect.fail();
@@ -103,9 +106,8 @@ describe("Facade D3", function () {
 
     it("DELETE test for remove dataset (success)", function () {
         try {
-            return chai.request(server)
-                .del("/dataset/:id")
-                .send(facade.removeDataset("courses"))
+            return chai.request("http://localhost:4321")
+                .del("/dataset/courses")
                 .then(function (res: Response) {
                     Log.info("Server::echo(..) - responding " + 200);
                     expect(res.status).to.be.equal(200);
@@ -122,47 +124,26 @@ describe("Facade D3", function () {
 
     it("DELETE test for remove dataset (fail)", function () {
         try {
-            return chai.request(server)
-                .del("/dataset/:id")
-                .send(facade.removeDataset("courses_"))
-                    .then(function (res: Response) {
-                        Log.info("Shouldn't remove dataset");
-                        expect.fail();
-                    })
-                    .catch(function (err) {
-                        Log.error("Server::echo(..) - responding 400");
-                        expect(err.status).to.be.equal(400);
-                    });
+            return chai.request("http://localhost:4321")
+                .del("/dataset/rooms_")
+                .then(function (res: Response) {
+                    Log.info("Shouldn't remove dataset");
+                    expect.fail();
+                })
+                .catch(function (err) {
+                    Log.error("Server::echo(..) - responding 400");
+                    expect(err.status).to.be.equal(400);
+                });
         } catch (err) {
             Log.error("Server::echo(..) - responding 400");
             expect(err.status).to.be.equal(400);
         }
     });
 
-    it("DELETE test for remove dataset (fail)", function () {
-        try {
-            return chai.request(server)
-                .del("/dataset/:id")
-                .send(facade.removeDataset("courses"))
-                .then(function (res: Response) {
-                    Log.info("Shouldn't remove dataset not existing");
-                    expect.fail();
-                })
-                .catch(function (err) {
-                    Log.error("Server::echo(..) - responding 404");
-                    expect(err.status).to.be.equal(404);
-                });
-        } catch (err) {
-            Log.error("Server::echo(..) - responding 404");
-            expect(err.status).to.be.equal(404);
-        }
-    });
-
     it("GET test for list dataset", function () {
         try {
-            return chai.request(server)
-                .del("/datasets")
-                .send(facade.listDatasets())
+            return chai.request("http://localhost:4321")
+                .get("/datasets")
                 .then(function (res: Response) {
                     Log.info("Server::echo(..) - responding " + 200);
                     expect(res.status).to.be.equal(200);
@@ -189,9 +170,10 @@ describe("Facade D3", function () {
                         ORDER: "courses_avg"
                 }
             };
-            return chai.request(server)
-                .put("/query")
-                .send(facade.performQuery(query))
+            return chai.request("http://localhost:4321")
+                .post("/query")
+                .send(query)
+                .set("Content-Type", "application/json")
                 .then(function (res: Response) {
                     Log.info("Server::echo(..) - responding " + 200);
                     expect(res.status).to.be.equal(200);
@@ -221,9 +203,10 @@ describe("Facade D3", function () {
                         ORDER: "courses_avg"
                     }
                 };
-            return chai.request(server)
+            return chai.request("http://localhost:4321")
                 .put("/query")
-                .send(facade.performQuery(query))
+                .send(query)
+                .set("Content-Type", "application/json")
                 .then(function (res: Response) {
                     Log.info("Shouldn't remove dataset not existing");
                     expect.fail();

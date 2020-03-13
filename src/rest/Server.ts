@@ -143,18 +143,18 @@ export default class Server {
     private static callAddDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         let kind: InsightDatasetKind = req.params.kind;
         let id: string = req.params.id;
-        let dataset = req.body; // base64
+        let dataset = req.body;
         dataset = dataset.toString("base64");
 
-        let insightFacade: InsightFacade = new InsightFacade();
-        return insightFacade.addDataset(id, dataset, kind).then((ids: string[]) => {
-                Log.info("Server::echo(..) - responding " + 200);
-                res.json(200, {result: ids});
-                return next();
+        Server.facade.addDataset(id, dataset, kind).then((ids: string[]) => {
+            Log.info("Server::echo(..) - responding " + 200);
+            res.json(200, {result: ids});
+            return next();
         }).catch((err: any) => {
-                Log.error("Server::echo(..) - responding 400");
-                res.json(400, {error: err.toString()});
-            });
+            Log.error("Server::echo(..) - responding 400");
+            res.json(400, {error: err.toString()});
+            return next();
+        });
     }
 
     private static callRemoveDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
@@ -162,38 +162,39 @@ export default class Server {
         Server.facade.removeDataset(id).then((idDeleted: string) => {
             Log.info("Server::echo(..) - responding " + 200);
             res.json(200, {result: idDeleted});
+            return next();
         }).catch((err: any) => {
             if (err instanceof InsightError) {
                 Log.error("Server::echo(..) - responding 400");
                 res.json(400, {error: err.toString()});
+                return next();
             }
             if (err instanceof NotFoundError) {
                 Log.error("Server::echo(..) - responding 404");
                 res.json(404, {error: err.toString()});
+                return next();
             }
         });
-        return next();
     }
 
     private static callListDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
-        let insightFacade: InsightFacade = new InsightFacade();
-        insightFacade.listDatasets().then((result: InsightDataset[]) => {
+        Server.facade.listDatasets().then((result: InsightDataset[]) => {
             Log.info("Server::echo(..) - responding " + 200);
             res.json(200, {result: result});
+            return next();
         });
-        return next();
     }
 
     private static callQueries(req: restify.Request, res: restify.Response, next: restify.Next) {
         let query: any = req.body;
-        let insightFacade: InsightFacade = new InsightFacade();
-        insightFacade.performQuery(query).then((result: any[]) => {
+        Server.facade.performQuery(query).then((result: any[]) => {
             Log.info("Server::echo(..) - responding " + 200);
             res.json(200, {result: result});
+            return next();
         }).catch((err: any) => {
             Log.error("Server::echo(..) - responding 400");
             res.json(400, {error: err.toString()});
+            return next();
         });
-        return next();
     }
 }

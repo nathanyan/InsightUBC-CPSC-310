@@ -47,10 +47,10 @@ export default class InsightFacade implements IInsightFacade {
             // }
 
             if (parsedFile["kind"] === InsightDatasetKind.Courses) {
-                    this.addedData[parsedFile["id"]] = parsedFile["data"];
+                    this.addedData[parsedFile["id"]] = parsedFile["data"][parsedFile["id"]];
                 }
             if (parsedFile["kind"] === InsightDatasetKind.Rooms) {
-                    this.addedRoomsData[parsedFile["id"]] = parsedFile["data"];
+                    this.addedRoomsData[parsedFile["id"]] = parsedFile["data"][parsedFile["id"]];
                 }
         });
     }
