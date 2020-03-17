@@ -36,7 +36,17 @@ export default class InsightFacade implements IInsightFacade {
         this.groupKeysInQuery = [];
         fs.readdirSync("./data/").forEach((file: string) => {
             let fileData: string = fs.readFileSync("./data/" + file).toString();
-            let parsedFile: any = JSON.parse(fileData);
+            try {
+                let parsedFile: any = JSON.parse(fileData);
+                if (parsedFile["kind"] === InsightDatasetKind.Courses) {
+                    this.addedData[parsedFile["id"]] = parsedFile["data"][parsedFile["id"]];
+                }
+                if (parsedFile["kind"] === InsightDatasetKind.Rooms) {
+                    this.addedRoomsData[parsedFile["id"]] = parsedFile["data"][parsedFile["id"]];
+                }
+            } catch (e) {
+                return;
+            }
             // for (let dataset of parsedFile["data"][file]) {
             //     if (dataset["kind"] === InsightDatasetKind.Courses) {
             //         this.addedData[dataset["id"]] = dataset["data"];
@@ -45,13 +55,6 @@ export default class InsightFacade implements IInsightFacade {
             //         this.addedRoomsData[dataset["id"]] = dataset["data"];
             //     }
             // }
-
-            if (parsedFile["kind"] === InsightDatasetKind.Courses) {
-                    this.addedData[parsedFile["id"]] = parsedFile["data"][parsedFile["id"]];
-                }
-            if (parsedFile["kind"] === InsightDatasetKind.Rooms) {
-                    this.addedRoomsData[parsedFile["id"]] = parsedFile["data"][parsedFile["id"]];
-                }
         });
     }
 

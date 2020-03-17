@@ -204,7 +204,7 @@ describe("Facade D3", function () {
                     }
                 };
             return chai.request("http://localhost:4321")
-                .put("/query")
+                .post("/query")
                 .send(query)
                 .set("Content-Type", "application/json")
                 .then(function (res: Response) {
