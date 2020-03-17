@@ -20,12 +20,20 @@ describe("Facade D3", function () {
         facade = new InsightFacade();
         server = new Server(4321);
         // TODO: start server here once and handle errors properly
-        server.start();
+        server.start().then((result: boolean) => {
+            Log.trace("Server successfully started! " + result);
+        }).catch((err: any) => {
+            Log.error("Server crashed while starting! " + err.toString());
+        });
     });
 
     after(function () {
         // TODO: stop server here once!
-        server.stop();
+        server.stop().then((result: boolean) => {
+            Log.trace("Server successfully stopped! " + result);
+        }).catch((err: any) => {
+            Log.error("Server crashed while stopping! " + err.toString());
+        });
     });
 
     beforeEach(function () {
@@ -74,7 +82,7 @@ describe("Facade D3", function () {
                     expect(res.status).to.be.equal(200);
                 })
                 .catch(function (err: Response) {
-                    Log.error("Shouldn't reject 1");
+                    Log.error(err + " :Shouldn't reject 1");
                     expect.fail();
                 });
         } catch (err) {
@@ -91,7 +99,7 @@ describe("Facade D3", function () {
                 .send(data)
                 .set("Content-Type", "application/x-zip-compressed")
                 .then(function (res: Response) {
-                    Log.info("Should not add dataset");
+                    Log.info(res + " :Should not add dataset");
                     expect.fail();
                 })
                 .catch(function (err) {
@@ -113,7 +121,7 @@ describe("Facade D3", function () {
                     expect(res.status).to.be.equal(200);
                 })
                 .catch(function (err) {
-                    Log.error("Shouldn't reject");
+                    Log.error(err + " :Shouldn't reject");
                     expect.fail();
                 });
         } catch (err) {
@@ -127,7 +135,7 @@ describe("Facade D3", function () {
             return chai.request("http://localhost:4321")
                 .del("/dataset/rooms_")
                 .then(function (res: Response) {
-                    Log.info("Shouldn't remove dataset");
+                    Log.info(res + " :Shouldn't remove dataset");
                     expect.fail();
                 })
                 .catch(function (err) {
@@ -179,7 +187,7 @@ describe("Facade D3", function () {
                     expect(res.status).to.be.equal(200);
                 })
                 .catch(function (err: Response) {
-                    Log.error("Shouldn't reject");
+                    Log.error("Shouldn't reject" + err);
                     expect.fail();
                 });
         } catch (err) {
@@ -208,7 +216,7 @@ describe("Facade D3", function () {
                 .send(query)
                 .set("Content-Type", "application/json")
                 .then(function (res: Response) {
-                    Log.info("Shouldn't remove dataset not existing");
+                    Log.info(res + " :Shouldn't remove dataset not existing");
                     expect.fail();
                 })
                 .catch(function (err: Response) {
