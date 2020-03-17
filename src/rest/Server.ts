@@ -15,11 +15,13 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
-    private static facade: InsightFacade = new InsightFacade();
+    // private static facade: InsightFacade = new InsightFacade();
+    private static facade: InsightFacade;
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
         this.port = port;
+        Server.facade = new InsightFacade();
     }
 
     /**
