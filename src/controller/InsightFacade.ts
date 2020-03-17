@@ -34,20 +34,24 @@ export default class InsightFacade implements IInsightFacade {
         this.uniqueIDsInQuery = [];
         this.applyKeysInQuery = [];
         this.groupKeysInQuery = [];
-        fs.readdirSync("./data/").forEach((file: string) => {
-            try {
-                let fileData: string = fs.readFileSync("./data/" + file).toString();
-                let parsedFile: any = JSON.parse(fileData);
-                if (parsedFile["kind"] === InsightDatasetKind.Courses) {
-                    this.addedData[parsedFile["id"]] = parsedFile["data"][parsedFile["id"]];
+        try {
+            fs.readdirSync("./data/").forEach((file: string) => {
+                try {
+                    let fileData: string = fs.readFileSync("./data/" + file).toString();
+                    let parsedFile: any = JSON.parse(fileData);
+                    if (parsedFile["kind"] === InsightDatasetKind.Courses) {
+                        this.addedData[parsedFile["id"]] = parsedFile["data"][parsedFile["id"]];
+                    }
+                    if (parsedFile["kind"] === InsightDatasetKind.Rooms) {
+                        this.addedRoomsData[parsedFile["id"]] = parsedFile["data"][parsedFile["id"]];
+                    }
+                } catch (e) {
+                    return;
                 }
-                if (parsedFile["kind"] === InsightDatasetKind.Rooms) {
-                    this.addedRoomsData[parsedFile["id"]] = parsedFile["data"][parsedFile["id"]];
-                }
-            } catch (e) {
-                return;
-            }
-        });
+            });
+        } catch (e) {
+            return;
+        }
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
