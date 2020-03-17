@@ -47,14 +47,6 @@ export default class InsightFacade implements IInsightFacade {
             } catch (e) {
                 return;
             }
-            // for (let dataset of parsedFile["data"][file]) {
-            //     if (dataset["kind"] === InsightDatasetKind.Courses) {
-            //         this.addedData[dataset["id"]] = dataset["data"];
-            //     }
-            //     if (dataset["kind"] === InsightDatasetKind.Rooms) {
-            //         this.addedRoomsData[dataset["id"]] = dataset["data"];
-            //     }
-            // }
         });
     }
 
