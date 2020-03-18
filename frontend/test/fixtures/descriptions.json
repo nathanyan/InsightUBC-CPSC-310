@@ -1,3 +1,12 @@
 {
-    "query1": "simple query IS comparison for department with two columns and old order syntax"
+    "query1": "simple query IS comparison for department with two columns and old order syntax",
+    "query2": "Courses: WHERE only 1 condition: GT",
+    "query3": "Courses: WHERE only 1 condition: NOT then IS",
+    "query4": "Courses: WHERE only - AND multiple (some NOTS in there)",
+    "query5": "Courses: WHERE only - OR multiple (includes 1 NOT)",
+    "query6": "Courses: WHERE only - NONE multiple (includes 1 NOT)",
+    "query7": "Rooms: WHERE only 1 condition: IS NOT",
+    "query8": "Rooms: WHERE only - AND multiple (includes 1 NOT)",
+    "query9": "Rooms: WHERE only - OR multiple (includes 1 NOT)",
+    "query10": "Rooms: WHERE only - NONE multiple (includes 1 NOT)"
 }

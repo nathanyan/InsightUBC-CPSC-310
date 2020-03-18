@@ -1,3 +1,12 @@
 {
     "query1":{"WHERE": {"IS": {"courses_dept": "cpsc"} }, "OPTIONS": {"COLUMNS": ["courses_dept", "courses_id"], "ORDER": "courses_id"} },
+    "query2": {"WHERE": {"GT": {"courses_avg": 96} } },
+    "query3": {"WHERE": {"NOT": {"IS": {"courses_dept": "cpsc"} } } },
+    "query4": {"WHERE": {"AND": [{"GT": {"courses_avg": 90} }, {"NOT": {"IS": {"courses_dept": "adhe"} } }, {"LT": {"courses_year": 1950} }, {"NOT": {"IS": {"courses_title": "Introduction to Software Engineering" } } } ] } },
+    "query5": {"WHERE": {"OR": [{"IS": {"courses_id": "101" } }, {"NOT": {"IS": {"courses_uuid": "1234"} } }, {"GT": {"courses_fail": 100} } ] } },
+    "query6": {"WHERE": {"NOT": {"OR": [{"EQ": {"courses_audit": 123} }, {"NOT": {"GT": {"courses_pass": 50} } }, {"IS": {"courses_instructor": "Elisa"} } ] } } },
+    "query7": {"WHERE": {"NOT": {"IS": {"rooms_name": "Angus"} } } },
+    "query8": {"WHERE": {"AND": [{"GT": {"rooms_seats": 123} }, {"NOT": {"IS": {"rooms_furniture": "Table"} } }, {"IS": {"rooms_fullname": "Henry Angus"} } ] } },
+    "query9": {"WHERE": {"OR": [{"NOT": {"LT": {"rooms_lon": 49} } }, {"IS": {"rooms_type": "Classroom"} }, {"IS": {"rooms_href": "www.ubc.ca"} } ] } },
+    "query10": {"WHERE": {"NOT": {"OR": [{"IS": {"rooms_number": "200"} }, {"GT": {"rooms_lat": 50} }, {"NOT": {"IS": {"rooms_address": "123 Fake Street"} } } ] } } }
 }
