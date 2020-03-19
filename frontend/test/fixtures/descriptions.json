@@ -8,5 +8,15 @@
     "query7": "Rooms: WHERE only 1 condition: IS NOT",
     "query8": "Rooms: WHERE only - AND multiple (includes 1 NOT)",
     "query9": "Rooms: WHERE only - OR multiple (includes 1 NOT)",
-    "query10": "Rooms: WHERE only - NONE multiple (includes 1 NOT)"
+    "query10": "Rooms: WHERE only - NONE multiple (includes 1 NOT)",
+    "query11": "Courses: testing Columns using query 5 where",
+    "query12": "Courses: testing Columns with applyKey (using query 5 where)",
+    "query13": "Rooms: testing Columns using query 8 where (contains 1 applyKey)",
+    "query14": "Rooms: testing Columns - only 1 applyKey checked",
+    "query15": "Rooms: testing Columns - none checked",
+    "query16": "Courses: testing order - 1 key ascending only",
+    "query17": "Courses: testing order - multiple keys ascending",
+    "query18": "Rooms: testing order - 1 key descending only",
+    "query19": "Rooms: testing order - 1 key ascending only (applyKey)",
+    "query20": "Rooms: testing order - multiple keys descending"
 }
