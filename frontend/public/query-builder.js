@@ -18,8 +18,6 @@ CampusExplorer.buildQuery = function () {
     let dataID;
     let coursesTab = document.querySelector("nav.nav a[data-type='courses']");
     let roomsTab = document.querySelector("nav.nav a[data-type='rooms']");
-    // let coursesTab = document.getElementsByClassName("nav-item tab")[0];
-    // let roomsTab = document.getElementsByClassName("nav-item tab")[1];
     if (coursesTab.getAttribute("class") === "nav-item tab active") {
         dataID = "courses_";
     }
@@ -38,10 +36,21 @@ CampusExplorer.buildQuery = function () {
     columns = buildColumns(dataID);
     order = buildOrder(dataID);
     options["COLUMNS"] = columns;
-    if (order !== "") {
+    if (order !== "") {                             // order is optional: if not blank, then add it to options
         options["ORDER"] = order;
     }
     query["OPTIONS"] = options;
+    group = buildGroup(dataID);
+    if (group.length !== 0) {
+        transformations["GROUP"] = group;
+    }
+    apply = buildApply(dataID);
+    if (apply.length !== 0) {
+        transformations["APPLY"] = apply;
+    }
+    if (group.length !== 0 || apply.length !== 0) {
+        query["TRANSFORMATIONS"] = transformations;
+    }
     return query;
 };
 
@@ -57,82 +66,79 @@ function buildWhere(dataID) {
         formElement = document.querySelector("form[data-type='rooms']");
         listOfConditions = formElement.getElementsByClassName("control-group condition");
     }
-    //let listOfConditions = document.getElementsByClassName("control-group condition");
     if (listOfConditions.length === 0) {
         return where;
     }
-    //if (dataID === "courses_") {        // data to query = courses
-        let whereFiltersOrAnd = [];
-        for (let controlGroupCondition of listOfConditions) {
-            //let controlGroupCondition = listOfConditions[i];
-            let comparisonKeyElement = controlGroupCondition.querySelector("div.control.operators option[selected='selected']");
-            let comparisonKey = comparisonKeyElement.getAttribute("value");  // IS EQ GT LT
-            let comparisonAttributeElement = controlGroupCondition.querySelector("div.control.fields option[selected='selected']");
-            let comparisonAttributeSkeyMkey = comparisonAttributeElement.getAttribute("value");
-            let comparisonAttribute = dataID + comparisonAttributeSkeyMkey;   // courses_audit courses_pass etc
-            let comparisonInputElement = controlGroupCondition.querySelector("div.control.term input[type='text']");
-            let comparisonInput = comparisonInputElement.getAttribute("value");     // "cpsc" 90 etc
-            if (mKeyFieldsCourses.includes(comparisonAttributeSkeyMkey) || mKeyFieldsRooms.includes(comparisonAttributeSkeyMkey)) {
-                comparisonInput = Number(comparisonInput);      // input should be a number instead of string
+    let whereFiltersOrAnd = [];
+    for (let controlGroupCondition of listOfConditions) {
+        let comparisonKeyElement = controlGroupCondition.querySelector("div.control.operators option[selected='selected']");
+        let comparisonKey = comparisonKeyElement.getAttribute("value");  // IS EQ GT LT
+        let comparisonAttributeElement = controlGroupCondition.querySelector("div.control.fields option[selected='selected']");
+        let comparisonAttributeSkeyMkey = comparisonAttributeElement.getAttribute("value");
+        let comparisonAttribute = dataID + comparisonAttributeSkeyMkey;   // courses_audit courses_pass etc
+        let comparisonInputElement = controlGroupCondition.querySelector("div.control.term input[type='text']");
+        let comparisonInput = comparisonInputElement.getAttribute("value");     // "cpsc" 90 etc
+        if (mKeyFieldsCourses.includes(comparisonAttributeSkeyMkey) || mKeyFieldsRooms.includes(comparisonAttributeSkeyMkey)) {
+            comparisonInput = Number(comparisonInput);      // input should be a number instead of string
+        }
+        let comparisonObject = {};
+        comparisonObject[comparisonAttribute] = comparisonInput;    // { "courses_fail" : 20 }
+        let notElement = controlGroupCondition.querySelector("div.control.not input");
+        if (notElement.getAttribute("checked") === "checked") {     // not checkbox selected
+            let notObject = {};
+            notObject[comparisonKey] = comparisonObject;    //  { "GT" : { "courses_fail" : 20 } }
+            if (listOfConditions.length === 1) {    // only 1 condition, put directly into WHERE
+                where["NOT"] = notObject;           // { "NOT" : { "GT" : { "courses_fail" : 20 } } }
+                return where;
+            } else {                                // more than 1 condition, put into array
+                let notObject2 = {};
+                notObject2["NOT"] = notObject;      // { "NOT" : { "GT" : { "courses_fail" : 20 } } }
+                whereFiltersOrAnd.push(notObject2);
             }
-            let comparisonObject = {};
-            comparisonObject[comparisonAttribute] = comparisonInput;    // { "courses_fail" : 20 }
-            let notElement = controlGroupCondition.querySelector("div.control.not input");
-            if (notElement.getAttribute("checked") === "checked") {     // not checkbox selected
-                let notObject = {};
-                notObject[comparisonKey] = comparisonObject;    //  { "GT" : { "courses_fail" : 20 } }
-                if (listOfConditions.length === 1) {    // only 1 condition, put directly into WHERE
-                    where["NOT"] = notObject;           // { "NOT" : { "GT" : { "courses_fail" : 20 } } }
-                    return where;
-                } else {                                // more than 1 condition, put into array
-                    let notObject2 = {};
-                    notObject2["NOT"] = notObject;      // { "NOT" : { "GT" : { "courses_fail" : 20 } } }
-                    whereFiltersOrAnd.push(notObject2);
-                }
-            } else {                                                            // not checkbox isn't selected
-                if (listOfConditions.length === 1) {            // only 1 condition, put directly into WHERE
-                    where[comparisonKey] = comparisonObject;    //  { "GT" : { "courses_fail" : 20 } }
-                    return where;
-                } else {                                        // more than 1 condition, put into array
-                    let conditionObject = {};
-                    conditionObject[comparisonKey] = comparisonObject;  //  { "GT" : { "courses_fail" : 20 } }
-                    whereFiltersOrAnd.push(conditionObject);
-                }
+        } else {                                                            // not checkbox isn't selected
+            if (listOfConditions.length === 1) {            // only 1 condition, put directly into WHERE
+                where[comparisonKey] = comparisonObject;    //  { "GT" : { "courses_fail" : 20 } }
+                return where;
+            } else {                                        // more than 1 condition, put into array
+                let conditionObject = {};
+                conditionObject[comparisonKey] = comparisonObject;  //  { "GT" : { "courses_fail" : 20 } }
+                whereFiltersOrAnd.push(conditionObject);
             }
         }
-        if (dataID === "courses_") {
-            let coursesConditionAllElement = document.getElementById("courses-conditiontype-all");
-            let coursesConditionAnyElement = document.getElementById("courses-conditiontype-any");
-            let coursesConditionNoneElement = document.getElementById("courses-conditiontype-none");
-            if (coursesConditionAllElement.getAttribute("checked") === "checked") {
-                where["AND"] = whereFiltersOrAnd;
-            }
-            if (coursesConditionAnyElement.getAttribute("checked") === "checked") {
-                where["OR"] = whereFiltersOrAnd;
-            }
-            if (coursesConditionNoneElement.getAttribute("checked") === "checked") {
-                let notObjectMany = {};
-                notObjectMany["OR"] = whereFiltersOrAnd;
-                where["NOT"] = notObjectMany;
-            }
+    }
+    if (dataID === "courses_") {
+        let coursesConditionAllElement = document.getElementById("courses-conditiontype-all");
+        let coursesConditionAnyElement = document.getElementById("courses-conditiontype-any");
+        let coursesConditionNoneElement = document.getElementById("courses-conditiontype-none");
+        if (coursesConditionAllElement.getAttribute("checked") === "checked") {
+            where["AND"] = whereFiltersOrAnd;
         }
-        if (dataID === "rooms_") {
-            let roomsConditionAllElement = document.getElementById("rooms-conditiontype-all");
-            let roomsConditionAnyElement = document.getElementById("rooms-conditiontype-any");
-            let roomsConditionNoneElement = document.getElementById("rooms-conditiontype-none");
-            if (roomsConditionAllElement.getAttribute("checked") === "checked") {
-                where["AND"] = whereFiltersOrAnd;
-            }
-            if (roomsConditionAnyElement.getAttribute("checked") === "checked") {
-                where["OR"] = whereFiltersOrAnd;
-            }
-            if (roomsConditionNoneElement.getAttribute("checked") === "checked") {
-                let notObjectMany = {};
-                notObjectMany["OR"] = whereFiltersOrAnd;
-                where["NOT"] = notObjectMany;
-            }
+        if (coursesConditionAnyElement.getAttribute("checked") === "checked") {
+            where["OR"] = whereFiltersOrAnd;
         }
-        return where;
+        if (coursesConditionNoneElement.getAttribute("checked") === "checked") {
+            let notObjectMany = {};
+            notObjectMany["OR"] = whereFiltersOrAnd;
+            where["NOT"] = notObjectMany;
+        }
+    }
+    if (dataID === "rooms_") {
+        let roomsConditionAllElement = document.getElementById("rooms-conditiontype-all");
+        let roomsConditionAnyElement = document.getElementById("rooms-conditiontype-any");
+        let roomsConditionNoneElement = document.getElementById("rooms-conditiontype-none");
+        if (roomsConditionAllElement.getAttribute("checked") === "checked") {
+            where["AND"] = whereFiltersOrAnd;
+        }
+        if (roomsConditionAnyElement.getAttribute("checked") === "checked") {
+            where["OR"] = whereFiltersOrAnd;
+        }
+        if (roomsConditionNoneElement.getAttribute("checked") === "checked") {
+            let notObjectMany = {};
+            notObjectMany["OR"] = whereFiltersOrAnd;
+            where["NOT"] = notObjectMany;
+        }
+    }
+    return where;
 }
 
 function buildColumns(dataID) {
@@ -225,4 +231,66 @@ function buildOrder(dataID) {
         orderMultiple["keys"] = orderKeys;
         return orderMultiple;
     }
+}
+
+function buildGroup(dataID) {
+    let group = [];
+    let formElement;
+    if (dataID === "courses_") {
+        formElement = document.querySelector("form[data-type='courses']");  // choose appropriate form
+    }
+    if (dataID === "rooms_") {
+        formElement = document.querySelector("form[data-type='rooms']");
+    }
+    let groupSection = formElement.querySelector("div.form-group.groups");  // grab only group section
+    let groupInputsAll = groupSection.querySelectorAll("input");
+    let containsAtLeastOneChecked = false;
+    for (let groupInput of groupInputsAll) {                     // check to see at least one group box is checked
+        if (groupInput.getAttribute("checked") === "checked") {
+            containsAtLeastOneChecked = true;
+        }
+    }
+    if (!containsAtLeastOneChecked) {             // none checked, return empty []
+        return group;
+    } else {
+        let groupElementsChecked = groupSection.querySelectorAll("input[checked='checked']");   // gather all input boxes checked
+        for (let groupElement of groupElementsChecked) {         // for each checked input, grab the value (ie: "instructor") and attach to the id string, then push to final list
+            let groupKeyField = groupElement.getAttribute("value");       // "instructor"
+            let groupKey = dataID + groupKeyField;        // "courses_instructor"
+            group.push(groupKey);
+        }
+        return group;
+    }
+}
+
+function buildApply(dataID) {
+    let apply = [];
+    let formElement;
+    let listOfApplyRules;
+    if (dataID === "courses_") {
+        formElement = document.querySelector("form[data-type='courses']");
+        listOfApplyRules = formElement.getElementsByClassName("control-group transformation");
+    }
+    if (dataID === "rooms_") {
+        formElement = document.querySelector("form[data-type='rooms']");
+        listOfApplyRules = formElement.getElementsByClassName("control-group transformation");
+    }
+    if (listOfApplyRules.length === 0) {
+        return apply;
+    }
+    for (let applyRule of listOfApplyRules) {
+        let applyKeyInput = applyRule.querySelector("div.control.term input[type='text']");     // applyKey text box
+        let applyKey = applyKeyInput.getAttribute("value");                 // applyKey string, ex: "overallAvg"
+        let applyTokenElement = applyRule.querySelector("div.control.operators option[selected='selected']");
+        let applyToken = applyTokenElement.getAttribute("value");               // MAX MIN COUNT SUM AVG
+        let keyFieldElement = applyRule.querySelector("div.control.fields option[selected='selected']");
+        let keyField = keyFieldElement.getAttribute("value");              // "instructor"
+        let keyIDAndField = dataID + keyField;                                          // "courses_instructor"
+        let applyTokenKeyObject = {};
+        applyTokenKeyObject[applyToken] = keyIDAndField;                                // { "MAX" : "courses_avg" }
+        let applyRuleObject = {};
+        applyRuleObject[applyKey] = applyTokenKeyObject;                                // { "highestAvg": { "MAX": "courses_avg" } }
+        apply.push(applyRuleObject);
+    }
+    return apply;
 }

@@ -18,5 +18,9 @@
     "query17": "Courses: testing order - multiple keys ascending",
     "query18": "Rooms: testing order - 1 key descending only",
     "query19": "Rooms: testing order - 1 key ascending only (applyKey)",
-    "query20": "Rooms: testing order - multiple keys descending"
+    "query20": "Rooms: testing order - multiple keys descending",
+    "query21": "Courses: testing group using query17 - multiple selected",
+    "query22": "Rooms: testing group using query20 - multiple selected",
+    "query23": "Rooms: testing group using query20 - only 1 selected",
+    "query24": "Courses: testing apply - max average and count fails"
 }
