@@ -25,5 +25,9 @@
     "query24": "Courses: testing apply - max average and count fails",
     "query25": "Courses: test order without columns, groups without apply",
     "query26": "Courses: valid, complex query, no sections empty",
-    "query27": "Rooms: valid, complex query, no sections empty"
+    "query27": "Rooms: valid, complex query, no sections empty",
+    "query28": "Courses: empty where",
+    "query29": "Courses: WHERE default to All without clicking it - should place in all conditions within an AND",
+    "query30": "Courses: WHERE none selected with just 1 condition that has not checked off - NOT in NOT",
+    "query31": "Courses: WHERE none selected with just 1 condition"
 }
