@@ -28,16 +28,24 @@ export default class Scheduler implements IScheduler {
             for (let availableSlot of availableTimeslots) {
                 for (let timeslot of Object.values(timeslotsAlreadyScheduled)) {
                     if (availableSlot !== timeslot) {
-                        finalTimeslot = this.scheduleRoomAndTimeslot(finalTimeslot, availableSlot, section, rooms,
-                            roomToSelect, timeslotsAlreadyScheduled, schedule);
+                        finalTimeslot = availableSlot;
+                        let scheduledTuple: [SchedSection, SchedRoom, string] =
+                            [section, rooms[roomToSelect], finalTimeslot];
+                        rooms.splice(roomToSelect, 1);
+                        timeslotsAlreadyScheduled[finalTimeslot] = section["courses_id"];
+                        schedule.push(scheduledTuple);
                         break;
                     } else {
                         for (let course of timeslotsAlreadyScheduled[timeslot]) {
                             if (course["courses_id"] === section["courses_id"]) {
                                 break;
                             }
-                            finalTimeslot = this.scheduleRoomAndTimeslot(finalTimeslot, availableSlot, section, rooms,
-                                roomToSelect, timeslotsAlreadyScheduled, schedule);
+                            finalTimeslot = availableSlot;
+                            let scheduledTuple: [SchedSection, SchedRoom, string] =
+                                [section, rooms[roomToSelect], finalTimeslot];
+                            rooms.splice(roomToSelect, 1);
+                            timeslotsAlreadyScheduled[finalTimeslot] = section["courses_id"];
+                            schedule.push(scheduledTuple);
                         }
                     }
                 }
@@ -46,24 +54,12 @@ export default class Scheduler implements IScheduler {
         return schedule;
     }
 
-    private scheduleRoomAndTimeslot(finalTimeslot: string, availableSlot: string, section: SchedSection,
-                                    rooms: SchedRoom[], roomToSelect: number, timeslotsAlreadyScheduled: any,
-                                    schedule: any[]) {
-        finalTimeslot = availableSlot;
-        let scheduledTuple: [SchedSection, SchedRoom, string] =
-            [section, rooms[roomToSelect], finalTimeslot];
-        rooms.splice(roomToSelect, 1);
-        timeslotsAlreadyScheduled[finalTimeslot] = section["courses_id"];
-        schedule.push(scheduledTuple);
-        return finalTimeslot;
-    }
-
-    private isEnrollmentMaximized(room: SchedRoom, section: SchedSection, seatsLeft: number) {
+    private isEnrollmentMaximized(room: SchedRoom, section: SchedSection, seatsLeft: number): boolean {
         return room["rooms_seats"] - (section["courses_pass"] + section["courses_fail"] +
             section["courses_audit"]) < seatsLeft;
     }
 
-    private isSectionLargerThanRoomCapacity(section: SchedSection, room: SchedRoom) {
+    private isSectionLargerThanRoomCapacity(section: SchedSection, room: SchedRoom): boolean {
         return (section["courses_pass"] + section["courses_fail"] + section["courses_audit"]) >
             room["rooms_seats"];
     }
