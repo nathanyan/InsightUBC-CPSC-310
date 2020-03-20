@@ -22,5 +22,8 @@
     "query21": "Courses: testing group using query17 - multiple selected",
     "query22": "Rooms: testing group using query20 - multiple selected",
     "query23": "Rooms: testing group using query20 - only 1 selected",
-    "query24": "Courses: testing apply - max average and count fails"
+    "query24": "Courses: testing apply - max average and count fails",
+    "query25": "Courses: test order without columns, groups without apply",
+    "query26": "Courses: valid, complex query, no sections empty",
+    "query27": "Rooms: valid, complex query, no sections empty"
 }

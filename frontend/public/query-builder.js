@@ -41,7 +41,7 @@ CampusExplorer.buildQuery = function () {
     }
     query["OPTIONS"] = options;
     group = buildGroup(dataID);
-    if (group.length !== 0) {
+    if (group.length !== 0) {                       // transformations are optional: as long as something in groups or apply present, will add transformations
         transformations["GROUP"] = group;
     }
     apply = buildApply(dataID);
@@ -197,7 +197,7 @@ function buildOrder(dataID) {
         return orderSingle;
     } else {
         let orderOptionsSelected = formOrderSection.querySelectorAll("option[selected='selected']");   // gather all option elements with selected = "selected"
-        let descendingCheckbox
+        let descendingCheckbox;
         if (dataID === "courses_") {
             descendingCheckbox = document.getElementById("courses-order");
         } else {
