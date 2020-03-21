@@ -3,52 +3,103 @@ import {IScheduler, SchedRoom, SchedSection, TimeSlot} from "./IScheduler";
 export default class Scheduler implements IScheduler {
 
     public schedule(sections: SchedSection[], rooms: SchedRoom[]): Array<[SchedRoom, SchedSection, TimeSlot]> {
-        let timeslotsAlreadyScheduled: any = {};
         let availableTimeslots: string[] = ["MWF 0800-0900", "MWF 0900-1000", "MWF 1000-1100", "MWF 1100-1200",
             "MWF 1200-1300", "MWF 1300-1400", "MWF 1400-1500", "MWF 1500-1600", "MWF 1600-1700", "TR  0800-0930",
             "TR  0930-1100", "TR  1100-1230", "TR  1230-1400", "TR  1400-1530", "TR  1530-1700"];
-        timeslotsAlreadyScheduled = this.initializeTimeslotsToSchedule(availableTimeslots, timeslotsAlreadyScheduled);
-        let schedule: any[] = [];
-        for (let section of sections) {
+        let priorityQueueSections: SchedSection[] = this.sortSectionsByEnrollmentDecreasing(sections);
+        let priorityQueueRooms: SchedRoom[] = this.sortRoomsByCapacityDecreasing(rooms);
+        let roomsAndSectionPairs: Array<[SchedRoom, SchedSection]> = [];
+        let maxDistance: number = this.getMaxDistanceFromAllRooms(rooms);
+        let roomsScheduled: SchedRoom[] = [];
+        // first pair sections with rooms
+        priorityQueueSections.forEach((section: any) => {
             let counter: number = 0;
-            let roomToSelect: number = 0;
-            let seatsLeft = 1000000;
-            for (let room of rooms) {
-                if (this.isSectionLargerThanRoomCapacity(section, room)) {
-                    counter++;
-                    continue;
-                }
-                if (this.isEnrollmentMaximized(room, section, seatsLeft)) {
-                    roomToSelect = counter;
-                    seatsLeft = this.setMaxEnrollmentSoFar(seatsLeft, room, section);
-                }
-            }
-            let finalTimeslot: string = "";
-            for (let availableSlot of availableTimeslots) {
-                for (let timeslot of Object.values(timeslotsAlreadyScheduled)) {
-                    if (availableSlot !== timeslot) {
-                        schedule = this.scheduleTuple(finalTimeslot, availableSlot, section, rooms, roomToSelect,
-                            timeslotsAlreadyScheduled, schedule);
-                        break;
+            let bestRoomSoFarIndex: number = 0;
+            let maxDistanceSoFar: number;
+            priorityQueueRooms.forEach((room: any) => {
+                if (this.doesSectionFitInRoom(section, room)) {
+                    if (roomsScheduled.length === 0) {
+                        bestRoomSoFarIndex = counter;
+                        counter++;
                     }
-                    let courseNames: string[] = timeslotsAlreadyScheduled[timeslot];
-                    if (courseNames.length === 0) {
-                        schedule = this.scheduleTuple(finalTimeslot, availableSlot, section, rooms, roomToSelect,
-                            timeslotsAlreadyScheduled, schedule);
-                        break;
+                    if (roomsScheduled.length === 1) {
+                        bestRoomSoFarIndex = counter;
+                        maxDistanceSoFar = this.getHaversineD(roomsScheduled[0], room);
+                        counter++;
                     }
-                    for (let courseName of courseNames) {
-                        if (courseName === section["courses_id"]) {
-                            break;
+                    if (roomsScheduled.length > 1) {
+                        for (let scheduledRoom of roomsScheduled) {
+                            let temp: number = this.getHaversineD(scheduledRoom, room);
+                            if (temp < maxDistanceSoFar && temp < maxDistance) {
+                                bestRoomSoFarIndex = room;
+                                maxDistanceSoFar = temp;
+                                counter++;
+                            }
                         }
-                        schedule = this.scheduleTuple(finalTimeslot, availableSlot, section, rooms,
-                            roomToSelect, timeslotsAlreadyScheduled, schedule);
-                        break;
                     }
+                } else {
+                    counter++;
+                }
+            });
+            let scheduledDuple: [SchedRoom, SchedSection] = [priorityQueueRooms[bestRoomSoFarIndex], section];
+            roomsAndSectionPairs.push(scheduledDuple);
+            roomsScheduled.push(priorityQueueRooms[bestRoomSoFarIndex]);
+            priorityQueueRooms.splice(bestRoomSoFarIndex, 1);
+        });
+        // then do timeslot optimization
+        return this.matchTimeSlots(availableTimeslots, roomsAndSectionPairs);
+    }
+
+    private matchTimeSlots(availableTimeslots: string[], roomsAndSectionPairs: Array<[SchedRoom, SchedSection]>):
+        Array<[SchedRoom, SchedSection, TimeSlot]> {
+        let scheduledTimeSlots: any = {};
+        scheduledTimeSlots = this.initializeTimeslotsToSchedule(availableTimeslots, scheduledTimeSlots);
+        let finalSchedule: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
+
+        roomsAndSectionPairs.forEach((duple: [SchedRoom, SchedSection]) => {
+            let timeslotSoFar: string;
+            let scheduledTuple: [SchedRoom, SchedSection, TimeSlot] = null;
+            availableTimeslots.forEach((timeslot: TimeSlot) => {
+                if (Object.keys(scheduledTimeSlots).length === 0) {
+                    scheduledTuple = [this.getDupleRoom(duple), this.getDupleSection(duple), timeslot];
+                    scheduledTimeSlots[timeslot] =
+                        scheduledTimeSlots[timeslot].push(this.getDupleSection(duple)["courses_id"]);
+                }
+                if (Object.keys(scheduledTimeSlots).length >= 1) {
+                    scheduledTuple = this.scheduleNoOverlappingSlot(scheduledTimeSlots, timeslot, scheduledTuple,
+                        duple, timeslotSoFar);
+                }
+            });
+            finalSchedule.push(scheduledTuple);
+        });
+        return finalSchedule;
+    }
+
+    private scheduleNoOverlappingSlot(scheduledTimeSlots: any, timeslot: string,
+                                      scheduledTuple: [SchedRoom, SchedSection, TimeSlot],
+                                      duple: [SchedRoom, SchedSection], timeslotSoFar: string) {
+        Object.keys(scheduledTimeSlots).forEach((slot: TimeSlot) => {
+            if (slot !== timeslot) {
+                timeslotSoFar = timeslot;
+                scheduledTuple = [this.getDupleRoom(duple), this.getDupleSection(duple), timeslotSoFar as TimeSlot];
+                scheduledTimeSlots[timeslot] =
+                    scheduledTimeSlots[timeslot].push(this.getDupleSection(duple)["courses_id"]);
+            } else {
+                let sameCourseInTimeslot: boolean = false;
+                scheduledTimeSlots[slot].forEach((courseID: string) => {
+                    if ((this.getDupleSection(duple)["courses_id"]) === courseID) {
+                        sameCourseInTimeslot = true;
+                    }
+                });
+                if (!sameCourseInTimeslot) {
+                    timeslotSoFar = timeslot;
+                    scheduledTuple = [this.getDupleRoom(duple), this.getDupleSection(duple), timeslotSoFar as TimeSlot];
+                    scheduledTimeSlots[timeslot] =
+                        scheduledTimeSlots[timeslot].push(this.getDupleSection(duple)["courses_id"]);
                 }
             }
-        }
-        return schedule;
+        });
+        return scheduledTuple;
     }
 
     private initializeTimeslotsToSchedule(availableTimeslots: string[], timeslotsAlreadyScheduled: any): any {
@@ -58,31 +109,68 @@ export default class Scheduler implements IScheduler {
         return timeslotsAlreadyScheduled;
     }
 
-    private setMaxEnrollmentSoFar(seatsLeft: number, room: SchedRoom, section: SchedSection): number {
-        seatsLeft = room["rooms_seats"] - (section["courses_pass"] + section["courses_fail"] +
-            section["courses_audit"]);
-        return seatsLeft;
+    private getDupleRoom(duple: [SchedRoom, SchedSection]): SchedRoom {
+        return duple[0];
     }
 
-    private scheduleTuple(finalTimeslot: string, availableSlot: string, section: SchedSection, rooms: SchedRoom[],
-                          roomToSelect: number, timeslotsAlreadyScheduled: any, schedule: any[]): any[] {
-        finalTimeslot = availableSlot;
-        let scheduledTuple: [SchedSection, SchedRoom, string] =
-            [section, rooms[roomToSelect], finalTimeslot];
-        rooms.splice(roomToSelect, 1);
-        timeslotsAlreadyScheduled[finalTimeslot] =
-            timeslotsAlreadyScheduled[finalTimeslot].push(section["courses_id"]);
-        schedule.push(scheduledTuple);
-        return schedule;
+    private getDupleSection(duple: [SchedRoom, SchedSection]): SchedSection {
+        return duple[1];
     }
 
-    private isEnrollmentMaximized(room: SchedRoom, section: SchedSection, seatsLeft: number): boolean {
-        return room["rooms_seats"] - (section["courses_pass"] + section["courses_fail"] +
-            section["courses_audit"]) < seatsLeft;
+    private convertToRad(num: number): number {
+        return (num * Math.PI / 180);
     }
 
-    private isSectionLargerThanRoomCapacity(section: SchedSection, room: SchedRoom): boolean {
-        return (section["courses_pass"] + section["courses_fail"] + section["courses_audit"]) >
-            room["rooms_seats"];
+    private getMaxDistanceFromAllRooms(rooms: SchedRoom[]): number {
+        let room1: SchedRoom = rooms[0];
+        let room2: SchedRoom = rooms[1];
+        let maxDistanceSoFar = this.getHaversineD(room1, room2);
+        let roomsConsidered: SchedRoom[] = [];
+        roomsConsidered.push(room1, room2);
+
+        for (let i = 2; i < rooms.length; i++) {
+            for (let room of roomsConsidered) {
+                let d: number = this.getHaversineD(rooms[i], room);
+                if (d < maxDistanceSoFar) {
+                    maxDistanceSoFar = d;
+                }
+            }
+        }
+        return maxDistanceSoFar;
+    }
+
+    private getHaversineD(room1: SchedRoom, room2: SchedRoom): number {
+        let R: number = 6371000; // unit = metres, this is Earth's radius
+        let lat: number = room2["rooms_lat"] - room1["rooms_lat"];
+        let lon: number = room2["rooms_lon"] - room1["rooms_lon"];
+        let dLat: number = this.convertToRad(lat);
+        let dLon: number = this.convertToRad(lon);
+        let a: number = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(this.convertToRad(room1["rooms_lat"]))
+            * Math.cos(this.convertToRad(room2["rooms_lat"])) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        let c: number = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    private doesSectionFitInRoom(section: any, room: any): boolean {
+        return (section["courses_audit"] + section["courses_pass"] + section["courses_fail"]) <=
+            room["room_seats"];
+    }
+
+    private sortRoomsByCapacityDecreasing(rooms: SchedRoom[]): SchedRoom[] {
+        let priorityQueueRooms: SchedRoom[] = rooms.sort(function (roomA, roomB) {
+            return (roomA.rooms_seats) - (roomB.rooms_seats);
+        });
+        priorityQueueRooms.reverse();
+        return priorityQueueRooms;
+    }
+
+    private sortSectionsByEnrollmentDecreasing(sections: SchedSection[]): SchedSection[] {
+        let priorityQueueSections: SchedSection[] = sections.sort(
+            function (sectionA, sectionB) {
+                return (sectionA.courses_audit + sectionA.courses_fail + sectionA.courses_pass) -
+                    (sectionB.courses_audit + sectionB.courses_fail + sectionB.courses_pass);
+            });
+        priorityQueueSections.reverse();
+        return priorityQueueSections;
     }
 }
