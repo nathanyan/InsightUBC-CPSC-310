@@ -1,0 +1,25 @@
+{
+    "title": "Test 4: 1 section but room too small - hard constraint PASS (empty schedule), score FAILS",
+    "sections": [
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1319",
+                "courses_pass": 101,
+                "courses_fail": 7,
+                "courses_audit": 2
+            }
+        ],
+    "rooms": [
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "120",
+                "rooms_seats": 50,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            }
+        ],
+    "result": [
+
+    ]
+}

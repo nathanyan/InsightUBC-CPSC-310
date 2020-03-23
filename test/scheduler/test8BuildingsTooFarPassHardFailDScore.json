@@ -1,0 +1,82 @@
+{
+    "title": "Test 8: Buildings too far - PASS hard constraints, FAILS low D score",
+    "sections": [
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "341",
+                "courses_uuid": "2",
+                "courses_pass": 123,
+                "courses_fail": 3,
+                "courses_audit": 1
+            }
+        ],
+    "rooms": [
+            {
+                "rooms_shortname": "ANSO",
+                "rooms_number": "202",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26958,
+                "rooms_lon": -123.25741
+            },
+            {
+                "rooms_shortname": "OSBO",
+                "rooms_number": "203A",
+                "rooms_seats": 110,
+                "rooms_lat": 49.26047,
+                "rooms_lon": -123.24467
+            },
+            {
+                "rooms_shortname": "OSBO",
+                "rooms_number": "203B",
+                "rooms_seats": 110,
+                "rooms_lat": 49.26047,
+                "rooms_lon": -123.24467
+            }
+        ],
+    "result": [
+        [
+            {
+                "rooms_shortname": "OSBO",
+                "rooms_number": "203A",
+                "rooms_seats": 110,
+                "rooms_lat": 49.26047,
+                "rooms_lon": -123.24467
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ANSO",
+                "rooms_number": "202",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26958,
+                "rooms_lon": -123.25741
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "341",
+                "courses_uuid": "2",
+                "courses_pass": 123,
+                "courses_fail": 3,
+                "courses_audit": 1
+            },
+            "MWF 0800-0900"
+        ]
+    ]
+}

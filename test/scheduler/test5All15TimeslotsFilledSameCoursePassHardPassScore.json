@@ -1,0 +1,498 @@
+{
+    "title": "Test 5: All 15 sections from same course, valid (one goes to each of 15 timeslots) - hard constraints PASS, score PASS?",
+    "sections": [
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "2",
+                "courses_pass": 123,
+                "courses_fail": 3,
+                "courses_audit": 1
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "3",
+                "courses_pass": 93,
+                "courses_fail": 2,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "4",
+                "courses_pass": 43,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "5",
+                "courses_pass": 80,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "6",
+                "courses_pass": 130,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "7",
+                "courses_pass": 100,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "8",
+                "courses_pass": 73,
+                "courses_fail": 1,
+                "courses_audit": 20
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "9",
+                "courses_pass": 101,
+                "courses_fail": 5,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "10",
+                "courses_pass": 43,
+                "courses_fail": 1,
+                "courses_audit": 100
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "11",
+                "courses_pass": 43,
+                "courses_fail": 100,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "12",
+                "courses_pass": 90,
+                "courses_fail": 5,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "13",
+                "courses_pass": 90,
+                "courses_fail": 25,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "14",
+                "courses_pass": 60,
+                "courses_fail": 5,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "15",
+                "courses_pass": 99,
+                "courses_fail": 5,
+                "courses_audit": 0
+            }
+        ],
+    "rooms": [
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "120",
+                "rooms_seats": 200,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "105",
+                "rooms_seats": 200,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "098",
+                "rooms_seats": 260,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "A101",
+                "rooms_seats": 275,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            },
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "220",
+                "rooms_seats": 200,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "205",
+                "rooms_seats": 200,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "198",
+                "rooms_seats": 260,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "B101",
+                "rooms_seats": 275,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            },
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "320",
+                "rooms_seats": 200,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "305",
+                "rooms_seats": 200,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "298",
+                "rooms_seats": 260,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "C101",
+                "rooms_seats": 275,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            },
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "420",
+                "rooms_seats": 200,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "405",
+                "rooms_seats": 200,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "398",
+                "rooms_seats": 260,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "D101",
+                "rooms_seats": 275,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            }
+        ],
+    "result": [
+        [
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "120",
+                "rooms_seats": 200,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "105",
+                "rooms_seats": 200,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "2",
+                "courses_pass": 123,
+                "courses_fail": 3,
+                "courses_audit": 1
+            },
+            "MWF 0900-1000"
+        ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "098",
+                "rooms_seats": 260,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "3",
+                "courses_pass": 93,
+                "courses_fail": 2,
+                "courses_audit": 0
+            },
+            "MWF 1000-1100" ],
+        [
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "A101",
+                "rooms_seats": 275,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "4",
+                "courses_pass": 43,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            "MWF 1100-1200"],
+        [
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "220",
+                "rooms_seats": 200,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "5",
+                "courses_pass": 80,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            "MWF 1200-1300" ],
+        [
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "205",
+                "rooms_seats": 200,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "6",
+                "courses_pass": 130,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            "MWF 1300-1400" ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "198",
+                "rooms_seats": 260,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "7",
+                "courses_pass": 100,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            "MWF 1400-1500" ],
+        [
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "B101",
+                "rooms_seats": 275,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "8",
+                "courses_pass": 73,
+                "courses_fail": 1,
+                "courses_audit": 20
+            },
+            "MWF 1500-1600" ],
+        [
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "320",
+                "rooms_seats": 200,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "9",
+                "courses_pass": 101,
+                "courses_fail": 5,
+                "courses_audit": 0
+            },
+            "MWF 1600-1700" ],
+        [
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "305",
+                "rooms_seats": 200,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "10",
+                "courses_pass": 43,
+                "courses_fail": 1,
+                "courses_audit": 100
+            },
+            "TR  0800-0930" ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "298",
+                "rooms_seats": 260,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "11",
+                "courses_pass": 43,
+                "courses_fail": 100,
+                "courses_audit": 0
+            },
+            "TR  0930-1100" ],
+        [
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "C101",
+                "rooms_seats": 275,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "12",
+                "courses_pass": 90,
+                "courses_fail": 5,
+                "courses_audit": 0
+            },
+            "TR  1100-1230" ],
+        [
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "420",
+                "rooms_seats": 200,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "13",
+                "courses_pass": 90,
+                "courses_fail": 25,
+                "courses_audit": 0
+            },
+            "TR  1230-1400" ],
+        [
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "405",
+                "rooms_seats": 200,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "14",
+                "courses_pass": 60,
+                "courses_fail": 5,
+                "courses_audit": 0
+            },
+            "TR  1400-1530" ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "398",
+                "rooms_seats": 260,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "15",
+                "courses_pass": 99,
+                "courses_fail": 5,
+                "courses_audit": 0
+            },
+            "TR  1530-1700" ]
+    ]
+}
