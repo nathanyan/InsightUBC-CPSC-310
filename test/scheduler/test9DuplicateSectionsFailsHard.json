@@ -1,0 +1,75 @@
+{
+    "title": "Test 9: Section added twice to timetable - FAILS hard constraints, SCORE pass?",
+    "sections": [
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            }
+        ],
+    "rooms": [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "098",
+                "rooms_seats": 120,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "A101",
+                "rooms_seats": 120,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            }
+        ],
+    "result": [
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "098",
+                "rooms_seats": 120,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "A101",
+                "rooms_seats": 120,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            "MWF 0900-1000"
+        ]
+    ]
+}

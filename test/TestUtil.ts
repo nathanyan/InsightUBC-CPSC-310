@@ -3,6 +3,7 @@ import Log from "../src/Util";
 import { ITestQuery } from "./InsightFacade.spec";
 import {expect} from "chai";
 import {InsightError, ResultTooLargeError} from "../src/controller/IInsightFacade";
+import {ITestScheduler} from "./Scheduler.spec";
 
 export default class TestUtil {
 
@@ -79,6 +80,46 @@ export default class TestUtil {
         }
 
         return testQueries;
+    }
+
+    public static readTestScheduler(path: string = "test/scheduler"): ITestScheduler[] {
+        const methodName: string = "TestUtil::readTestScheduler --";
+        const testSchedulerInputs: ITestScheduler[] = [];
+        let files: string[];
+
+        try {
+            files = TestUtil.readAllFiles(path);
+            if (files.length === 0) {
+                Log.warn(`${methodName} No query files found in ${path}.`);
+            }
+        } catch (err) {
+            Log.error(`${methodName} Exception reading files in ${path}.`);
+            throw err;
+        }
+
+        for (const file of files) {
+            const skipFile: string = file.replace(__dirname, "test");
+            let content: Buffer;
+
+            try {
+                content = fs.readFileSync(file);
+            } catch (err) {
+                Log.error(`${methodName} Could not read ${skipFile}.`);
+                throw err;
+            }
+
+            try {
+                const schedulerInput = JSON.parse(content.toString());
+                TestUtil.validate(schedulerInput, {title: "string", sections: null, rooms: null, result: null});
+                schedulerInput["filename"] = file;
+                testSchedulerInputs.push(schedulerInput);
+            } catch (err) {
+                Log.error(`${methodName} ${skipFile} does not conform to the query schema.`);
+                throw new Error(`In ${file} ${err.message}`);
+            }
+        }
+
+        return testSchedulerInputs;
     }
 
     private static readAllFiles(currentPath: string): string[] {

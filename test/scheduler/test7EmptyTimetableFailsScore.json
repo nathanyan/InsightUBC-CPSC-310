@@ -1,0 +1,201 @@
+{
+    "title": "Test 7: Many sections and rooms, but none fit the sections - hard constrains PASS, score FAILS (low E score)",
+    "sections": [
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "341",
+                "courses_uuid": "2",
+                "courses_pass": 123,
+                "courses_fail": 3,
+                "courses_audit": 1
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "342",
+                "courses_uuid": "3",
+                "courses_pass": 93,
+                "courses_fail": 2,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "343",
+                "courses_uuid": "4",
+                "courses_pass": 43,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "344",
+                "courses_uuid": "5",
+                "courses_pass": 80,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "345",
+                "courses_uuid": "6",
+                "courses_pass": 130,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "346",
+                "courses_uuid": "7",
+                "courses_pass": 100,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "347",
+                "courses_uuid": "8",
+                "courses_pass": 73,
+                "courses_fail": 1,
+                "courses_audit": 20
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "348",
+                "courses_uuid": "9",
+                "courses_pass": 101,
+                "courses_fail": 5,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "349",
+                "courses_uuid": "10",
+                "courses_pass": 43,
+                "courses_fail": 1,
+                "courses_audit": 100
+            }
+        ],
+    "rooms": [
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "120",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "105",
+                "rooms_seats": 40,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "098",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "A101",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            },
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "220",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "205",
+                "rooms_seats": 40,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "198",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "B101",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            },
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "320",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "305",
+                "rooms_seats": 40,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "298",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "C101",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            },
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "420",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "rooms_shortname": "ALRD",
+                "rooms_number": "405",
+                "rooms_seats": 40,
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "398",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "BUCH",
+                "rooms_number": "D101",
+                "rooms_seats": 40,
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468
+            }
+        ],
+    "result": [
+    ]
+}

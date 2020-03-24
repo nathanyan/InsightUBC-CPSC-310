@@ -1,0 +1,42 @@
+{
+    "title": "Test 3: 1 section for 1 room - hard constraints PASS, score PASS",
+    "sections": [
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1319",
+                "courses_pass": 101,
+                "courses_fail": 7,
+                "courses_audit": 2
+            }
+        ],
+    "rooms": [
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "120",
+                "rooms_seats": 144,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            }
+        ],
+    "result": [
+        [
+            {
+                "rooms_shortname": "AERL",
+                "rooms_number": "120",
+                "rooms_seats": 144,
+                "rooms_lat": 49.26372,
+                "rooms_lon": -123.25099
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1319",
+                "courses_pass": 101,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            "MWF 0800-0900"
+        ]
+    ]
+}
