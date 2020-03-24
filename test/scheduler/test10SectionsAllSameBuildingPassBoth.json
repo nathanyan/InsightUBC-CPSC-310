@@ -1,0 +1,339 @@
+{
+    "title": "Test 10: Many sections all in same building - hard constraints PASS and score for sure PASS (D score = 1 exactly)",
+    "sections": [
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "341",
+                "courses_uuid": "2",
+                "courses_pass": 123,
+                "courses_fail": 3,
+                "courses_audit": 1
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "342",
+                "courses_uuid": "3",
+                "courses_pass": 93,
+                "courses_fail": 2,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "343",
+                "courses_uuid": "4",
+                "courses_pass": 43,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "344",
+                "courses_uuid": "5",
+                "courses_pass": 80,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "345",
+                "courses_uuid": "6",
+                "courses_pass": 130,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "346",
+                "courses_uuid": "7",
+                "courses_pass": 100,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "347",
+                "courses_uuid": "8",
+                "courses_pass": 73,
+                "courses_fail": 1,
+                "courses_audit": 20
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "348",
+                "courses_uuid": "9",
+                "courses_pass": 101,
+                "courses_fail": 5,
+                "courses_audit": 0
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "349",
+                "courses_uuid": "10",
+                "courses_pass": 43,
+                "courses_fail": 1,
+                "courses_audit": 100
+            }
+        ],
+    "rooms": [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "098",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "099",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "100",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "101",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "102",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "103",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "202",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "303",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "301",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "305",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            }
+        ],
+    "result": [
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "098",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "340",
+                "courses_uuid": "1",
+                "courses_pass": 100,
+                "courses_fail": 7,
+                "courses_audit": 2
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "099",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "341",
+                "courses_uuid": "2",
+                "courses_pass": 123,
+                "courses_fail": 3,
+                "courses_audit": 1
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "100",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "342",
+                "courses_uuid": "3",
+                "courses_pass": 93,
+                "courses_fail": 2,
+                "courses_audit": 0
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "101",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "343",
+                "courses_uuid": "4",
+                "courses_pass": 43,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "102",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "344",
+                "courses_uuid": "5",
+                "courses_pass": 80,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "103",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "345",
+                "courses_uuid": "6",
+                "courses_pass": 130,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "202",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "346",
+                "courses_uuid": "7",
+                "courses_pass": 100,
+                "courses_fail": 1,
+                "courses_audit": 0
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "303",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "347",
+                "courses_uuid": "8",
+                "courses_pass": 73,
+                "courses_fail": 1,
+                "courses_audit": 20
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "304",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "348",
+                "courses_uuid": "9",
+                "courses_pass": 101,
+                "courses_fail": 5,
+                "courses_audit": 0
+            },
+            "MWF 0800-0900"
+        ],
+        [
+            {
+                "rooms_shortname": "ANGU",
+                "rooms_number": "305",
+                "rooms_seats": 150,
+                "rooms_lat": 49.26486,
+                "rooms_lon": -123.25364
+            },
+            {
+                "courses_dept": "cpsc",
+                "courses_id": "349",
+                "courses_uuid": "10",
+                "courses_pass": 43,
+                "courses_fail": 1,
+                "courses_audit": 100
+            },
+            "MWF 0800-0900"
+        ]
+    ]
+}
