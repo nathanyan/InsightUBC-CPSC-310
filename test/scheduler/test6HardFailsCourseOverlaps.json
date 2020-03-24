@@ -1,5 +1,5 @@
 {
-    "title": "Test 6: All 16 sections from same course - hard constraint FAILS because 16th section causes overlap, score PASSES?",
+    "title": "Test 6: All 16 sections from same course - hard constraint FAILS because 16th section causes overlap, score PASSES",
     "sections": [
             {
                 "courses_dept": "cpsc",

@@ -7,29 +7,32 @@ let timeslots: any[] = [ "MWF 0800-0900" || "MWF 0900-1000" || "MWF 1000-1100" |
 
 export default class SchedulerTestHelper {
 
-   // helper functions for tests
+   // helper functions for testing if outputted schedule 1) passes hard constraints / 2) has a good enough opt score
     public passHardConstraints(schedule: any[], sections: any[], rooms: any[]): boolean {
+        if (schedule.length === 0) {
+            return true;
+        }
         if (this.containsInvalidItems(schedule, sections, rooms)) {
-            Log.trace("Failed because invalid sections/rooms/timeslots in timetable");
+            // Log.trace("Failed because invalid sections/rooms/timeslots in timetable");
             return false;
         }
         if (!this.sectionsFitInRooms(schedule)) {
-            Log.trace("Failed because sections don't fit in rooms");
+            // Log.trace("Failed because sections don't fit in rooms");
             return false;
         }
         if (this.roomsDoubleBooked(schedule)) {
-            Log.trace("Failed because room(s) are double booked");
+            // Log.trace("Failed because room(s) are double booked");
             return false;
         }
         if (this.coursesOverlapping(schedule)) {
-            Log.trace("Failed because same course overlaps on a given timeslot");
+            // Log.trace("Failed because same course overlaps on a given timeslot");
             return false;
         }
         if (!this.sectionScheduledOnlyOnce(schedule)) {
-            Log.trace("Failed because a section got scheduled twice in final timetable");
+            // Log.trace("Failed because a section got scheduled twice in final timetable");
             return false;
         }
-        Log.trace("Hard constraints are passing");
+        // Log.trace("Hard constraints are passing");
         return true;
     }
 
@@ -152,7 +155,7 @@ export default class SchedulerTestHelper {
             }
         }
         Log.trace("Max Haversine D = " + maxHaversineD);
-        return maxHaversineD;
+        return maxHaversineD / 1.372;       // distance divided by 1372 meters to get it between 0 and 1
     }
 
     private getHaversineD(room1: SchedRoom, room2: SchedRoom): number {

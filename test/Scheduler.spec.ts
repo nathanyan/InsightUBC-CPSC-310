@@ -16,24 +16,31 @@ export interface ITestScheduler {
     filename: string;
 }
 
-// *** Hannah said to write tests like how we did the tests for performQuery (ie: make a bunch of json files
+// *** NOTE***:
+// Hannah said to write tests like how we did the tests for performQuery (ie: make a bunch of json files
 // and have the inputs in there (before it was "query" as input, but for scheduler, inputs are "sections"
-// and "rooms"). Expected output is "result" in the json file
-// Not sure exactly about how to route this test suite to go through each json file in test/scheduler
+// and "rooms"). Expected output is "result" in the json files. See comment blocks below too.
+// Edit:  Make sure to run tests from the ENTIRE Scheduler.spec.ts file (don't just run from this
+// describe block or else tests wont run)
+// ***IMPORTANT***: some expected timetable outputs from schedule() may differ from what I wrote in the test files
+// depending on how you implemented schedule(). If schedule() outputs something different from what I wrote in the
+// test, but you're sure it's a valid output, then the test should consider as passed.
+// ***IMPORTANT***: some tests SHOULD FAIL for the passHardConstraints and/or optimalityScore. I couldn't separate
+// those tests that should pass vs those tests that should fail since the set up of these tests had to be in a way
+// where it just loops through each json file to grab the sections input and the rooms input. Check each test's title
+// to confirm if passHardConstraints and/or optimalityScore should pass.
 describe("Scheduler tests: small inputs, checks outputted timetable is correct", () => {
-    let scheduler: Scheduler = null;
-    let scheduleTest: SchedulerTestHelper = null;
+    let scheduler: Scheduler = new Scheduler();
+    let scheduleTest: SchedulerTestHelper = new SchedulerTestHelper();
     let testSchedules: ITestScheduler[] = [];
 
     // Load all the test queries, and call addDataset on the insightFacade instance for all the datasets
     before(function () {
         Log.test(`Before: ${this.test.parent.title}`);
 
-        // Load the query JSON files under test/queries.
-        // Fail if there is a problem reading ANY query.
+        // Load the  JSON files under test/scheduler.
+        // Fail if there is a problem reading ANY json.
         try {
-            // **NOT SURE IF THIS IS RIGHT. In performQuery, it had readTestQuery() from TestUtil.. so I made
-            // something similar in TestUtil but for scheduler. Not sure if we are supposed to touch TestUtil
             testSchedules = TestUtil.readTestScheduler();
         } catch (err) {
             expect.fail("", "", `Failed to read one or more test queries. ${err}`);
@@ -54,26 +61,374 @@ describe("Scheduler tests: small inputs, checks outputted timetable is correct",
 
     // Dynamically create and run a test for each test in testSchedules.
     // Creates an extra "test" called "Should run test queries" as a byproduct.
-    // **** also not sure about if this is how to write the test that gets performed on each json file..
-    // Hannah said when starting out, test small samples to make sure schedule() outputs the exact timetable we expect
-    // it to be (ie: "result" in the json file. But that for larger ones, we should test that hard constraints pass
-    // and that the optimalityscore passes (ie: is above a threshold)
+    //
+    // **NOTE**: Hannah said when starting out, test small sample size inputs to make sure schedule() outputs the exact
+    // timetable we expect it to be (ie: has "result" in the json files). These are tests 1-11.
+    //
+    // But for larger sample-size tests, she said that
+    // we should just test that hard constraints pass and that the optimality score passes (ie: is above a threshold).
+    // Therefore, for test 12 onwards, "result" is blank in the json files since we don't care about the actual
+    // outputted timetable. I've included the queries used to generate the sections and rooms inputs below in case you
+    // need them.
     it("Should run test scheduler", function () {
         describe("Dynamic Scheduler tests", function () {
             for (const test of testSchedules) {
+                let timeTable = scheduler.schedule(test.sections, test.rooms);
+                let passHardConstraints = scheduleTest.passHardConstraints(timeTable,
+                    test.sections, test.rooms);
+                let optimalityScore = scheduleTest.calcOptimalityScore(timeTable,
+                    test.sections);
+                // test whether outputted timetable matches the timetable we expect (for small sample size tests)
                 it(`[${test.filename}] ${test.title}`, function () {
-                    expect(scheduler.schedule(test.sections, test.rooms)).to.deep.equal(test.result);
-                    expect(scheduleTest.passHardConstraints(scheduler.schedule(test.sections, test.rooms),
-                        test.sections, test.rooms)).to.equal(true);
-                    expect(scheduleTest.calcOptimalityScore(scheduler.schedule(test.sections, test.rooms),
-                        test.sections)).to.be.at.least(0.90);
+                    expect(timeTable).to.deep.equal(test.result);
+                });
+                // test whether outputted timetable passes hard constraints (see test titles, some are expected to fail)
+                it(`[${test.filename}] ${test.title}`, function () {
+                    expect(passHardConstraints).to.equal(true);
+                });
+                // test whether outputted timetable's optimality score > a threshold
+                // (see test titles, some are expected to fail. Depends on threshold set by course staff)
+                // Change the threshold depending on the sample size (see post @981 in Piazza)
+                it(`[${test.filename}] ${test.title}`, function () {
+                    expect(optimalityScore).to.be.at.least(0.75);
                 });
             }
         });
     });
 });
 
-// BELOW: first-attempt at writing tests. Apparently writing them this way was wrong
+// *** Queries used to generate the larger inputs tests for scheduler (in case you need them):
+// Test 11:
+//
+// {
+//   "WHERE": {
+//     "AND": [
+//       {
+//         "GT": {
+//           "courses_avg": 70
+//         }
+//       },
+//       {
+//         "IS": {
+//           "courses_id": "310"
+//         }
+//       },
+//       {
+//         "IS": {
+//           "courses_dept": "cpsc"
+//         }
+//       }
+//     ]
+//   },
+//   "OPTIONS": {
+//     "COLUMNS": [
+//       "courses_dept",
+//       "courses_id",
+//       "courses_uuid",
+//       "courses_pass",
+//       "courses_fail",
+//       "courses_audit"
+//     ]
+//   }
+// }
+// {
+//   "WHERE": {
+//     "AND": [
+//       {
+//         "LT": {
+//           "rooms_seats": 50
+//         }
+//       },
+//       {
+//         "IS": {
+//           "rooms_shortname": "BUCH"
+//         }
+//       }
+//     ]
+//   },
+//   "OPTIONS": {
+//     "COLUMNS": [
+//       "rooms_shortname",
+//       "rooms_number",
+//       "rooms_seats",
+//       "rooms_lat",
+//       "rooms_lon"
+//     ]
+//   }
+// }
+//
+//
+// Test 12:
+// {
+//     "WHERE": {
+//     "AND": [
+//         {
+//             "GT": {
+//                 "courses_avg": 96
+//             }
+//         },
+//         {
+//             "NOT": {
+//                 "IS": {
+//                     "courses_dept": "cpsc"
+//                 }
+//             }
+//         },
+//         {
+//             "LT": {
+//                 "courses_pass": 50
+//             }
+//         }
+//     ]
+// },
+//     "OPTIONS": {
+//     "COLUMNS": [
+//         "courses_dept",
+//         "courses_id",
+//         "courses_uuid",
+//         "courses_pass",
+//         "courses_fail",
+//         "courses_audit"
+//     ]
+// }
+// }
+// {
+//     "WHERE": {
+//     "AND": [
+//         {
+//             "GT": {
+//                 "rooms_seats": 50
+//             }
+//         },
+//         {
+//             "NOT": {
+//                 "IS": {
+//                     "rooms_shortname": "ANSO"
+//                 }
+//             }
+//         },
+//         {
+//             "NOT": {
+//                 "IS": {
+//                     "rooms_shortname": "OSBO"
+//                 }
+//             }
+//         }
+//     ]
+// },
+//     "OPTIONS": {
+//     "COLUMNS": [
+//         "rooms_shortname",
+//         "rooms_number",
+//         "rooms_seats",
+//         "rooms_lat",
+//         "rooms_lon"
+//     ]
+// }
+// }
+//
+// Test 13:// {
+// //     "WHERE": {
+// //     "AND": [
+// //         {
+// //             "LT": {
+// //                 "courses_avg": 61
+// //             }
+// //         },
+// //         {
+// //             "NOT": {
+// //                 "IS": {
+// //                     "courses_dept": "cpsc"
+// //                 }
+// //             }
+// //         },
+// //         {
+// //             "LT": {
+// //                 "courses_pass": 20
+// //             }
+// //         }
+// //     ]
+// // },
+// //     "OPTIONS": {
+// //     "COLUMNS": [
+// //         "courses_dept",
+// //         "courses_id",
+// //         "courses_uuid",
+// //         "courses_pass",
+// //         "courses_fail",
+// //         "courses_audit"
+// //     ]
+// // }
+// // }
+
+// {
+//     "WHERE": {
+//     "AND": [
+//         {
+//             "GT": {
+//                 "rooms_seats": 25
+//             }
+//         },
+//         {
+//             "NOT": {
+//                 "IS": {
+//                     "rooms_shortname": "ANSO"
+//                 }
+//             }
+//         },
+//         {
+//             "NOT": {
+//                 "IS": {
+//                     "rooms_shortname": "OSBO"
+//                 }
+//             }
+//         }
+//     ]
+// },
+//     "OPTIONS": {
+//     "COLUMNS": [
+//         "rooms_shortname",
+//         "rooms_number",
+//         "rooms_seats",
+//         "rooms_lat",
+//         "rooms_lon"
+//     ]
+// }
+// }
+//
+// Test 14:
+// {
+//     "WHERE": {
+//     "AND": [
+//         {
+//             "LT": {
+//                 "courses_avg": 64
+//             }
+//         },
+//         {
+//             "NOT": {
+//                 "IS": {
+//                     "courses_dept": "cpsc"
+//                 }
+//             }
+//         },
+//         {
+//             "LT": {
+//                 "courses_pass": 10
+//             }
+//         }
+//     ]
+// },
+//     "OPTIONS": {
+//     "COLUMNS": [
+//         "courses_dept",
+//         "courses_id",
+//         "courses_uuid",
+//         "courses_pass",
+//         "courses_fail",
+//         "courses_audit"
+//     ]
+// }
+// }
+// {
+//     "WHERE": {
+//     "AND": [
+//         {
+//             "GT": {
+//                 "rooms_seats": 15
+//             }
+//         },
+//         {
+//             "NOT": {
+//                 "IS": {
+//                     "rooms_shortname": "OSBO"
+//                 }
+//             }
+//         },
+//         {
+//             "LT": {
+//                 "rooms_lat": 49.2659
+//             }
+//         }
+//     ]
+// },
+//     "OPTIONS": {
+//     "COLUMNS": [
+//         "rooms_shortname",
+//         "rooms_number",
+//         "rooms_seats",
+//         "rooms_lat",
+//         "rooms_lon"
+//     ]
+// }
+// }
+//
+// Test 15:
+// {
+//     "WHERE": {
+//     "AND": [
+//         {
+//             "GT": {
+//                 "courses_avg": 88
+//             }
+//         },
+//         {
+//             "GT": {
+//                 "courses_pass": 50
+//             }
+//         },
+//         {
+//             "LT": {
+//                 "courses_pass": 100
+//             }
+//         }
+//     ]
+// },
+//     "OPTIONS": {
+//     "COLUMNS": [
+//         "courses_dept",
+//         "courses_id",
+//         "courses_uuid",
+//         "courses_pass",
+//         "courses_fail",
+//         "courses_audit"
+//     ]
+// }
+// }
+// {
+//     "WHERE": {
+//     "AND": [
+//         {
+//             "LT": {
+//                 "rooms_seats": 60
+//             }
+//         },
+//         {
+//             "NOT": {
+//                 "IS": {
+//                     "rooms_shortname": "OSBO"
+//                 }
+//             }
+//         },
+//         {
+//             "LT": {
+//                 "rooms_lat": 49.2659
+//             }
+//         }
+//     ]
+// },
+//     "OPTIONS": {
+//     "COLUMNS": [
+//         "rooms_shortname",
+//         "rooms_number",
+//         "rooms_seats",
+//         "rooms_lat",
+//         "rooms_lon"
+//     ]
+// }
+// }
+
+// IGNORE EVERYTHING BELOW: first-attempt at writing tests. Apparently writing them this way was wrong.
 //
 //
 // describe("Scheduler schedule (small samples - no addDataset/performQuery called)", function () {
@@ -113,7 +468,7 @@ describe("Scheduler tests: small inputs, checks outputted timetable is correct",
 //                 rooms_lon: -123.25468} ];
 //         let schedule = scheduler.schedule(sections, rooms);
 //         expect(scheduleTest.passHardConstraints(schedule, sections, rooms)).to.equal(true);
-//         expect(scheduleTest.calcOptimalityScore(schedule, sections)).to.be.at.least(0.95);
+//         // expect(scheduleTest.calcOptimalityScore(schedule, sections)).to.be.at.least(0.95);
 //     });
 //
 //     it("Test 2: 4 sections but only 2 rooms: hard constraints pass but score will fail (E score low)", function () {
