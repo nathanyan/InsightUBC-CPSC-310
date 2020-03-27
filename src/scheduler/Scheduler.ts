@@ -7,8 +7,7 @@ export default class Scheduler implements IScheduler {
             "MWF 1200-1300", "MWF 1300-1400", "MWF 1400-1500", "MWF 1500-1600", "MWF 1600-1700", "TR  0800-0930",
             "TR  0930-1100", "TR  1100-1230", "TR  1230-1400", "TR  1400-1530", "TR  1530-1700"];
         let priorityQueueSections: any[] = this.sortSectionsByEnrollmentDecreasing(sections, availableTimeslots);
-        let priorityQueueRooms: any[] = this.sortRoomsByCapacityDecreasing(rooms, availableTimeslots);
-        let maxDistance: number = this.getMaxDistanceFromAllRooms(rooms);
+        let priorityQueueRooms: any[] = this.sortRoomsByDistanceIncreasing(rooms, availableTimeslots);
         let sectionsScheduled: {[courseDeptId: string]: string[]} = {};
         let finalSchedule: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
         finalSchedule = this.doScheduling(priorityQueueSections, priorityQueueRooms, sectionsScheduled, finalSchedule);
@@ -103,29 +102,6 @@ export default class Scheduler implements IScheduler {
         return (num * Math.PI / 180);
     }
 
-    private getMaxDistanceFromAllRooms(rooms: SchedRoom[]): number {
-        let maxDistanceSoFar: number;
-        if (rooms.length === 0 || rooms.length === 1) {
-            maxDistanceSoFar = 0;
-        } else {
-            let room1: SchedRoom = rooms[0];
-            let room2: SchedRoom = rooms[1];
-            maxDistanceSoFar = this.getHaversineD(room1, room2);
-            let roomsConsidered: SchedRoom[] = [];
-            roomsConsidered.push(room1, room2);
-
-            for (let i = 2; i < rooms.length; i++) {
-                for (let room of roomsConsidered) {
-                    let d: number = this.getHaversineD(rooms[i], room);
-                    if (d < maxDistanceSoFar) {
-                        maxDistanceSoFar = d;
-                    }
-                }
-            }
-        }
-        return maxDistanceSoFar;
-    }
-
     private getHaversineD(room1: SchedRoom, room2: SchedRoom): number {
         let R: number = 6371000; // unit = metres, this is Earth's radius
         let lat: number = room2["rooms_lat"] - room1["rooms_lat"];
@@ -146,11 +122,14 @@ export default class Scheduler implements IScheduler {
         return sectionSum <= roomSeats;
     }
 
-    private sortRoomsByCapacityDecreasing(rooms: SchedRoom[], slotsPossible: string[]): any[] {
+    private sortRoomsByDistanceIncreasing(rooms: SchedRoom[], slotsPossible: string[]): any[] {
+        let anchorRoom: SchedRoom = rooms[0];
         let priorityQueueRooms: SchedRoom[] = rooms.sort(function (roomA, roomB) {
-            return (roomA.rooms_seats) - (roomB.rooms_seats);
+            let roomAtoAnchorDistance: number = this.getHaversineD(anchorRoom, roomA);
+            let roomBtoAnchorDistance: number = this.getHaversineD(anchorRoom, roomB);
+            return roomAtoAnchorDistance - roomBtoAnchorDistance;
         });
-        priorityQueueRooms.reverse();
+        // priorityQueueRooms.reverse();
         let PQRoomsInit: any[] = [];
         priorityQueueRooms.forEach((room: SchedRoom) => {
             let temp: any = {};
