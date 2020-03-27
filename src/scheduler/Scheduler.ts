@@ -1,4 +1,5 @@
 import {IScheduler, SchedRoom, SchedSection, TimeSlot} from "./IScheduler";
+import Log from "../Util";
 
 export default class Scheduler implements IScheduler {
 
@@ -119,6 +120,9 @@ export default class Scheduler implements IScheduler {
         let sectionSum: number = sectionObject.courses_audit + sectionObject.courses_pass + sectionObject.courses_fail;
         let roomObject: SchedRoom = room[Object.keys(room)[0]];
         let roomSeats: number = roomObject.rooms_seats;
+        if (isNaN(sectionSum) || roomSeats === undefined) {
+            Log.trace("OUT OF ORDER");
+        }
         return sectionSum <= roomSeats;
     }
 
