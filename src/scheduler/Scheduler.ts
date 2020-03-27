@@ -124,12 +124,11 @@ export default class Scheduler implements IScheduler {
 
     private sortRoomsByDistanceIncreasing(rooms: SchedRoom[], slotsPossible: string[]): any[] {
         let anchorRoom: SchedRoom = rooms[0];
-        let priorityQueueRooms: SchedRoom[] = rooms.sort(function (roomA, roomB) {
+        let priorityQueueRooms: SchedRoom[] = rooms.sort((roomA, roomB) => {
             let roomAtoAnchorDistance: number = this.getHaversineD(anchorRoom, roomA);
             let roomBtoAnchorDistance: number = this.getHaversineD(anchorRoom, roomB);
             return roomAtoAnchorDistance - roomBtoAnchorDistance;
         });
-        // priorityQueueRooms.reverse();
         let PQRoomsInit: any[] = [];
         priorityQueueRooms.forEach((room: SchedRoom) => {
             let temp: any = {};
