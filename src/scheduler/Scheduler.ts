@@ -80,7 +80,7 @@ export default class Scheduler implements IScheduler {
     private setTuple2(scheduledTuple: [SchedRoom, SchedSection, TimeSlot], section: any, room: any,
                       availCourseTime: string, finalSchedule: Array<[SchedRoom, SchedSection, TimeSlot]>,
                       sectionsScheduled: { [p: string]: string[] }, key: string, roomTimes: string[]) {
-        scheduledTuple = [section[Object.keys(section)[0]], room[Object.keys(room)[0]],
+        scheduledTuple = [room[Object.keys(room)[0]], section[Object.keys(section)[0]],
             availCourseTime as TimeSlot];
         finalSchedule.push(scheduledTuple);
         sectionsScheduled[key].push(availCourseTime);
@@ -91,7 +91,7 @@ export default class Scheduler implements IScheduler {
     private setTuple(scheduledTuple: [SchedRoom, SchedSection, TimeSlot], section: any, room: any,
                      availCourseTime: string, finalSchedule: Array<[SchedRoom, SchedSection, TimeSlot]>,
                      sectionsScheduled: { [p: string]: string[] }, key: string, roomTimes: string[]) {
-        scheduledTuple = [section[Object.keys(section)[0]], room[Object.keys(room)[0]],
+        scheduledTuple = [room[Object.keys(room)[0]], section[Object.keys(section)[0]],
             availCourseTime as TimeSlot];
         finalSchedule.push(scheduledTuple);
         sectionsScheduled[key] = [availCourseTime];
