@@ -14,7 +14,7 @@ export default class Scheduler implements IScheduler {
         // first pair sections with rooms
         priorityQueueSections.forEach((section: any) => {
             let counter: number = 0;
-            let bestRoomSoFarIndex: number = 0;
+            let bestRoomSoFarIndex: number = null;
             let maxDistanceSoFar: number;
             priorityQueueRooms.forEach((room: any) => {
                 if (this.doesSectionFitInRoom(section, room)) {
@@ -161,7 +161,7 @@ export default class Scheduler implements IScheduler {
 
     private doesSectionFitInRoom(section: any, room: any): boolean {
         return (section["courses_audit"] + section["courses_pass"] + section["courses_fail"]) <=
-            room["room_seats"];
+            room["rooms_seats"];
     }
 
     private sortRoomsByCapacityDecreasing(rooms: SchedRoom[]): SchedRoom[] {
