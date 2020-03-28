@@ -1,5 +1,4 @@
 import {IScheduler, SchedRoom, SchedSection, TimeSlot} from "./IScheduler";
-import Log from "../Util";
 
 export default class Scheduler implements IScheduler {
 
@@ -23,7 +22,7 @@ export default class Scheduler implements IScheduler {
             let scheduledTuple: [SchedRoom, SchedSection, TimeSlot] = null;
             for (let room of priorityQueueRooms) {
                 if (scheduledTuple !== null) {
-                    continue;
+                    break;
                 }
                 if (this.doesSectionFitInRoom(section, room)) {
                     let courseTimes: string[] = section["courseTimesAvail"];
@@ -41,13 +40,13 @@ export default class Scheduler implements IScheduler {
                                 let key = this.getSectionKey(section);
                                 if (sectionsScheduled[key] === undefined) {
                                     scheduledTuple = this.setTuple(scheduledTuple, section, room, availCourseTime,
-                                        finalSchedule, sectionsScheduled, key, roomTimes);
+                                        finalSchedule, sectionsScheduled, key, roomTimes, courseTimes);
                                     break;
                                 }
                                 booked = this.checkBooked(sectionsScheduled, key, availCourseTime, booked);
                                 if (!booked) {
                                     scheduledTuple = this.setTuple2(scheduledTuple, section, room, availCourseTime,
-                                        finalSchedule, sectionsScheduled, key, roomTimes);
+                                        finalSchedule, sectionsScheduled, key, roomTimes, courseTimes);
                                     break;
                                 }
                             }
@@ -79,23 +78,27 @@ export default class Scheduler implements IScheduler {
 
     private setTuple2(scheduledTuple: [SchedRoom, SchedSection, TimeSlot], section: any, room: any,
                       availCourseTime: string, finalSchedule: Array<[SchedRoom, SchedSection, TimeSlot]>,
-                      sectionsScheduled: { [p: string]: string[] }, key: string, roomTimes: string[]) {
+                      sectionsScheduled: { [p: string]: string[] }, key: string, roomTimes: string[],
+                      courseTimes: string[]) {
         scheduledTuple = [room[Object.keys(room)[0]], section[Object.keys(section)[0]],
             availCourseTime as TimeSlot];
         finalSchedule.push(scheduledTuple);
         sectionsScheduled[key].push(availCourseTime);
         roomTimes.splice(roomTimes.indexOf(availCourseTime), 1);
+        courseTimes.splice(courseTimes.indexOf(availCourseTime), 1);
         return scheduledTuple;
     }
 
     private setTuple(scheduledTuple: [SchedRoom, SchedSection, TimeSlot], section: any, room: any,
                      availCourseTime: string, finalSchedule: Array<[SchedRoom, SchedSection, TimeSlot]>,
-                     sectionsScheduled: { [p: string]: string[] }, key: string, roomTimes: string[]) {
+                     sectionsScheduled: { [p: string]: string[] }, key: string, roomTimes: string[],
+                     courseTimes: string[]) {
         scheduledTuple = [room[Object.keys(room)[0]], section[Object.keys(section)[0]],
             availCourseTime as TimeSlot];
         finalSchedule.push(scheduledTuple);
         sectionsScheduled[key] = [availCourseTime];
         roomTimes.splice(roomTimes.indexOf(availCourseTime), 1);
+        courseTimes.splice(courseTimes.indexOf(availCourseTime), 1);
         return scheduledTuple;
     }
 
@@ -120,9 +123,6 @@ export default class Scheduler implements IScheduler {
         let sectionSum: number = sectionObject.courses_audit + sectionObject.courses_pass + sectionObject.courses_fail;
         let roomObject: SchedRoom = room[Object.keys(room)[0]];
         let roomSeats: number = roomObject.rooms_seats;
-        if (isNaN(sectionSum) || roomSeats === undefined) {
-            Log.trace("OUT OF ORDER");
-        }
         return sectionSum <= roomSeats;
     }
 
@@ -137,7 +137,7 @@ export default class Scheduler implements IScheduler {
         priorityQueueRooms.forEach((room: SchedRoom) => {
             let temp: any = {};
             temp[room["rooms_shortname"] + room["rooms_number"]] = room;
-            temp["roomTimesAvail"] = slotsPossible;
+            temp["roomTimesAvail"] = [...slotsPossible];
             PQRoomsInit.push(temp);
         });
         return PQRoomsInit;
@@ -154,7 +154,7 @@ export default class Scheduler implements IScheduler {
         priorityQueueSections.forEach((section: SchedSection) => {
             let temp: any = {};
             temp[section["courses_dept"] + section["courses_id"]] = section;
-            temp["courseTimesAvail"] = slotsPossible;
+            temp["courseTimesAvail"] = [...slotsPossible];
             PQSectionsInit.push(temp);
         });
         return PQSectionsInit;
