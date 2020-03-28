@@ -155,7 +155,7 @@ export default class SchedulerTestHelper {
             }
         }
         Log.trace("Max Haversine D = " + maxHaversineD);
-        return maxHaversineD / 1.372;       // distance divided by 1372 meters to get it between 0 and 1
+        return maxHaversineD / 1372;       // distance divided by 1372 meters to get it between 0 and 1
     }
 
     private getHaversineD(room1: SchedRoom, room2: SchedRoom): number {
